@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TubeCoin Bot</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0f0f1a;--card:#1a1a2e;--card2:#16213e;--border:#2a2a4a;--text:#e0e0e0;--muted:#888;--green:#00e676;--orange:#ff9100;--blue:#448aff;--red:#ff5252;--cyan:#00e5ff;--purple:#7c4dff;--yellow:#ffd740}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.container{max-width:900px;margin:0 auto;padding:20px}
+h1{text-align:center;font-size:2rem;margin:20px 0;background:linear-gradient(135deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:800}
+.subtitle{text-align:center;color:var(--muted);margin-bottom:30px;font-size:.9rem}
+
+/* Login */
+.login-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:30px;max-width:420px;margin:0 auto 30px}
+.login-card h2{font-size:1.2rem;margin-bottom:20px;color:var(--cyan)}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:.85rem;color:var(--muted);margin-bottom:6px}
+.field input,.field select{width:100%;padding:12px 14px;background:var(--bg);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:.95rem;outline:none;transition:border .2s}
+.field input:focus,.field select:focus{border-color:var(--cyan)}
+.field select option{background:var(--bg)}
+.row{display:flex;gap:12px}
+.row .field{flex:1}
+
+.btn{width:100%;padding:14px;border:none;border-radius:12px;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s}
+.btn-start{background:linear-gradient(135deg,var(--cyan),var(--purple));color:#fff}
+.btn-start:hover{opacity:.9;transform:translateY(-1px)}
+.btn-start:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.btn-stop{background:var(--red);color:#fff;margin-top:10px}
+.btn-stop:hover{opacity:.85}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center}
+.stat .val{font-size:1.5rem;font-weight:800}
+.stat .lbl{font-size:.75rem;color:var(--muted);margin-top:4px}
+.stat.tc .val{color:var(--orange)}
+.stat.bp .val{color:var(--cyan)}
+.stat.xp .val{color:var(--green)}
+.stat.vd .val{color:var(--purple)}
+
+/* Progress */
+.progress-section{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:20px}
+.progress-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.progress-header h3{font-size:1rem;color:var(--cyan)}
+.progress-header span{font-size:.85rem;color:var(--muted)}
+.progress-bar-bg{width:100%;height:8px;background:var(--bg);border-radius:4px;overflow:hidden;margin-bottom:8px}
+.progress-bar{height:100%;border-radius:4px;transition:width .3s;background:linear-gradient(90deg,var(--cyan),var(--purple))}
+.current-video{font-size:.85rem;color:var(--muted)}
+.current-video span{color:var(--text)}
+
+/* Video progress */
+.video-progress{margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
+.video-bar-bg{width:100%;height:6px;background:var(--bg);border-radius:3px;overflow:hidden;margin-top:8px}
+.video-bar{height:100%;border-radius:3px;transition:width .5s;background:linear-gradient(90deg,var(--green),var(--cyan))}
+.video-info{display:flex;justify-content:space-between;font-size:.8rem;color:var(--muted);margin-top:4px}
+
+/* Log */
+.log-section{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px}
+.log-section h3{font-size:1rem;color:var(--cyan);margin-bottom:12px}
+#log{max-height:350px;overflow-y:auto;font-family:'Cascadia Code','Fira Code',monospace;font-size:.8rem;line-height:1.6}
+#log::-webkit-scrollbar{width:6px}
+#log::-webkit-scrollbar-track{background:var(--bg);border-radius:3px}
+#log::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+.log-line{padding:2px 0}
+.log-time{color:var(--blue)}
+.log-ok{color:var(--green)}
+.log-err{color:var(--red)}
+.log-warn{color:var(--orange)}
+.log-info{color:var(--blue)}
+.log-prog{color:var(--cyan)}
+
+.hidden{display:none}
+@media(max-width:600px){.stats{grid-template-columns:repeat(2,1fr)}.row{flex-direction:column;gap:0}}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>TubeCoin Bot</h1>
+<p class="subtitle">Automacao de videos, check-in e missoes</p>
+
+<!-- Login -->
+<div class="login-card" id="loginCard">
+<h2>Credenciais</h2>
+<div class="field">
+<label>Usuario / E-mail / WhatsApp</label>
+<input type="text" id="user" placeholder="seu_usuario" autocomplete="username">
+</div>
+<div class="field">
+<label>Senha</label>
+<input type="password" id="pass" placeholder="sua_senha" autocomplete="current-password">
+</div>
+<div class="row">
+<div class="field">
+<label>Acao</label>
+<select id="acao">
+<option value="completo">Completo (tudo)</option>
+<option value="videos">Apenas Videos</option>
+<option value="checkin">Apenas Check-in</option>
+<option value="missoes">Apenas Missoes</option>
+<option value="status">Ver Status</option>
+</select>
+</div>
+<div class="field">
+<label>Categoria</label>
+<select id="categoria">
+<option value="">Todas</option>
+<option value="orange">Prioritario (80 TC)</option>
+<option value="blue">Normal (60 TC)</option>
+<option value="green">Mini (40 TC)</option>
+</select>
+</div>
+</div>
+<button class="btn btn-start" id="btnStart" onclick="iniciar()">Iniciar Bot</button>
+<button class="btn btn-stop hidden" id="btnStop" onclick="parar()">Parar Bot</button>
+</div>
+
+<!-- Stats -->
+<div class="stats hidden" id="statsSection">
+<div class="stat tc"><div class="val" id="sTc">0</div><div class="lbl">TC Ganho</div></div>
+<div class="stat bp"><div class="val" id="sBp">0</div><div class="lbl">BP Ganho</div></div>
+<div class="stat xp"><div class="val" id="sXp">0</div><div class="lbl">XP Ganho</div></div>
+<div class="stat vd"><div class="val" id="sVd">0/0</div><div class="lbl">Videos</div></div>
+</div>
+
+<!-- Progress -->
+<div class="progress-section hidden" id="progressSection">
+<div class="progress-header">
+<h3>Progresso Geral</h3>
+<span id="progressPct">0%</span>
+</div>
+<div class="progress-bar-bg"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+<div class="current-video" id="currentAction">Aguardando...</div>
+
+<div class="video-progress hidden" id="videoProgress">
+<div style="display:flex;justify-content:space-between;align-items:center">
+<span style="font-size:.85rem">Assistindo video</span>
+<span id="videoTimer" style="font-size:.85rem;color:var(--green)">0:00</span>
+</div>
+<div class="video-bar-bg"><div class="video-bar" id="videoBar" style="width:0%"></div></div>
+<div class="video-info"><span id="videoName">-</span><span id="videoReward">-</span></div>
+</div>
+</div>
+
+<!-- Log -->
+<div class="log-section hidden" id="logSection">
+<h3>Log de Atividade</h3>
+<div id="log"></div>
+</div>
+</div>
+
+<script>
+let running = false, stopFlag = false;
+let tcTotal=0, bpTotal=0, xpTotal=0, videosFeitos=0, videosTotal=0;
+let csrfToken="", csrfParam="csrf_test_name";
+let sessionId = "s_" + Math.random().toString(36).substring(2, 10);
+
+// ── UI helpers ──
+function $(id){return document.getElementById(id)}
+function show(id){$(id).classList.remove("hidden")}
+function hide(id){$(id).classList.add("hidden")}
+
+function addLog(msg,tipo="info"){
+  const el=$("log");
+  const t=new Date().toLocaleTimeString("pt-BR");
+  const cls={"ok":"log-ok","err":"log-err","warn":"log-warn","info":"log-info","prog":"log-prog"}[tipo]||"log-info";
+  const prefix={"ok":"[OK]","err":"[ERRO]","warn":"[AVISO]","info":"[INFO]","prog":"[...]"}[tipo]||"[INFO]";
+  el.innerHTML+=`<div class="log-line"><span class="log-time">[${t}]</span> <span class="${cls}">${prefix}</span> ${msg}</div>`;
+  el.scrollTop=el.scrollHeight;
+}
+
+function updateStats(){
+  $("sTc").textContent=tcTotal;
+  $("sBp").textContent=bpTotal;
+  $("sXp").textContent=xpTotal;
+  $("sVd").textContent=`${videosFeitos}/${videosTotal}`;
+}
+
+function setProgress(pct,text){
+  $("progressBar").style.width=pct+"%";
+  $("progressPct").textContent=pct+"%";
+  if(text)$("currentAction").innerHTML=text;
+}
+
+function setVideoProgress(pct,seconds,total,name,reward){
+  $("videoBar").style.width=pct+"%";
+  const m=Math.floor((total-seconds)/60),s=(total-seconds)%60;
+  $("videoTimer").textContent=`${m}:${s.toString().padStart(2,"0")}`;
+  if(name)$("videoName").textContent=name;
+  if(reward)$("videoReward").textContent=reward;
+}
+
+// ── API via Express proxy ──
+async function api(method, path, body=null, contentType="application/json"){
+  const payload={method,path,body,contentType,csrfToken,csrfParam,sessionId};
+  const r=await fetch("/api/proxy",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify(payload)
+  });
+  if(!r.ok) throw new Error(`HTTP ${r.status}`);
+  return await r.json();
+}
+
+// ── Extrair dados do HTML ──
+function extractCsrf(html){
+  if(!html)return;
+  let m=html.match(/name="csrf-token"\s+content="([^"]+)"/);
+  if(m)csrfToken=m[1];
+  // Fallback: buscar no cookie hidden input
+  if(!csrfToken){
+    m=html.match(/name="csrf_test_name"[^>]*value="([^"]+)"/);
+    if(m)csrfToken=m[1];
+  }
+  m=html.match(/name="csrf-param"\s+content="([^"]+)"/);
+  if(m)csrfParam=m[1];
+}
+
+function extractUser(html){
+  if(!html)return{};
+  const m=html.match(/userDataMixin\((\{.*?\})\)/s);
+  if(!m)return{};
+  try{return JSON.parse(m[1])}catch(e){return{}}
+}
+
+function extractVideos(html){
+  if(!html)return[];
+  const m=html.match(/videos:\s*(\[.*?\])/s);
+  if(!m)return[];
+  try{return JSON.parse(m[1])}catch(e){return[]}
+}
+
+function extractMissions(html){
+  if(!html)return[];
+  const m=html.match(/missions:\s*(\[.*?\])/s);
+  if(!m)return[];
+  try{return JSON.parse(m[1])}catch(e){return[]}
+}
+
+function extractWatchToken(html){
+  if(!html)return null;
+  const m=html.match(/watchToken:\s*'([^']+)'/);
+  return m?m[1]:null;
+}
+
+// ── Sleep ──
+function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
+
+// ── Bot Logic ──
+async function iniciar(){
+  const user=$("user").value.trim();
+  const pass=$("pass").value.trim();
+  if(!user||!pass){alert("Preencha usuario e senha!");return}
+
+  const acao=$("acao").value;
+  const categoria=$("categoria").value;
+
+  running=true;stopFlag=false;
+  sessionId = "s_" + Math.random().toString(36).substring(2, 10);
+  $("btnStart").disabled=true;
+  show("btnStop");show("statsSection");show("progressSection");show("logSection");
+  $("log").innerHTML="";
+  tcTotal=0;bpTotal=0;xpTotal=0;videosFeitos=0;videosTotal=0;
+  updateStats();
+
+  try{
+    // LOGIN
+    addLog("Iniciando autenticacao...","info");
+    setProgress(5,"Fazendo login...");
+
+    let r=await api("GET","/login");
+    if(!r.success){addLog("Erro ao acessar pagina de login: "+(r.error||""),"err");return fin()}
+    extractCsrf(r.html);
+    if(!csrfToken){addLog("CSRF token nao encontrado","err");return fin()}
+    addLog(`CSRF obtido: ${csrfToken.substring(0,16)}...`,"info");
+
+    const loginBody=`identifier=${encodeURIComponent(user)}&password=${encodeURIComponent(pass)}&${csrfParam}=${encodeURIComponent(csrfToken)}`;
+    r=await api("POST","/login/authenticate",loginBody,"application/x-www-form-urlencoded");
+    if(!r.success&&r.error){addLog("Erro no login: "+r.error,"err");return fin()}
+
+    let loginData;
+    try{loginData=JSON.parse(r.body||"{}")}catch(e){
+      // Se body nao e JSON, pode ser redirect HTML (login ok)
+      if(r.html && r.html.includes("dashboard")){
+        loginData={success:true,redirect:"/dashboard"};
+      }else{
+        addLog("Resposta inesperada do servidor","err");return fin();
+      }
+    }
+    if(!loginData.success){addLog("Login falhou: "+(loginData.message||"credenciais invalidas"),"err");return fin()}
+
+    addLog(`Login realizado! Bem-vindo, <b>${user}</b>`,"ok");
+    setProgress(10,"Carregando dashboard...");
+
+    // DASHBOARD
+    r=await api("GET",loginData.redirect||"/dashboard");
+    if(!r.success){addLog("Erro ao carregar dashboard","err");return fin()}
+    extractCsrf(r.html);
+    const userData=extractUser(r.html);
+    const videos=extractVideos(r.html);
+    const missions=extractMissions(r.html);
+
+    addLog(`TC: ${userData.tc||0} | BP: ${userData.bp||0} | Nivel: ${userData.level||1} | XP: ${userData.xp||0}`,"info");
+
+    if(acao==="status"){
+      addLog(`Usuario: ${userData.name||user}`,"info");
+      addLog(`E-mail: ${userData.email||"N/A"}`,"info");
+      addLog(`Membership: ${userData.membershipDisplay||"Normal"}`,"info");
+      addLog(`Videos hoje: ${userData.videosWatchedToday||0}`,"info");
+      setProgress(100,"Status carregado");
+      return fin();
+    }
+
+    // CHECK-IN
+    if(acao==="completo"||acao==="checkin"){
+      if(stopFlag)return fin();
+      addLog("--- CHECK-IN DIARIO ---","info");
+      setProgress(15,"Verificando check-in...");
+
+      r=await api("GET","/checkin/status");
+      let checkinData;
+      try{checkinData=JSON.parse(r.body||"{}")}catch(e){checkinData={}}
+
+      if(checkinData.has_checked_in_today){
+        addLog(`Check-in ja realizado. Streak: ${checkinData.current_streak||0} dias`,"warn");
+      }else{
+        r=await api("POST","/checkin/daily","","application/x-www-form-urlencoded");
+        let cData;
+        try{cData=JSON.parse(r.body||"{}")}catch(e){cData={}}
+        if(cData.success){
+          const rw=cData.rewards||{};
+          addLog(`Check-in realizado! Streak: ${cData.streak||1} dias`,"ok");
+          addLog(`Recompensas: +${rw.tc||0} TC | +${rw.bp||0} BP | +${rw.xp||0} XP`,"ok");
+          tcTotal+=parseInt(rw.tc||0);bpTotal+=parseInt(rw.bp||0);xpTotal+=parseInt(rw.xp||0);
+          updateStats();
+        }else{
+          addLog("Falha no check-in: "+(cData.message||"erro"),"err");
+        }
+      }
+    }
+
+    // MISSOES
+    if(acao==="completo"||acao==="missoes"){
+      if(stopFlag)return fin();
+      addLog("--- MISSOES DIARIAS ---","info");
+      setProgress(20,"Verificando missoes...");
+
+      for(const m of missions){
+        if(stopFlag)break;
+        if(m.is_claimed){addLog(`[JA RESGATADA] ${m.title}`,"warn");continue}
+        if(!m.is_completed){
+          const pct=m.target?Math.round(m.progress/m.target*100):0;
+          addLog(`[PENDENTE ${pct}%] ${m.title}`,"info");continue;
+        }
+        addLog(`Resgatando: ${m.title}...`,"prog");
+        r=await api("POST","/missions/claim",JSON.stringify({mission_id:m.id}),"application/json");
+        let mData;
+        try{mData=JSON.parse(r.body||"{}")}catch(e){mData={}}
+        if(mData.success){addLog(`Missao resgatada: ${m.title}`,"ok")}
+        else{addLog(`Falha: ${mData.message||"erro"}`,"err")}
+        await sleep(1000);
+      }
+    }
+
+    // VIDEOS
+    if(acao==="completo"||acao==="videos"){
+      if(stopFlag)return fin();
+      addLog("--- ASSISTIR VIDEOS ---","info");
+
+      let lista=videos;
+      if(categoria)lista=lista.filter(v=>v.category===categoria);
+
+      // Limitar a 80 sessoes
+      lista=lista.slice(0,80);
+      videosTotal=lista.length;
+      updateStats();
+
+      addLog(`Total de videos: ${videosTotal}`,"info");
+      show("videoProgress");
+
+      for(let i=0;i<lista.length;i++){
+        if(stopFlag)break;
+        const v=lista[i];
+        const vid=v.id, titulo=v.title||"Sem titulo", dur=parseInt(v.duration||60);
+        const reward=parseInt(v.reward||0), bp=parseInt(v.bp||0);
+        const catName={"orange":"Prioritario","blue":"Normal","green":"Mini"}[v.category]||v.category;
+
+        const overallPct=Math.round(25+((i)/videosTotal)*75);
+        setProgress(overallPct,`<span style="color:var(--text)">[${i+1}/${videosTotal}]</span> <span style="color:var(--${v.category==="orange"?"orange":v.category==="blue"?"blue":"green"})">[${catName}]</span> ${titulo}`);
+        addLog(`[${i+1}/${videosTotal}] [${catName}] ${titulo} - ${dur}s, +${reward} TC`,"info");
+
+        // Obter watchToken
+        r=await api("GET",`/watch/${vid}`);
+        if(!r.success){addLog(`Erro ao acessar video ${vid}`,"err");continue}
+        extractCsrf(r.html);
+        const wt=extractWatchToken(r.html);
+        if(!wt){addLog("watchToken nao encontrado","err");continue}
+        addLog(`watchToken: ${wt.substring(0,16)}...`,"info");
+
+        // Simular assistencia
+        setVideoProgress(0,0,dur,titulo,`+${reward} TC, +${bp} BP`);
+        for(let s=1;s<=dur;s++){
+          if(stopFlag)break;
+          const interval=950+Math.floor(Math.random()*201);
+          await sleep(interval);
+          const pct=Math.round((s/dur)*100);
+          setVideoProgress(pct,s,dur);
+        }
+        if(stopFlag)break;
+
+        // Claim reward
+        addLog("Resgatando recompensa...","prog");
+        const claimBody=`campaign_id=${vid}&watch_token=${wt}`;
+        r=await api("POST","/watch/claim-reward",claimBody,"application/x-www-form-urlencoded");
+        let claimData;
+        try{claimData=JSON.parse(r.body||"{}")}catch(e){claimData={}}
+
+        if(claimData.success){
+          const rw=claimData.rewards||{};
+          const tc=parseInt(rw.tc||reward),bpR=parseInt(rw.bp||bp),xp=parseInt(rw.xp||0);
+          tcTotal+=tc;bpTotal+=bpR;xpTotal+=xp;videosFeitos++;
+          updateStats();
+          addLog(`Recompensa: +${tc} TC | +${bpR} BP | +${xp} XP`,"ok");
+          if(claimData.level_up)addLog(`LEVEL UP! Nivel ${rw.new_level}!`,"ok");
+          if(claimData.first_video_bonus)addLog(`Bonus primeiro video! +${rw.tc_bonus||50} TC extra`,"ok");
+        }else{
+          addLog(`Falha: ${claimData.message||"erro"}`,"err");
+        }
+
+        // Pausa entre videos
+        if(i<lista.length-1&&!stopFlag){
+          const pausa=4+Math.random()*3;
+          addLog(`Aguardando ${pausa.toFixed(1)}s...`,"prog");
+          await sleep(pausa*1000);
+        }
+      }
+      hide("videoProgress");
+    }
+
+    // Relatorio
+    addLog("--- RELATORIO ---","info");
+    addLog(`Videos: ${videosFeitos}/${videosTotal} | TC: +${tcTotal} | BP: +${bpTotal} | XP: +${xpTotal}`,"ok");
+    setProgress(100,"Concluido!");
+
+  }catch(e){
+    addLog("Erro inesperado: "+e.message,"err");
+  }
+  fin();
+}
+
+function fin(){
+  running=false;
+  $("btnStart").disabled=false;
+  $("btnStart").textContent="Iniciar Novamente";
+  hide("btnStop");
+}
+
+function parar(){
+  stopFlag=true;
+  addLog("Parando bot...","warn");
+}
+</script>
+</body>
+</html>
