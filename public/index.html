@@ -115,6 +115,17 @@ body{font-family:'Inter','Segoe UI',system-ui,-apple-system,sans-serif;backgroun
 }
 .ym-enter-btn:hover{box-shadow:0 0 30px rgba(0,220,170,0.6);transform:translateY(-1px)}
 
+/* Stats cards */
+.ym-stats{display:flex;gap:12px;margin-bottom:16px}
+.ym-stat-card{
+  flex:1;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);
+  border-radius:12px;padding:16px;text-align:center;
+}
+.ym-stat-val{font-size:24px;font-weight:800;margin-bottom:4px}
+.ym-stat-val.imp-color{color:#00DCAA}
+.ym-stat-val.click-color{color:#a78bfa}
+.ym-stat-lbl{font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:0.05em}
+
 /* ═══════════════════════════════════════════ */
 /* TELA DO BOT TUBECOIN                       */
 /* ═══════════════════════════════════════════ */
@@ -270,18 +281,18 @@ h1.bot-title{text-align:center;font-size:2rem;margin:20px 0;background:linear-gr
   
   <div class="ym-card">
     <div class="ym-header">
-      <h1>Young Money</h1>
-      <p>Complete as missoes para liberar o bot</p>
+      <h1>Missao Diaria</h1>
+      <p>Complete as tarefas abaixo para desbloquear suas recompensas</p>
       <div class="ym-id" id="ymIdDisplay">ID: ---</div>
     </div>
     
     <div class="ym-body" id="ymTasksBody">
-      <!-- YMID Input (se nao tiver na URL) -->
+      <!-- Login Section -->
       <div id="ymLoginSection">
         <div style="margin-bottom:20px">
-          <label style="display:block;font-size:12px;font-weight:600;color:#94a3b8;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.08em">SEU YMID</label>
-          <input type="text" id="ymidInput" placeholder="Digite seu YMID" style="width:100%;padding:14px 16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;color:#f1f5f9;font-size:15px;outline:none;font-family:inherit;transition:all 0.2s">
-          <p style="font-size:11px;color:#64748b;margin-top:6px">Identificador unico do Young Money</p>
+          <label style="display:block;font-size:12px;font-weight:600;color:#94a3b8;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.08em">SEU USUARIO</label>
+          <input type="text" id="ymidInput" placeholder="Digite seu usuario do TubeCoin" style="width:100%;padding:14px 16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;color:#f1f5f9;font-size:15px;outline:none;font-family:inherit;transition:all 0.2s">
+          <p style="font-size:11px;color:#64748b;margin-top:6px">Insira o usuario que voce utiliza no bot TubeCoin</p>
         </div>
         <button class="ym-ad-btn" id="ymLoginBtn" onclick="ymLogin()">
           Entrar
@@ -290,34 +301,46 @@ h1.bot-title{text-align:center;font-size:2rem;margin:20px 0;background:linear-gr
       
       <!-- Tarefas (aparece apos login) -->
       <div id="ymTasksSection" style="display:none">
-        <!-- Tarefa 1: Cliques -->
-        <div class="ym-task" id="ymTaskClicks">
-          <div class="ym-task-header">
-            <div class="ym-task-icon clicks">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2"><path d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5"/></svg>
-            </div>
-            <div>
-              <div class="ym-task-title">Cliques em Anuncios</div>
-              <div class="ym-task-subtitle">Clique nos anuncios exibidos</div>
-            </div>
-          </div>
-          <div class="ym-progress-bg"><div class="ym-progress-bar clicks" id="ymClicksBar" style="width:0%"></div></div>
-          <div class="ym-progress-text"><span id="ymClicksText">0 / 2</span><span class="val" id="ymClicksPct">0%</span></div>
-        </div>
-        
-        <!-- Tarefa 2: Impressoes -->
+        <!-- Tarefa 1: Impressoes -->
         <div class="ym-task" id="ymTaskImpressions">
           <div class="ym-task-header">
             <div class="ym-task-icon impressions">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00DCAA" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
             </div>
             <div>
-              <div class="ym-task-title">Impressoes de Anuncios</div>
+              <div class="ym-task-title">Anuncios Assistidos</div>
               <div class="ym-task-subtitle">Visualize os anuncios exibidos</div>
             </div>
           </div>
           <div class="ym-progress-bg"><div class="ym-progress-bar impressions" id="ymImpressionsBar" style="width:0%"></div></div>
           <div class="ym-progress-text"><span id="ymImpressionsText">0 / 20</span><span class="val" id="ymImpressionsPct">0%</span></div>
+        </div>
+
+        <!-- Tarefa 2: Cliques -->
+        <div class="ym-task" id="ymTaskClicks">
+          <div class="ym-task-header">
+            <div class="ym-task-icon clicks">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2"><path d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5"/></svg>
+            </div>
+            <div>
+              <div class="ym-task-title">Cliques Realizados</div>
+              <div class="ym-task-subtitle">Clique nos anuncios exibidos</div>
+            </div>
+          </div>
+          <div class="ym-progress-bg"><div class="ym-progress-bar clicks" id="ymClicksBar" style="width:0%"></div></div>
+          <div class="ym-progress-text"><span id="ymClicksText">0 / 2</span><span class="val" id="ymClicksPct">0%</span></div>
+        </div>
+
+        <!-- Stats cards -->
+        <div class="ym-stats">
+          <div class="ym-stat-card">
+            <div class="ym-stat-val imp-color" id="ymTotalImpressions">0</div>
+            <div class="ym-stat-lbl">Total de Impressoes</div>
+          </div>
+          <div class="ym-stat-card">
+            <div class="ym-stat-val click-color" id="ymTotalClicks">0</div>
+            <div class="ym-stat-lbl">Total de Cliques</div>
+          </div>
         </div>
         
         <!-- Botao de Assistir Anuncio -->
@@ -326,7 +349,7 @@ h1.bot-title{text-align:center;font-size:2rem;margin:20px 0;background:linear-gr
           ASSISTIR ANUNCIO
         </button>
         
-        <p class="ym-tip">Clique no botao acima para assistir anuncios e completar as missoes. Apos completar, o bot sera liberado automaticamente.</p>
+        <p class="ym-tip">Interaja com o anuncio para acumular mais pontos</p>
       </div>
       
       <!-- Missoes Completas -->
@@ -454,38 +477,184 @@ h1.bot-title{text-align:center;font-size:2rem;margin:20px 0;background:linear-gr
 <!-- ═══════════════════════════════════════════ -->
 <!-- MONETAG AD SCRIPT                          -->
 <!-- ═══════════════════════════════════════════ -->
-<script src='//libtl.com/sdk.js' data-zone='10325249' data-sdk='show_10325249'></script>
+<script src='https://libtl.com/sdk.js' data-zone='10325249' data-sdk='show_10325249'></script>
 
 <script>
 // ═══════════════════════════════════════════
 // YOUNG MONEY - SISTEMA DE MISSOES
 // ═══════════════════════════════════════════
 
-let currentYmid = null;
+let currentUserId = null;
 let ymCheckInterval = null;
 let resetTimerInterval = null;
 let resetTimestamp = null;
+let adProcessing = false;
+let adTimerRef = null;
 const RESET_INTERVAL = 60 * 60 * 1000; // 1 hora
 const MAX_CLICKS = 2;
 const MAX_IMPRESSIONS = 20;
+const ZONE_ID = '10325249';
+const MONETAG_POSTBACK_API = 'https://monetag-postback-server-production.up.railway.app';
 
-// Pegar YMID da URL
-function getYmidFromUrl() {
+// ═══════════════════════════════════════════
+// INTERCEPTOR DE CLIQUES DO MONETAG
+// ═══════════════════════════════════════════
+
+function setupInterceptors() {
+  // Interceptar fetch para detectar cliques do Monetag
+  if (!window.__originalFetch) {
+    window.__originalFetch = window.fetch;
+  }
+  const origFetch = window.__originalFetch;
+  
+  window.fetch = function(...args) {
+    const url = args[0];
+    if (typeof url === 'string' && url.includes('postback') && !url.includes(MONETAG_POSTBACK_API)) {
+      try {
+        const parsedUrl = new URL(url);
+        const eventType = parsedUrl.searchParams.get('event_type') || 'impression';
+        
+        if (eventType === 'click') {
+          const estimatedPrice = parseFloat(parsedUrl.searchParams.get('estimated_price') || '0');
+          if (estimatedPrice > 0) {
+            console.log('[INTERCEPTOR] Detectado clique com ganho - registrando...');
+            sendPostback('click');
+          }
+        }
+      } catch(e) {}
+    }
+    return origFetch.apply(this, args);
+  };
+  
+  // Interceptar XMLHttpRequest
+  const origXHROpen = XMLHttpRequest.prototype.open;
+  XMLHttpRequest.prototype.open = function(method, url, ...rest) {
+    if (typeof url === 'string' && url.includes('postback') && !url.includes(MONETAG_POSTBACK_API)) {
+      try {
+        const parsedUrl = new URL(url);
+        const eventType = parsedUrl.searchParams.get('event_type') || 'impression';
+        if (eventType === 'click') {
+          const estimatedPrice = parseFloat(parsedUrl.searchParams.get('estimated_price') || '0');
+          if (estimatedPrice > 0) {
+            console.log('[INTERCEPTOR XHR] Detectado clique com ganho - registrando...');
+            sendPostback('click');
+          }
+        }
+      } catch(e) {}
+    }
+    return origXHROpen.call(this, method, url, ...rest);
+  };
+  
+  // Interceptar Image.src para detectar pixels de tracking
+  const origImageDescriptor = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'src');
+  if (origImageDescriptor && origImageDescriptor.set) {
+    const origSet = origImageDescriptor.set;
+    Object.defineProperty(HTMLImageElement.prototype, 'src', {
+      set: function(val) {
+        if (typeof val === 'string' && val.includes('postback')) {
+          try {
+            const parsedUrl = new URL(val);
+            const eventType = parsedUrl.searchParams.get('event_type') || 'impression';
+            if (eventType === 'click') {
+              const estimatedPrice = parseFloat(parsedUrl.searchParams.get('estimated_price') || '0');
+              if (estimatedPrice > 0) {
+                console.log('[INTERCEPTOR Image] Detectado clique com ganho - registrando...');
+                sendPostback('click');
+              }
+            }
+          } catch(e) {}
+        }
+        origSet.call(this, val);
+      },
+      get: origImageDescriptor.get
+    });
+  }
+  
+  console.log('[YM] Interceptors configurados');
+}
+
+// ═══════════════════════════════════════════
+// FUNCOES DE POSTBACK E STATS
+// ═══════════════════════════════════════════
+
+// Enviar postback para registrar impressao ou clique
+function sendPostback(eventType) {
+  if (!currentUserId) return;
+  
+  const params = new URLSearchParams({
+    event_type: eventType,
+    zone_id: ZONE_ID,
+    ymid: currentUserId,
+    user_email: currentUserId,
+    estimated_price: eventType === 'click' ? '0.0045' : '0.0023'
+  });
+  
+  const url = MONETAG_POSTBACK_API + '/api/postback?' + params.toString();
+  console.log('[POSTBACK] Enviando ' + eventType + ' para ' + currentUserId);
+  
+  (window.__originalFetch || window.fetch)(url, { method: 'GET', mode: 'cors' })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      console.log('[POSTBACK] ' + eventType + ' enviado com sucesso:', data);
+      // Atualizar stats apos envio
+      setTimeout(ymFetchStats, 500);
+    })
+    .catch(function(err) {
+      console.error('[POSTBACK] Erro ao enviar ' + eventType + ':', err);
+    });
+}
+
+// Buscar stats do usuario
+async function ymFetchStats() {
+  if (!currentUserId) return;
+  
+  try {
+    const url = MONETAG_POSTBACK_API + '/api/stats/user/' + currentUserId;
+    const resp = await (window.__originalFetch || window.fetch)(url);
+    const data = await resp.json();
+    
+    if (data.success) {
+      const impressions = data.total_impressions || 0;
+      const clicks = data.total_clicks || 0;
+      
+      console.log('[STATS] Impressoes: ' + impressions + ', Cliques: ' + clicks);
+      
+      // Atualizar UI
+      ymUpdateProgress({ impressions: impressions, clicks: clicks });
+      
+      // Verificar se completou
+      if (impressions >= MAX_IMPRESSIONS && clicks >= MAX_CLICKS) {
+        ymShowCompleted({ remainingMs: RESET_INTERVAL });
+      }
+    }
+  } catch(err) {
+    console.error('[STATS] Erro ao buscar:', err);
+  }
+}
+
+// Pegar userId da URL
+function getUserIdFromUrl() {
   const params = new URLSearchParams(window.location.search);
-  return params.get('ymid') || params.get('id') || params.get('user_id') || null;
+  return params.get('user') || params.get('ymid') || params.get('id') || params.get('user_id') || null;
 }
 
 // Inicializar Young Money
 async function ymInit() {
-  const ymid = getYmidFromUrl();
+  // Configurar interceptors
+  setupInterceptors();
   
-  if (ymid) {
-    currentYmid = ymid;
-    document.getElementById('ymIdDisplay').textContent = 'ID: ' + ymid;
+  const userId = getUserIdFromUrl();
+  
+  if (userId) {
+    currentUserId = userId;
+    document.getElementById('ymIdDisplay').textContent = 'ID: ' + userId;
     document.getElementById('ymLoginSection').style.display = 'none';
     document.getElementById('ymTasksSection').style.display = 'block';
-    await ymCheckStatus();
-    // Verificar a cada 3 segundos
+    
+    // Buscar stats iniciais
+    await ymFetchStats();
+    
+    // Verificar status no servidor a cada 3 segundos
     ymCheckInterval = setInterval(ymCheckStatus, 3000);
   } else {
     // Mostrar campo de login
@@ -494,36 +663,37 @@ async function ymInit() {
   }
 }
 
-// Login com YMID
+// Login com usuario
 function ymLogin() {
-  const ymid = document.getElementById('ymidInput').value.trim();
-  if (!ymid) {
-    alert('Digite seu YMID!');
+  const userId = document.getElementById('ymidInput').value.trim();
+  if (!userId) {
+    alert('Digite seu usuario!');
     return;
   }
-  // Redirecionar com ymid na URL
-  window.location.href = '/?ymid=' + encodeURIComponent(ymid);
+  // Redirecionar com user na URL
+  window.location.href = '/?user=' + encodeURIComponent(userId);
 }
 
-// Verificar status das tarefas
+// Verificar status das tarefas no servidor
 async function ymCheckStatus() {
-  if (!currentYmid) return;
+  if (!currentUserId) return;
   
   try {
-    const resp = await fetch('/api/ym/status/' + currentYmid);
+    const resp = await fetch('/api/ym/status/' + currentUserId);
     const data = await resp.json();
     
     if (!data.success) return;
     
     if (data.status === 'granted') {
-      // Tarefas completas - mostrar tela de acesso
       ymShowCompleted(data);
     } else {
-      // Tarefas pendentes - atualizar progresso
-      ymUpdateProgress(data);
+      // Tambem buscar stats direto da API do Monetag
+      await ymFetchStats();
     }
   } catch (err) {
     console.error('[YM] Erro ao verificar status:', err);
+    // Fallback: buscar stats direto
+    await ymFetchStats();
   }
 }
 
@@ -534,30 +704,29 @@ function ymUpdateProgress(data) {
   const maxClicks = data.maxClicks || MAX_CLICKS;
   const maxImpressions = data.maxImpressions || MAX_IMPRESSIONS;
   
-  // Cliques
-  const clicksPct = Math.min(100, Math.round((clicks / maxClicks) * 100));
-  document.getElementById('ymClicksBar').style.width = clicksPct + '%';
-  document.getElementById('ymClicksText').textContent = clicks + ' / ' + maxClicks;
-  document.getElementById('ymClicksPct').textContent = clicksPct + '%';
-  
-  if (clicks >= maxClicks) {
-    document.getElementById('ymTaskClicks').classList.add('completed');
-  }
-  
   // Impressoes
   const impPct = Math.min(100, Math.round((impressions / maxImpressions) * 100));
   document.getElementById('ymImpressionsBar').style.width = impPct + '%';
-  document.getElementById('ymImpressionsText').textContent = impressions + ' / ' + maxImpressions;
+  document.getElementById('ymImpressionsText').textContent = impressions + '/' + maxImpressions;
   document.getElementById('ymImpressionsPct').textContent = impPct + '%';
   
   if (impressions >= maxImpressions) {
     document.getElementById('ymTaskImpressions').classList.add('completed');
   }
   
-  // Se ambas completas, verificar novamente para pegar o status granted
-  if (clicks >= maxClicks && impressions >= maxImpressions) {
-    // O proximo check vai pegar o status granted
+  // Cliques
+  const clicksPct = Math.min(100, Math.round((clicks / maxClicks) * 100));
+  document.getElementById('ymClicksBar').style.width = clicksPct + '%';
+  document.getElementById('ymClicksText').textContent = clicks + '/' + maxClicks;
+  document.getElementById('ymClicksPct').textContent = clicksPct + '%';
+  
+  if (clicks >= maxClicks) {
+    document.getElementById('ymTaskClicks').classList.add('completed');
   }
+  
+  // Stats cards
+  document.getElementById('ymTotalImpressions').textContent = impressions;
+  document.getElementById('ymTotalClicks').textContent = clicks;
 }
 
 // Mostrar tela de missoes completas
@@ -566,33 +735,34 @@ function ymShowCompleted(data) {
   document.getElementById('ymCompletedSection').style.display = 'block';
   document.getElementById('ymLoginSection').style.display = 'none';
   
-  // Calcular tempo restante
   const remaining = data.remainingMs || RESET_INTERVAL;
   const mins = Math.ceil(remaining / 60000);
   document.getElementById('ymTimeLeft').textContent = mins + ' min';
   
-  // Salvar timestamp de reset
   resetTimestamp = data.resetAt || (Date.now() + remaining);
 }
 
 // Entrar no bot
 function ymEnterBot() {
-  // Esconder tela YM, mostrar bot
   document.getElementById('ym-screen').style.display = 'none';
   document.getElementById('bot-screen').style.display = 'block';
   
-  // Parar verificacao de tarefas
   if (ymCheckInterval) {
     clearInterval(ymCheckInterval);
     ymCheckInterval = null;
   }
   
-  // Iniciar timer de reset
   startResetTimer();
 }
 
-// Mostrar anuncio
+// ═══════════════════════════════════════════
+// SISTEMA DE ANUNCIOS
+// ═══════════════════════════════════════════
+
 function ymShowAd() {
+  if (adProcessing) return;
+  adProcessing = true;
+  
   const overlay = document.getElementById('ad-overlay');
   overlay.style.display = 'flex';
   
@@ -600,37 +770,51 @@ function ymShowAd() {
   closeBtn.disabled = true;
   closeBtn.textContent = 'Aguarde...';
   
-  // Carregar anuncio Monetag
   const adZone = document.getElementById('adZone');
-  adZone.innerHTML = '';
+  adZone.innerHTML = '<p style="color:#64748b;font-size:13px;text-align:center">Carregando anuncio...<br>Interaja com o anuncio exibido.</p>';
   
-  // Tentar chamar o SDK do Monetag
+  // Chamar o SDK do Monetag para mostrar o anuncio
+  let adShown = false;
   try {
     if (typeof window.show_10325249 === 'function') {
-      window.show_10325249();
+      console.log('[MONETAG] Chamando SDK show_10325249...');
+      const adPromise = window.show_10325249();
+      
+      if (adPromise && typeof adPromise.then === 'function') {
+        adPromise.then(function() {
+          console.log('[MONETAG] Anuncio exibido com sucesso');
+          adShown = true;
+        }).catch(function(err) {
+          console.log('[MONETAG] Erro no SDK:', err);
+        });
+      } else {
+        adShown = true;
+      }
+    } else {
+      console.log('[MONETAG] SDK nao disponivel, usando fallback');
     }
   } catch(e) {
-    console.log('[YM] Monetag SDK:', e.message);
+    console.log('[MONETAG] Erro ao chamar SDK:', e.message);
   }
   
-  // Criar um container para o anuncio
-  const adDiv = document.createElement('div');
-  adDiv.id = 'ym-ad-container';
-  adDiv.style.cssText = 'width:100%;min-height:250px;display:flex;align-items:center;justify-content:center;';
-  adDiv.innerHTML = '<p style="color:#64748b;font-size:13px;text-align:center">Interaja com o anuncio exibido na pagina.<br>O anuncio pode aparecer como popup ou banner.</p>';
-  adZone.appendChild(adDiv);
-  
-  // Timer de 15 segundos
+  // Timer de 10 segundos - apos isso envia impressao
   let countdown = 15;
   const timerEl = document.getElementById('adTimerCount');
   timerEl.textContent = countdown;
   
-  const timerInterval = setInterval(() => {
+  // Enviar impressao apos 10 segundos
+  const impressionTimeout = setTimeout(function() {
+    console.log('[YM] 10 segundos passados - enviando impressao...');
+    sendPostback('impression');
+  }, 10000);
+  
+  adTimerRef = setInterval(function() {
     countdown--;
     timerEl.textContent = countdown;
     
     if (countdown <= 0) {
-      clearInterval(timerInterval);
+      clearInterval(adTimerRef);
+      adTimerRef = null;
       closeBtn.disabled = false;
       closeBtn.textContent = 'Fechar e Continuar';
     }
@@ -640,8 +824,15 @@ function ymShowAd() {
 // Fechar anuncio
 function ymCloseAd() {
   document.getElementById('ad-overlay').style.display = 'none';
+  adProcessing = false;
+  
+  if (adTimerRef) {
+    clearInterval(adTimerRef);
+    adTimerRef = null;
+  }
+  
   // Verificar status imediatamente
-  ymCheckStatus();
+  ymFetchStats();
 }
 
 // ═══════════════════════════════════════════
@@ -662,11 +853,10 @@ function updateResetTimer() {
   const remaining = resetTimestamp - now;
   
   if (remaining <= 0) {
-    // Reset! Voltar para tela de missoes
     clearInterval(resetTimerInterval);
     resetTimerInterval = null;
     
-    // Mostrar tela YM novamente
+    // Reset! Voltar para tela de missoes
     document.getElementById('bot-screen').style.display = 'none';
     document.getElementById('ym-screen').style.display = 'flex';
     document.getElementById('ymTasksSection').style.display = 'block';
@@ -677,14 +867,16 @@ function updateResetTimer() {
     document.getElementById('ymTaskImpressions').classList.remove('completed');
     document.getElementById('ymClicksBar').style.width = '0%';
     document.getElementById('ymImpressionsBar').style.width = '0%';
-    document.getElementById('ymClicksText').textContent = '0 / ' + MAX_CLICKS;
-    document.getElementById('ymImpressionsText').textContent = '0 / ' + MAX_IMPRESSIONS;
+    document.getElementById('ymClicksText').textContent = '0/' + MAX_CLICKS;
+    document.getElementById('ymImpressionsText').textContent = '0/' + MAX_IMPRESSIONS;
     document.getElementById('ymClicksPct').textContent = '0%';
     document.getElementById('ymImpressionsPct').textContent = '0%';
+    document.getElementById('ymTotalImpressions').textContent = '0';
+    document.getElementById('ymTotalClicks').textContent = '0';
     
     // Reiniciar verificacao
     ymCheckInterval = setInterval(ymCheckStatus, 3000);
-    ymCheckStatus();
+    ymFetchStats();
     
     return;
   }
@@ -1016,7 +1208,7 @@ function parar(){
 document.addEventListener('DOMContentLoaded', function() {
   ymInit();
   
-  // Enter no campo YMID
+  // Enter no campo de usuario
   const ymidInput = document.getElementById('ymidInput');
   if (ymidInput) {
     ymidInput.addEventListener('keydown', function(e) {
