@@ -9,8 +9,19 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const BASE = "https://tubecoin.com.br";
 
-// Store de cookies por sessão
+// ── Configuração Young Money ──
+const MONETAG_API = "https://monetag-postback-server-production.up.railway.app/api/stats/user";
+const MAX_CLICKS = 2;
+const MAX_IMPRESSIONS = 20;
+const RESET_INTERVAL_MS = 60 * 60 * 1000; // 1 hora em ms
+
+// Store de cookies por sessão (TubeCoin)
 const sessions = new Map();
+
+// Store de timestamps de liberação por ymid
+// Quando o usuário completa as tarefas, salva o timestamp
+// Após 1 hora, reseta automaticamente
+const userAccess = new Map();
 
 // Middleware
 app.use(express.json({ limit: "5mb" }));
@@ -45,7 +56,93 @@ function mergeCookies(existing, newCookies) {
   return Array.from(jar.entries()).map(([k, v]) => `${k}=${v}`).join("; ");
 }
 
-// ── Proxy API ──
+// ── Young Money: Verificar status das tarefas ──
+app.get("/api/ym/status/:ymid", async (req, res) => {
+  try {
+    const { ymid } = req.params;
+    
+    // Verificar se o usuário já tem acesso liberado e se ainda está no período válido
+    const access = userAccess.get(ymid);
+    if (access) {
+      const elapsed = Date.now() - access.grantedAt;
+      if (elapsed < RESET_INTERVAL_MS) {
+        // Ainda dentro do período de acesso
+        const remainingMs = RESET_INTERVAL_MS - elapsed;
+        return res.json({
+          success: true,
+          status: "granted",
+          remainingMs,
+          resetAt: access.grantedAt + RESET_INTERVAL_MS,
+          grantedAt: access.grantedAt,
+          clicks: access.clicks,
+          impressions: access.impressions
+        });
+      } else {
+        // Período expirou, remover acesso
+        userAccess.delete(ymid);
+      }
+    }
+    
+    // Consultar API do Monetag para verificar progresso
+    const apiResp = await fetch(`${MONETAG_API}/${ymid}`);
+    const data = await apiResp.json();
+    
+    if (!data.success) {
+      return res.json({
+        success: true,
+        status: "pending",
+        clicks: 0,
+        impressions: 0,
+        maxClicks: MAX_CLICKS,
+        maxImpressions: MAX_IMPRESSIONS,
+        message: "Usuário não encontrado na API"
+      });
+    }
+    
+    const clicks = parseInt(data.total_clicks) || 0;
+    const impressions = parseInt(data.total_impressions) || 0;
+    
+    // Verificar se completou todas as tarefas
+    if (clicks >= MAX_CLICKS && impressions >= MAX_IMPRESSIONS) {
+      // Liberar acesso e salvar timestamp
+      const grantedAt = Date.now();
+      userAccess.set(ymid, { grantedAt, clicks, impressions });
+      
+      return res.json({
+        success: true,
+        status: "granted",
+        remainingMs: RESET_INTERVAL_MS,
+        resetAt: grantedAt + RESET_INTERVAL_MS,
+        grantedAt,
+        clicks,
+        impressions
+      });
+    }
+    
+    // Tarefas ainda pendentes
+    return res.json({
+      success: true,
+      status: "pending",
+      clicks,
+      impressions,
+      maxClicks: MAX_CLICKS,
+      maxImpressions: MAX_IMPRESSIONS
+    });
+    
+  } catch (error) {
+    console.error("[YM Status Error]", error.message);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// ── Young Money: Forçar reset (para testes) ──
+app.post("/api/ym/reset/:ymid", (req, res) => {
+  const { ymid } = req.params;
+  userAccess.delete(ymid);
+  res.json({ success: true, message: "Acesso resetado" });
+});
+
+// ── Proxy API (TubeCoin) ──
 app.post("/api/proxy", async (req, res) => {
   try {
     const { method, path, body: reqBody, contentType, csrfToken, sessionId: sid } = req.body;
@@ -122,7 +219,7 @@ app.post("/api/proxy", async (req, res) => {
 
 // ── Health check ──
 app.get("/api/health", (req, res) => {
-  res.json({ status: "ok", sessions: sessions.size });
+  res.json({ status: "ok", sessions: sessions.size, activeUsers: userAccess.size });
 });
 
 // ── SPA fallback ──
@@ -131,5 +228,5 @@ app.get("*", (req, res) => {
 });
 
 app.listen(PORT, "0.0.0.0", () => {
-  console.log(`TubeCoin Bot rodando na porta ${PORT}`);
+  console.log(`TubeCoin Bot + Young Money rodando na porta ${PORT}`);
 });

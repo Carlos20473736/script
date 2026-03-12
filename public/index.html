@@ -2,15 +2,138 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TubeCoin Bot</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>TubeCoin Bot - Young Money</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#0f0f1a;--card:#1a1a2e;--card2:#16213e;--border:#2a2a4a;--text:#e0e0e0;--muted:#888;--green:#00e676;--orange:#ff9100;--blue:#448aff;--red:#ff5252;--cyan:#00e5ff;--purple:#7c4dff;--yellow:#ffd740}
-body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+:root{--bg:#0a0a1a;--card:#12121e;--card2:#16213e;--border:#2a2a4a;--text:#e0e0e0;--muted:#888;--green:#00e676;--orange:#ff9100;--blue:#448aff;--red:#ff5252;--cyan:#00e5ff;--purple:#7c4dff;--yellow:#ffd740;--accent1:#7C3AED;--accent2:#3B82F6;--accent3:#00DCAA}
+body{font-family:'Inter','Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+/* ═══════════════════════════════════════════ */
+/* TELA YOUNG MONEY - MISSOES                 */
+/* ═══════════════════════════════════════════ */
+#ym-screen{
+  position:fixed;top:0;left:0;width:100vw;height:100vh;
+  background:linear-gradient(180deg,#0a0a1a 0%,#0d1117 50%,#0a0a1a 100%);
+  z-index:10000;display:flex;align-items:center;justify-content:center;
+  font-family:'Inter',sans-serif;overflow:hidden;
+}
+#ym-screen .ym-bg-glow{position:absolute;border-radius:50%;filter:blur(150px);pointer-events:none}
+#ym-screen .glow-1{width:400px;height:400px;top:-100px;right:-80px;background:rgba(124,58,237,0.12)}
+#ym-screen .glow-2{width:350px;height:350px;bottom:-120px;left:-80px;background:rgba(0,220,170,0.08)}
+
+#ym-screen .ym-card{
+  position:relative;background:rgba(18,18,30,0.95);backdrop-filter:blur(20px);
+  border:1px solid rgba(124,58,237,0.2);border-radius:24px;
+  padding:0;width:440px;max-width:92vw;
+  box-shadow:0 30px 80px rgba(0,0,0,0.6),0 0 40px rgba(124,58,237,0.08);
+  animation:ymSlideUp 0.6s cubic-bezier(0.16,1,0.3,1);overflow:hidden;
+}
+#ym-screen .ym-card::before{
+  content:'';position:absolute;top:-1px;left:-1px;right:-1px;bottom:-1px;
+  border-radius:24px;padding:1px;
+  background:linear-gradient(135deg,rgba(124,58,237,0.3),transparent 40%,transparent 60%,rgba(0,220,170,0.3));
+  -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;
+}
+@keyframes ymSlideUp{from{opacity:0;transform:translateY(30px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+.ym-header{
+  background:linear-gradient(135deg,#7C3AED 0%,#3B82F6 50%,#06B6D4 100%);
+  padding:28px 32px;text-align:center;
+}
+.ym-header h1{font-size:24px;font-weight:800;color:#fff;margin:0 0 4px;letter-spacing:-0.02em}
+.ym-header p{font-size:13px;color:rgba(255,255,255,0.8);margin:0}
+.ym-header .ym-id{
+  display:inline-block;margin-top:10px;padding:4px 14px;
+  background:rgba(255,255,255,0.2);border-radius:20px;
+  font-size:12px;color:#fff;font-weight:600;
+}
+
+.ym-body{padding:28px 32px}
+
+.ym-task{
+  background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);
+  border-radius:16px;padding:20px;margin-bottom:16px;
+  transition:all 0.3s ease;
+}
+.ym-task.completed{border-color:rgba(0,220,170,0.3);background:rgba(0,220,170,0.05)}
+.ym-task-header{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.ym-task-icon{
+  width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.ym-task-icon.clicks{background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.3)}
+.ym-task-icon.impressions{background:rgba(0,220,170,0.15);border:1px solid rgba(0,220,170,0.3)}
+.ym-task-title{font-size:15px;font-weight:600;color:#f1f5f9}
+.ym-task-subtitle{font-size:12px;color:#94a3b8;margin-top:2px}
+
+.ym-progress-bg{
+  width:100%;height:8px;background:#1e1e2e;border-radius:4px;overflow:hidden;
+  border:1px solid rgba(255,255,255,0.05);
+}
+.ym-progress-bar{height:100%;border-radius:4px;transition:width 0.5s ease}
+.ym-progress-bar.clicks{background:linear-gradient(90deg,#7C3AED,#a78bfa);box-shadow:0 0 10px rgba(124,58,237,0.4)}
+.ym-progress-bar.impressions{background:linear-gradient(90deg,#00DCAA,#10B981);box-shadow:0 0 10px rgba(0,220,170,0.4)}
+.ym-progress-text{display:flex;justify-content:space-between;font-size:12px;color:#94a3b8;margin-top:6px}
+.ym-progress-text .val{color:#f1f5f9;font-weight:600}
+
+.ym-ad-btn{
+  width:100%;padding:16px;border:none;border-radius:14px;
+  background:linear-gradient(135deg,#7C3AED 0%,#6366F1 50%,#3B82F6 100%);
+  color:#fff;font-size:15px;font-weight:700;cursor:pointer;
+  box-shadow:0 0 20px rgba(124,58,237,0.4);border:1px solid rgba(139,92,246,0.3);
+  transition:all 0.3s ease;font-family:inherit;margin-top:8px;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.ym-ad-btn:hover{box-shadow:0 0 30px rgba(124,58,237,0.6);transform:translateY(-1px)}
+.ym-ad-btn:disabled{opacity:0.4;cursor:not-allowed;transform:none}
+
+.ym-tip{
+  text-align:center;font-size:12px;color:#64748b;margin-top:16px;line-height:1.5;
+}
+
+.ym-completed-msg{
+  text-align:center;padding:20px;
+}
+.ym-completed-msg .check-icon{
+  width:64px;height:64px;margin:0 auto 16px;background:rgba(0,220,170,0.15);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  border:2px solid rgba(0,220,170,0.3);
+}
+.ym-completed-msg h3{font-size:20px;font-weight:700;color:#00DCAA;margin-bottom:8px}
+.ym-completed-msg p{font-size:13px;color:#94a3b8;margin-bottom:16px}
+.ym-enter-btn{
+  width:100%;padding:16px;border:none;border-radius:14px;
+  background:linear-gradient(135deg,#00DCAA,#10B981);
+  color:#fff;font-size:15px;font-weight:700;cursor:pointer;
+  box-shadow:0 0 20px rgba(0,220,170,0.4);
+  transition:all 0.3s ease;font-family:inherit;
+}
+.ym-enter-btn:hover{box-shadow:0 0 30px rgba(0,220,170,0.6);transform:translateY(-1px)}
+
+/* ═══════════════════════════════════════════ */
+/* TELA DO BOT TUBECOIN                       */
+/* ═══════════════════════════════════════════ */
+#bot-screen{display:none}
+
 .container{max-width:900px;margin:0 auto;padding:20px}
-h1{text-align:center;font-size:2rem;margin:20px 0;background:linear-gradient(135deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:800}
+h1.bot-title{text-align:center;font-size:2rem;margin:20px 0;background:linear-gradient(135deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:800}
 .subtitle{text-align:center;color:var(--muted);margin-bottom:30px;font-size:.9rem}
+
+/* Reset Timer Bar */
+.reset-bar{
+  background:var(--card);border:1px solid var(--border);border-radius:12px;
+  padding:14px 20px;margin-bottom:20px;display:flex;align-items:center;gap:12px;
+}
+.reset-bar .timer-icon{color:var(--orange);flex-shrink:0}
+.reset-bar .timer-text{font-size:13px;color:var(--muted)}
+.reset-bar .timer-text span{color:var(--orange);font-weight:700;font-size:15px}
+.reset-bar .timer-progress{flex:1;height:4px;background:rgba(255,255,255,0.05);border-radius:2px;overflow:hidden}
+.reset-bar .timer-fill{height:100%;background:linear-gradient(90deg,var(--orange),var(--red));border-radius:2px;transition:width 1s linear}
 
 /* Login */
 .login-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:30px;max-width:420px;margin:0 auto 30px}
@@ -73,12 +196,189 @@ h1{text-align:center;font-size:2rem;margin:20px 0;background:linear-gradient(135
 
 .hidden{display:none}
 @media(max-width:600px){.stats{grid-template-columns:repeat(2,1fr)}.row{flex-direction:column;gap:0}}
+
+/* ═══════════════════════════════════════════ */
+/* OVERLAY DE ANUNCIO FLUTUANTE               */
+/* ═══════════════════════════════════════════ */
+#ad-overlay{
+  position:fixed;top:0;left:0;width:100vw;height:100vh;
+  background:rgba(0,0,0,0.85);z-index:20000;
+  display:none;align-items:center;justify-content:center;
+  backdrop-filter:blur(8px);
+}
+#ad-overlay .ad-container{
+  background:#12121e;border:1px solid rgba(124,58,237,0.3);
+  border-radius:20px;padding:32px;width:400px;max-width:92vw;
+  text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.5);
+}
+#ad-overlay .ad-container h3{color:#f1f5f9;font-size:18px;font-weight:700;margin-bottom:8px}
+#ad-overlay .ad-container p{color:#94a3b8;font-size:13px;margin-bottom:20px}
+#ad-overlay .ad-zone{
+  min-height:250px;background:rgba(255,255,255,0.02);
+  border:1px dashed rgba(255,255,255,0.1);border-radius:12px;
+  margin-bottom:16px;display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+}
+#ad-overlay .ad-timer{
+  font-size:13px;color:#64748b;padding:8px 16px;
+  background:rgba(255,255,255,0.03);border-radius:8px;
+}
+#ad-overlay .ad-timer span{color:#f1f5f9;font-weight:600}
+#ad-overlay .ad-close-btn{
+  margin-top:12px;padding:12px 24px;border:none;border-radius:10px;
+  background:rgba(255,255,255,0.05);color:#94a3b8;font-size:13px;
+  cursor:pointer;transition:all 0.2s;font-family:inherit;
+}
+#ad-overlay .ad-close-btn:hover{background:rgba(255,255,255,0.1);color:#f1f5f9}
+#ad-overlay .ad-close-btn:disabled{opacity:0.3;cursor:not-allowed}
+
+/* Scrollbar dark */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:#0a0a1a}
+::-webkit-scrollbar-thumb{background:#2d2d44;border-radius:3px}
+
+/* Loading spinner */
+.ym-spinner{
+  width:20px;height:20px;border:2px solid rgba(255,255,255,0.3);
+  border-top-color:#fff;border-radius:50%;
+  animation:spin 0.6s linear infinite;display:inline-block;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Particles */
+.ym-particles{position:absolute;top:0;left:0;width:100%;height:100%;overflow:hidden;pointer-events:none}
+.ym-particles .p{position:absolute;border-radius:50%;opacity:0;animation:pFloat 8s ease-in-out infinite}
+.ym-particles .p:nth-child(1){width:4px;height:4px;background:#7C3AED;top:20%;left:10%;animation-delay:0s}
+.ym-particles .p:nth-child(2){width:6px;height:6px;background:#00DCAA;top:60%;left:80%;animation-delay:2s}
+.ym-particles .p:nth-child(3){width:3px;height:3px;background:#3B82F6;top:40%;left:50%;animation-delay:4s}
+.ym-particles .p:nth-child(4){width:5px;height:5px;background:#7C3AED;top:80%;left:20%;animation-delay:1s}
+.ym-particles .p:nth-child(5){width:4px;height:4px;background:#00DCAA;top:10%;left:70%;animation-delay:3s}
+@keyframes pFloat{0%,100%{opacity:0;transform:translateY(0) scale(0.5)}50%{opacity:0.6;transform:translateY(-40px) scale(1)}}
 </style>
 </head>
 <body>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- TELA YOUNG MONEY - MISSOES                 -->
+<!-- ═══════════════════════════════════════════ -->
+<div id="ym-screen">
+  <div class="ym-particles">
+    <div class="p"></div><div class="p"></div><div class="p"></div><div class="p"></div><div class="p"></div>
+  </div>
+  <div class="ym-bg-glow glow-1"></div>
+  <div class="ym-bg-glow glow-2"></div>
+  
+  <div class="ym-card">
+    <div class="ym-header">
+      <h1>Young Money</h1>
+      <p>Complete as missoes para liberar o bot</p>
+      <div class="ym-id" id="ymIdDisplay">ID: ---</div>
+    </div>
+    
+    <div class="ym-body" id="ymTasksBody">
+      <!-- YMID Input (se nao tiver na URL) -->
+      <div id="ymLoginSection">
+        <div style="margin-bottom:20px">
+          <label style="display:block;font-size:12px;font-weight:600;color:#94a3b8;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.08em">SEU YMID</label>
+          <input type="text" id="ymidInput" placeholder="Digite seu YMID" style="width:100%;padding:14px 16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;color:#f1f5f9;font-size:15px;outline:none;font-family:inherit;transition:all 0.2s">
+          <p style="font-size:11px;color:#64748b;margin-top:6px">Identificador unico do Young Money</p>
+        </div>
+        <button class="ym-ad-btn" id="ymLoginBtn" onclick="ymLogin()">
+          Entrar
+        </button>
+      </div>
+      
+      <!-- Tarefas (aparece apos login) -->
+      <div id="ymTasksSection" style="display:none">
+        <!-- Tarefa 1: Cliques -->
+        <div class="ym-task" id="ymTaskClicks">
+          <div class="ym-task-header">
+            <div class="ym-task-icon clicks">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2"><path d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5"/></svg>
+            </div>
+            <div>
+              <div class="ym-task-title">Cliques em Anuncios</div>
+              <div class="ym-task-subtitle">Clique nos anuncios exibidos</div>
+            </div>
+          </div>
+          <div class="ym-progress-bg"><div class="ym-progress-bar clicks" id="ymClicksBar" style="width:0%"></div></div>
+          <div class="ym-progress-text"><span id="ymClicksText">0 / 2</span><span class="val" id="ymClicksPct">0%</span></div>
+        </div>
+        
+        <!-- Tarefa 2: Impressoes -->
+        <div class="ym-task" id="ymTaskImpressions">
+          <div class="ym-task-header">
+            <div class="ym-task-icon impressions">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00DCAA" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </div>
+            <div>
+              <div class="ym-task-title">Impressoes de Anuncios</div>
+              <div class="ym-task-subtitle">Visualize os anuncios exibidos</div>
+            </div>
+          </div>
+          <div class="ym-progress-bg"><div class="ym-progress-bar impressions" id="ymImpressionsBar" style="width:0%"></div></div>
+          <div class="ym-progress-text"><span id="ymImpressionsText">0 / 20</span><span class="val" id="ymImpressionsPct">0%</span></div>
+        </div>
+        
+        <!-- Botao de Assistir Anuncio -->
+        <button class="ym-ad-btn" id="ymWatchAdBtn" onclick="ymShowAd()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          ASSISTIR ANUNCIO
+        </button>
+        
+        <p class="ym-tip">Clique no botao acima para assistir anuncios e completar as missoes. Apos completar, o bot sera liberado automaticamente.</p>
+      </div>
+      
+      <!-- Missoes Completas -->
+      <div id="ymCompletedSection" style="display:none">
+        <div class="ym-completed-msg">
+          <div class="check-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#00DCAA" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <h3>Missoes Completas!</h3>
+          <p>Voce completou todas as tarefas. O bot esta liberado por <strong id="ymTimeLeft">60 min</strong>.</p>
+          <button class="ym-enter-btn" onclick="ymEnterBot()">
+            Acessar TubeCoin Bot
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- OVERLAY DE ANUNCIO                         -->
+<!-- ═══════════════════════════════════════════ -->
+<div id="ad-overlay">
+  <div class="ad-container">
+    <h3>Assistindo Anuncio</h3>
+    <p>Aguarde o anuncio carregar e interaja com ele</p>
+    <div class="ad-zone" id="adZone">
+      <span style="color:#64748b;font-size:13px">Carregando anuncio...</span>
+    </div>
+    <div class="ad-timer">Aguarde <span id="adTimerCount">15</span> segundos</div>
+    <button class="ad-close-btn" id="adCloseBtn" onclick="ymCloseAd()" disabled>Aguarde...</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- TELA DO BOT TUBECOIN                       -->
+<!-- ═══════════════════════════════════════════ -->
+<div id="bot-screen">
 <div class="container">
-<h1>TubeCoin Bot</h1>
+<h1 class="bot-title">TubeCoin Bot</h1>
 <p class="subtitle">Automacao de videos, check-in e missoes</p>
+
+<!-- Reset Timer -->
+<div class="reset-bar" id="resetBar">
+  <div class="timer-icon">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+  </div>
+  <div>
+    <div class="timer-text">Reset em <span id="resetTimerText">60:00</span></div>
+  </div>
+  <div class="timer-progress"><div class="timer-fill" id="resetTimerFill" style="width:100%"></div></div>
+</div>
 
 <!-- Login -->
 <div class="login-card" id="loginCard">
@@ -149,8 +449,261 @@ h1{text-align:center;font-size:2rem;margin:20px 0;background:linear-gradient(135
 <div id="log"></div>
 </div>
 </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- MONETAG AD SCRIPT                          -->
+<!-- ═══════════════════════════════════════════ -->
+<script src='//libtl.com/sdk.js' data-zone='10325249' data-sdk='show_10325249'></script>
 
 <script>
+// ═══════════════════════════════════════════
+// YOUNG MONEY - SISTEMA DE MISSOES
+// ═══════════════════════════════════════════
+
+let currentYmid = null;
+let ymCheckInterval = null;
+let resetTimerInterval = null;
+let resetTimestamp = null;
+const RESET_INTERVAL = 60 * 60 * 1000; // 1 hora
+const MAX_CLICKS = 2;
+const MAX_IMPRESSIONS = 20;
+
+// Pegar YMID da URL
+function getYmidFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('ymid') || params.get('id') || params.get('user_id') || null;
+}
+
+// Inicializar Young Money
+async function ymInit() {
+  const ymid = getYmidFromUrl();
+  
+  if (ymid) {
+    currentYmid = ymid;
+    document.getElementById('ymIdDisplay').textContent = 'ID: ' + ymid;
+    document.getElementById('ymLoginSection').style.display = 'none';
+    document.getElementById('ymTasksSection').style.display = 'block';
+    await ymCheckStatus();
+    // Verificar a cada 3 segundos
+    ymCheckInterval = setInterval(ymCheckStatus, 3000);
+  } else {
+    // Mostrar campo de login
+    document.getElementById('ymLoginSection').style.display = 'block';
+    document.getElementById('ymTasksSection').style.display = 'none';
+  }
+}
+
+// Login com YMID
+function ymLogin() {
+  const ymid = document.getElementById('ymidInput').value.trim();
+  if (!ymid) {
+    alert('Digite seu YMID!');
+    return;
+  }
+  // Redirecionar com ymid na URL
+  window.location.href = '/?ymid=' + encodeURIComponent(ymid);
+}
+
+// Verificar status das tarefas
+async function ymCheckStatus() {
+  if (!currentYmid) return;
+  
+  try {
+    const resp = await fetch('/api/ym/status/' + currentYmid);
+    const data = await resp.json();
+    
+    if (!data.success) return;
+    
+    if (data.status === 'granted') {
+      // Tarefas completas - mostrar tela de acesso
+      ymShowCompleted(data);
+    } else {
+      // Tarefas pendentes - atualizar progresso
+      ymUpdateProgress(data);
+    }
+  } catch (err) {
+    console.error('[YM] Erro ao verificar status:', err);
+  }
+}
+
+// Atualizar progresso das tarefas
+function ymUpdateProgress(data) {
+  const clicks = data.clicks || 0;
+  const impressions = data.impressions || 0;
+  const maxClicks = data.maxClicks || MAX_CLICKS;
+  const maxImpressions = data.maxImpressions || MAX_IMPRESSIONS;
+  
+  // Cliques
+  const clicksPct = Math.min(100, Math.round((clicks / maxClicks) * 100));
+  document.getElementById('ymClicksBar').style.width = clicksPct + '%';
+  document.getElementById('ymClicksText').textContent = clicks + ' / ' + maxClicks;
+  document.getElementById('ymClicksPct').textContent = clicksPct + '%';
+  
+  if (clicks >= maxClicks) {
+    document.getElementById('ymTaskClicks').classList.add('completed');
+  }
+  
+  // Impressoes
+  const impPct = Math.min(100, Math.round((impressions / maxImpressions) * 100));
+  document.getElementById('ymImpressionsBar').style.width = impPct + '%';
+  document.getElementById('ymImpressionsText').textContent = impressions + ' / ' + maxImpressions;
+  document.getElementById('ymImpressionsPct').textContent = impPct + '%';
+  
+  if (impressions >= maxImpressions) {
+    document.getElementById('ymTaskImpressions').classList.add('completed');
+  }
+  
+  // Se ambas completas, verificar novamente para pegar o status granted
+  if (clicks >= maxClicks && impressions >= maxImpressions) {
+    // O proximo check vai pegar o status granted
+  }
+}
+
+// Mostrar tela de missoes completas
+function ymShowCompleted(data) {
+  document.getElementById('ymTasksSection').style.display = 'none';
+  document.getElementById('ymCompletedSection').style.display = 'block';
+  document.getElementById('ymLoginSection').style.display = 'none';
+  
+  // Calcular tempo restante
+  const remaining = data.remainingMs || RESET_INTERVAL;
+  const mins = Math.ceil(remaining / 60000);
+  document.getElementById('ymTimeLeft').textContent = mins + ' min';
+  
+  // Salvar timestamp de reset
+  resetTimestamp = data.resetAt || (Date.now() + remaining);
+}
+
+// Entrar no bot
+function ymEnterBot() {
+  // Esconder tela YM, mostrar bot
+  document.getElementById('ym-screen').style.display = 'none';
+  document.getElementById('bot-screen').style.display = 'block';
+  
+  // Parar verificacao de tarefas
+  if (ymCheckInterval) {
+    clearInterval(ymCheckInterval);
+    ymCheckInterval = null;
+  }
+  
+  // Iniciar timer de reset
+  startResetTimer();
+}
+
+// Mostrar anuncio
+function ymShowAd() {
+  const overlay = document.getElementById('ad-overlay');
+  overlay.style.display = 'flex';
+  
+  const closeBtn = document.getElementById('adCloseBtn');
+  closeBtn.disabled = true;
+  closeBtn.textContent = 'Aguarde...';
+  
+  // Carregar anuncio Monetag
+  const adZone = document.getElementById('adZone');
+  adZone.innerHTML = '';
+  
+  // Tentar chamar o SDK do Monetag
+  try {
+    if (typeof window.show_10325249 === 'function') {
+      window.show_10325249();
+    }
+  } catch(e) {
+    console.log('[YM] Monetag SDK:', e.message);
+  }
+  
+  // Criar um container para o anuncio
+  const adDiv = document.createElement('div');
+  adDiv.id = 'ym-ad-container';
+  adDiv.style.cssText = 'width:100%;min-height:250px;display:flex;align-items:center;justify-content:center;';
+  adDiv.innerHTML = '<p style="color:#64748b;font-size:13px;text-align:center">Interaja com o anuncio exibido na pagina.<br>O anuncio pode aparecer como popup ou banner.</p>';
+  adZone.appendChild(adDiv);
+  
+  // Timer de 15 segundos
+  let countdown = 15;
+  const timerEl = document.getElementById('adTimerCount');
+  timerEl.textContent = countdown;
+  
+  const timerInterval = setInterval(() => {
+    countdown--;
+    timerEl.textContent = countdown;
+    
+    if (countdown <= 0) {
+      clearInterval(timerInterval);
+      closeBtn.disabled = false;
+      closeBtn.textContent = 'Fechar e Continuar';
+    }
+  }, 1000);
+}
+
+// Fechar anuncio
+function ymCloseAd() {
+  document.getElementById('ad-overlay').style.display = 'none';
+  // Verificar status imediatamente
+  ymCheckStatus();
+}
+
+// ═══════════════════════════════════════════
+// TIMER DE RESET
+// ═══════════════════════════════════════════
+
+function startResetTimer() {
+  if (!resetTimestamp) {
+    resetTimestamp = Date.now() + RESET_INTERVAL;
+  }
+  
+  updateResetTimer();
+  resetTimerInterval = setInterval(updateResetTimer, 1000);
+}
+
+function updateResetTimer() {
+  const now = Date.now();
+  const remaining = resetTimestamp - now;
+  
+  if (remaining <= 0) {
+    // Reset! Voltar para tela de missoes
+    clearInterval(resetTimerInterval);
+    resetTimerInterval = null;
+    
+    // Mostrar tela YM novamente
+    document.getElementById('bot-screen').style.display = 'none';
+    document.getElementById('ym-screen').style.display = 'flex';
+    document.getElementById('ymTasksSection').style.display = 'block';
+    document.getElementById('ymCompletedSection').style.display = 'none';
+    
+    // Resetar estados das tarefas
+    document.getElementById('ymTaskClicks').classList.remove('completed');
+    document.getElementById('ymTaskImpressions').classList.remove('completed');
+    document.getElementById('ymClicksBar').style.width = '0%';
+    document.getElementById('ymImpressionsBar').style.width = '0%';
+    document.getElementById('ymClicksText').textContent = '0 / ' + MAX_CLICKS;
+    document.getElementById('ymImpressionsText').textContent = '0 / ' + MAX_IMPRESSIONS;
+    document.getElementById('ymClicksPct').textContent = '0%';
+    document.getElementById('ymImpressionsPct').textContent = '0%';
+    
+    // Reiniciar verificacao
+    ymCheckInterval = setInterval(ymCheckStatus, 3000);
+    ymCheckStatus();
+    
+    return;
+  }
+  
+  const totalMs = RESET_INTERVAL;
+  const mins = Math.floor(remaining / 60000);
+  const secs = Math.floor((remaining % 60000) / 1000);
+  
+  document.getElementById('resetTimerText').textContent = 
+    mins.toString().padStart(2, '0') + ':' + secs.toString().padStart(2, '0');
+  
+  const pct = (remaining / totalMs) * 100;
+  document.getElementById('resetTimerFill').style.width = pct + '%';
+}
+
+// ═══════════════════════════════════════════
+// BOT TUBECOIN - LOGICA ORIGINAL
+// ═══════════════════════════════════════════
+
 let running = false, stopFlag = false;
 let tcTotal=0, bpTotal=0, xpTotal=0, videosFeitos=0, videosTotal=0;
 let csrfToken="", csrfParam="csrf_test_name";
@@ -208,7 +761,6 @@ function extractCsrf(html){
   if(!html)return;
   let m=html.match(/name="csrf-token"\s+content="([^"]+)"/);
   if(m)csrfToken=m[1];
-  // Fallback: buscar no cookie hidden input
   if(!csrfToken){
     m=html.match(/name="csrf_test_name"[^>]*value="([^"]+)"/);
     if(m)csrfToken=m[1];
@@ -265,7 +817,6 @@ async function iniciar(){
   updateStats();
 
   try{
-    // LOGIN
     addLog("Iniciando autenticacao...","info");
     setProgress(5,"Fazendo login...");
 
@@ -281,7 +832,6 @@ async function iniciar(){
 
     let loginData;
     try{loginData=JSON.parse(r.body||"{}")}catch(e){
-      // Se body nao e JSON, pode ser redirect HTML (login ok)
       if(r.html && r.html.includes("dashboard")){
         loginData={success:true,redirect:"/dashboard"};
       }else{
@@ -371,7 +921,6 @@ async function iniciar(){
       let lista=videos;
       if(categoria)lista=lista.filter(v=>v.category===categoria);
 
-      // Limitar a 80 sessoes
       lista=lista.slice(0,80);
       videosTotal=lista.length;
       updateStats();
@@ -460,6 +1009,21 @@ function parar(){
   stopFlag=true;
   addLog("Parando bot...","warn");
 }
+
+// ═══════════════════════════════════════════
+// INICIALIZACAO
+// ═══════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', function() {
+  ymInit();
+  
+  // Enter no campo YMID
+  const ymidInput = document.getElementById('ymidInput');
+  if (ymidInput) {
+    ymidInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') ymLogin();
+    });
+  }
+});
 </script>
 </body>
 </html>
