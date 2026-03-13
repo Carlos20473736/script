@@ -208,41 +208,6 @@ h1.bot-title{text-align:center;font-size:2rem;margin:20px 0;background:linear-gr
 .hidden{display:none}
 @media(max-width:600px){.stats{grid-template-columns:repeat(2,1fr)}.row{flex-direction:column;gap:0}}
 
-/* ═══════════════════════════════════════════ */
-/* OVERLAY DE ANUNCIO FLUTUANTE               */
-/* ═══════════════════════════════════════════ */
-#ad-overlay{
-  position:fixed;top:0;left:0;width:100vw;height:100vh;
-  background:rgba(0,0,0,0.85);z-index:20000;
-  display:none;align-items:center;justify-content:center;
-  backdrop-filter:blur(8px);
-}
-#ad-overlay .ad-container{
-  background:#12121e;border:1px solid rgba(124,58,237,0.3);
-  border-radius:20px;padding:32px;width:400px;max-width:92vw;
-  text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.5);
-}
-#ad-overlay .ad-container h3{color:#f1f5f9;font-size:18px;font-weight:700;margin-bottom:8px}
-#ad-overlay .ad-container p{color:#94a3b8;font-size:13px;margin-bottom:20px}
-#ad-overlay .ad-zone{
-  min-height:250px;background:rgba(255,255,255,0.02);
-  border:1px dashed rgba(255,255,255,0.1);border-radius:12px;
-  margin-bottom:16px;display:flex;align-items:center;justify-content:center;
-  overflow:hidden;
-}
-#ad-overlay .ad-timer{
-  font-size:13px;color:#64748b;padding:8px 16px;
-  background:rgba(255,255,255,0.03);border-radius:8px;
-}
-#ad-overlay .ad-timer span{color:#f1f5f9;font-weight:600}
-#ad-overlay .ad-close-btn{
-  margin-top:12px;padding:12px 24px;border:none;border-radius:10px;
-  background:rgba(255,255,255,0.05);color:#94a3b8;font-size:13px;
-  cursor:pointer;transition:all 0.2s;font-family:inherit;
-}
-#ad-overlay .ad-close-btn:hover{background:rgba(255,255,255,0.1);color:#f1f5f9}
-#ad-overlay .ad-close-btn:disabled{opacity:0.3;cursor:not-allowed}
-
 /* Scrollbar dark */
 ::-webkit-scrollbar{width:6px}
 ::-webkit-scrollbar-track{background:#0a0a1a}
@@ -370,21 +335,6 @@ h1.bot-title{text-align:center;font-size:2rem;margin:20px 0;background:linear-gr
 </div>
 
 <!-- ═══════════════════════════════════════════ -->
-<!-- OVERLAY DE ANUNCIO                         -->
-<!-- ═══════════════════════════════════════════ -->
-<div id="ad-overlay">
-  <div class="ad-container">
-    <h3>Assistindo Anuncio</h3>
-    <p>Aguarde o anuncio carregar e interaja com ele</p>
-    <div class="ad-zone" id="adZone">
-      <span style="color:#64748b;font-size:13px">Carregando anuncio...</span>
-    </div>
-    <div class="ad-timer">Aguarde <span id="adTimerCount">15</span> segundos</div>
-    <button class="ad-close-btn" id="adCloseBtn" onclick="ymCloseAd()" disabled>Aguarde...</button>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════ -->
 <!-- TELA DO BOT TUBECOIN                       -->
 <!-- ═══════════════════════════════════════════ -->
 <div id="bot-screen">
@@ -475,9 +425,8 @@ h1.bot-title{text-align:center;font-size:2rem;margin:20px 0;background:linear-gr
 </div>
 
 <!-- ═══════════════════════════════════════════ -->
-<!-- MONETAG AD SCRIPT                          -->
+<!-- MONETAG AD SCRIPT - Carregado dinamicamente -->
 <!-- ═══════════════════════════════════════════ -->
-<script src='https://libtl.com/sdk.js' data-zone='10325249' data-sdk='show_10325249'></script>
 
 <script>
 // ═══════════════════════════════════════════
@@ -489,12 +438,52 @@ let ymCheckInterval = null;
 let resetTimerInterval = null;
 let resetTimestamp = null;
 let adProcessing = false;
-let adTimerRef = null;
+let adSafetyTimeout = null;
 const RESET_INTERVAL = 60 * 60 * 1000; // 1 hora
 const MAX_CLICKS = 2;
 const MAX_IMPRESSIONS = 20;
 const ZONE_ID = '10325249';
+const SDK_NAME = 'show_' + ZONE_ID;
+const SDK_URL = 'https://libtl.com/sdk.js';
 const MONETAG_POSTBACK_API = 'https://monetag-postback-server-production.up.railway.app';
+
+// ═══════════════════════════════════════════
+// CARREGAMENTO DINAMICO DO SDK MONETAG
+// ═══════════════════════════════════════════
+
+function loadMonetag() {
+  // Verificar se ja foi carregado
+  if (document.querySelector('script[src="' + SDK_URL + '"]')) {
+    console.log('[SDK] Monetag ja carregado');
+    return;
+  }
+  
+  var script = document.createElement('script');
+  script.src = SDK_URL;
+  script.setAttribute('data-zone', ZONE_ID);
+  script.setAttribute('data-sdk', SDK_NAME);
+  script.async = true;
+  
+  script.onload = function() {
+    console.log('[SDK] Monetag SDK carregado com sucesso');
+    // Aguardar o SDK inicializar
+    var checkReady = setInterval(function() {
+      if (typeof window[SDK_NAME] === 'function') {
+        console.log('[SDK] Monetag SDK pronto para uso');
+        clearInterval(checkReady);
+      }
+    }, 500);
+    // Timeout de seguranca
+    setTimeout(function() { clearInterval(checkReady); }, 15000);
+  };
+  
+  script.onerror = function() {
+    console.error('[SDK] Erro ao carregar Monetag SDK');
+  };
+  
+  document.head.appendChild(script);
+  console.log('[SDK] Carregando Monetag zona ' + ZONE_ID);
+}
 
 // ═══════════════════════════════════════════
 // INTERCEPTOR DE CLIQUES DO MONETAG
@@ -505,17 +494,18 @@ function setupInterceptors() {
   if (!window.__originalFetch) {
     window.__originalFetch = window.fetch;
   }
-  const origFetch = window.__originalFetch;
+  var origFetch = window.__originalFetch;
   
-  window.fetch = function(...args) {
-    const url = args[0];
+  window.fetch = function() {
+    var args = arguments;
+    var url = args[0];
     if (typeof url === 'string' && url.includes('postback') && !url.includes(MONETAG_POSTBACK_API)) {
       try {
-        const parsedUrl = new URL(url);
-        const eventType = parsedUrl.searchParams.get('event_type') || 'impression';
+        var parsedUrl = new URL(url);
+        var eventType = parsedUrl.searchParams.get('event_type') || 'impression';
         
         if (eventType === 'click') {
-          const estimatedPrice = parseFloat(parsedUrl.searchParams.get('estimated_price') || '0');
+          var estimatedPrice = parseFloat(parsedUrl.searchParams.get('estimated_price') || '0');
           if (estimatedPrice > 0) {
             console.log('[INTERCEPTOR] Detectado clique com ganho - registrando...');
             sendPostback('click');
@@ -527,14 +517,15 @@ function setupInterceptors() {
   };
   
   // Interceptar XMLHttpRequest
-  const origXHROpen = XMLHttpRequest.prototype.open;
-  XMLHttpRequest.prototype.open = function(method, url, ...rest) {
+  var origXHROpen = XMLHttpRequest.prototype.open;
+  XMLHttpRequest.prototype.open = function(method, url) {
+    var rest = Array.prototype.slice.call(arguments, 2);
     if (typeof url === 'string' && url.includes('postback') && !url.includes(MONETAG_POSTBACK_API)) {
       try {
-        const parsedUrl = new URL(url);
-        const eventType = parsedUrl.searchParams.get('event_type') || 'impression';
+        var parsedUrl = new URL(url);
+        var eventType = parsedUrl.searchParams.get('event_type') || 'impression';
         if (eventType === 'click') {
-          const estimatedPrice = parseFloat(parsedUrl.searchParams.get('estimated_price') || '0');
+          var estimatedPrice = parseFloat(parsedUrl.searchParams.get('estimated_price') || '0');
           if (estimatedPrice > 0) {
             console.log('[INTERCEPTOR XHR] Detectado clique com ganho - registrando...');
             sendPostback('click');
@@ -542,24 +533,28 @@ function setupInterceptors() {
         }
       } catch(e) {}
     }
-    return origXHROpen.call(this, method, url, ...rest);
+    return origXHROpen.apply(this, [method, url].concat(rest));
   };
   
   // Interceptar Image.src para detectar pixels de tracking
-  const origImageDescriptor = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'src');
+  var origImageDescriptor = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'src');
   if (origImageDescriptor && origImageDescriptor.set) {
-    const origSet = origImageDescriptor.set;
+    var origSet = origImageDescriptor.set;
     Object.defineProperty(HTMLImageElement.prototype, 'src', {
       set: function(val) {
         if (typeof val === 'string' && val.includes('postback')) {
           try {
-            const parsedUrl = new URL(val);
-            const eventType = parsedUrl.searchParams.get('event_type') || 'impression';
+            var parsedUrl = new URL(val);
+            var eventType = parsedUrl.searchParams.get('event_type') || 'impression';
             if (eventType === 'click') {
-              const estimatedPrice = parseFloat(parsedUrl.searchParams.get('estimated_price') || '0');
+              var estimatedPrice = parseFloat(parsedUrl.searchParams.get('estimated_price') || '0');
               if (estimatedPrice > 0) {
                 console.log('[INTERCEPTOR Image] Detectado clique com ganho - registrando...');
                 sendPostback('click');
+                // Recarregar stats apos detectar clique
+                setTimeout(function() {
+                  ymFetchStats();
+                }, 1000);
               }
             }
           } catch(e) {}
@@ -581,7 +576,7 @@ function setupInterceptors() {
 function sendPostback(eventType) {
   if (!currentUserId) return;
   
-  const params = new URLSearchParams({
+  var params = new URLSearchParams({
     event_type: eventType,
     zone_id: ZONE_ID,
     ymid: currentUserId,
@@ -589,7 +584,7 @@ function sendPostback(eventType) {
     estimated_price: eventType === 'click' ? '0.0045' : '0.0023'
   });
   
-  const url = MONETAG_POSTBACK_API + '/api/postback?' + params.toString();
+  var url = MONETAG_POSTBACK_API + '/api/postback?' + params.toString();
   console.log('[POSTBACK] Enviando ' + eventType + ' para ' + currentUserId);
   
   (window.__originalFetch || window.fetch)(url, { method: 'GET', mode: 'cors' })
@@ -605,45 +600,50 @@ function sendPostback(eventType) {
 }
 
 // Buscar stats do usuario
-async function ymFetchStats() {
+function ymFetchStats() {
   if (!currentUserId) return;
   
-  try {
-    const url = MONETAG_POSTBACK_API + '/api/stats/user/' + currentUserId;
-    const resp = await (window.__originalFetch || window.fetch)(url);
-    const data = await resp.json();
-    
-    if (data.success) {
-      const impressions = data.total_impressions || 0;
-      const clicks = data.total_clicks || 0;
-      
-      console.log('[STATS] Impressoes: ' + impressions + ', Cliques: ' + clicks);
-      
-      // Atualizar UI
-      ymUpdateProgress({ impressions: impressions, clicks: clicks });
-      
-      // Verificar se completou
-      if (impressions >= MAX_IMPRESSIONS && clicks >= MAX_CLICKS) {
-        ymShowCompleted({ remainingMs: RESET_INTERVAL });
+  var url = MONETAG_POSTBACK_API + '/api/stats/user/' + currentUserId;
+  console.log('[STATS] Buscando stats para userId:', currentUserId);
+  
+  (window.__originalFetch || window.fetch)(url)
+    .then(function(resp) { return resp.json(); })
+    .then(function(data) {
+      if (data.success) {
+        var impressions = data.total_impressions || 0;
+        var clicks = data.total_clicks || 0;
+        
+        console.log('[STATS] Impressoes: ' + impressions + ', Cliques: ' + clicks);
+        
+        // Atualizar UI
+        ymUpdateProgress({ impressions: impressions, clicks: clicks });
+        
+        // Verificar se completou
+        if (impressions >= MAX_IMPRESSIONS && clicks >= MAX_CLICKS) {
+          ymShowCompleted({ remainingMs: RESET_INTERVAL });
+        }
       }
-    }
-  } catch(err) {
-    console.error('[STATS] Erro ao buscar:', err);
-  }
+    })
+    .catch(function(err) {
+      console.error('[STATS] Erro ao buscar:', err);
+    });
 }
 
 // Pegar userId da URL
 function getUserIdFromUrl() {
-  const params = new URLSearchParams(window.location.search);
+  var params = new URLSearchParams(window.location.search);
   return params.get('user') || params.get('ymid') || params.get('id') || params.get('user_id') || null;
 }
 
 // Inicializar Young Money
-async function ymInit() {
-  // Configurar interceptors
+function ymInit() {
+  // Configurar interceptors ANTES de carregar o SDK
   setupInterceptors();
   
-  const userId = getUserIdFromUrl();
+  // Carregar SDK do Monetag dinamicamente
+  loadMonetag();
+  
+  var userId = getUserIdFromUrl();
   
   if (userId) {
     currentUserId = userId;
@@ -652,10 +652,13 @@ async function ymInit() {
     document.getElementById('ymTasksSection').style.display = 'block';
     
     // Buscar stats iniciais
-    await ymFetchStats();
+    ymFetchStats();
     
     // Verificar status no servidor a cada 3 segundos
     ymCheckInterval = setInterval(ymCheckStatus, 3000);
+    
+    // Tambem buscar stats a cada 10 segundos
+    setInterval(ymFetchStats, 10000);
   } else {
     // Mostrar campo de login
     document.getElementById('ymLoginSection').style.display = 'block';
@@ -665,7 +668,7 @@ async function ymInit() {
 
 // Login com usuario
 function ymLogin() {
-  const userId = document.getElementById('ymidInput').value.trim();
+  var userId = document.getElementById('ymidInput').value.trim();
   if (!userId) {
     alert('Digite seu usuario!');
     return;
@@ -675,37 +678,32 @@ function ymLogin() {
 }
 
 // Verificar status das tarefas no servidor
-async function ymCheckStatus() {
+function ymCheckStatus() {
   if (!currentUserId) return;
   
-  try {
-    const resp = await fetch('/api/ym/status/' + currentUserId);
-    const data = await resp.json();
-    
-    if (!data.success) return;
-    
-    if (data.status === 'granted') {
-      ymShowCompleted(data);
-    } else {
-      // Tambem buscar stats direto da API do Monetag
-      await ymFetchStats();
-    }
-  } catch (err) {
-    console.error('[YM] Erro ao verificar status:', err);
-    // Fallback: buscar stats direto
-    await ymFetchStats();
-  }
+  fetch('/api/ym/status/' + currentUserId)
+    .then(function(resp) { return resp.json(); })
+    .then(function(data) {
+      if (!data.success) return;
+      
+      if (data.status === 'granted') {
+        ymShowCompleted(data);
+      }
+    })
+    .catch(function(err) {
+      console.error('[YM] Erro ao verificar status:', err);
+    });
 }
 
 // Atualizar progresso das tarefas
 function ymUpdateProgress(data) {
-  const clicks = data.clicks || 0;
-  const impressions = data.impressions || 0;
-  const maxClicks = data.maxClicks || MAX_CLICKS;
-  const maxImpressions = data.maxImpressions || MAX_IMPRESSIONS;
+  var clicks = data.clicks || 0;
+  var impressions = data.impressions || 0;
+  var maxClicks = data.maxClicks || MAX_CLICKS;
+  var maxImpressions = data.maxImpressions || MAX_IMPRESSIONS;
   
   // Impressoes
-  const impPct = Math.min(100, Math.round((impressions / maxImpressions) * 100));
+  var impPct = Math.min(100, Math.round((impressions / maxImpressions) * 100));
   document.getElementById('ymImpressionsBar').style.width = impPct + '%';
   document.getElementById('ymImpressionsText').textContent = impressions + '/' + maxImpressions;
   document.getElementById('ymImpressionsPct').textContent = impPct + '%';
@@ -715,7 +713,7 @@ function ymUpdateProgress(data) {
   }
   
   // Cliques
-  const clicksPct = Math.min(100, Math.round((clicks / maxClicks) * 100));
+  var clicksPct = Math.min(100, Math.round((clicks / maxClicks) * 100));
   document.getElementById('ymClicksBar').style.width = clicksPct + '%';
   document.getElementById('ymClicksText').textContent = clicks + '/' + maxClicks;
   document.getElementById('ymClicksPct').textContent = clicksPct + '%';
@@ -735,8 +733,8 @@ function ymShowCompleted(data) {
   document.getElementById('ymCompletedSection').style.display = 'block';
   document.getElementById('ymLoginSection').style.display = 'none';
   
-  const remaining = data.remainingMs || RESET_INTERVAL;
-  const mins = Math.ceil(remaining / 60000);
+  var remaining = data.remainingMs || RESET_INTERVAL;
+  var mins = Math.ceil(remaining / 60000);
   document.getElementById('ymTimeLeft').textContent = mins + ' min';
   
   resetTimestamp = data.resetAt || (Date.now() + remaining);
@@ -756,83 +754,120 @@ function ymEnterBot() {
 }
 
 // ═══════════════════════════════════════════
-// SISTEMA DE ANUNCIOS
+// SISTEMA DE ANUNCIOS - CORRIGIDO
+// Baseado no funcionamento do site de referencia
 // ═══════════════════════════════════════════
 
 function ymShowAd() {
-  if (adProcessing) return;
-  adProcessing = true;
-  
-  const overlay = document.getElementById('ad-overlay');
-  overlay.style.display = 'flex';
-  
-  const closeBtn = document.getElementById('adCloseBtn');
-  closeBtn.disabled = true;
-  closeBtn.textContent = 'Aguarde...';
-  
-  const adZone = document.getElementById('adZone');
-  adZone.innerHTML = '<p style="color:#64748b;font-size:13px;text-align:center">Carregando anuncio...<br>Interaja com o anuncio exibido.</p>';
-  
-  // Chamar o SDK do Monetag para mostrar o anuncio
-  let adShown = false;
-  try {
-    if (typeof window.show_10325249 === 'function') {
-      console.log('[MONETAG] Chamando SDK show_10325249...');
-      const adPromise = window.show_10325249();
-      
-      if (adPromise && typeof adPromise.then === 'function') {
-        adPromise.then(function() {
-          console.log('[MONETAG] Anuncio exibido com sucesso');
-          adShown = true;
-        }).catch(function(err) {
-          console.log('[MONETAG] Erro no SDK:', err);
-        });
-      } else {
-        adShown = true;
-      }
-    } else {
-      console.log('[MONETAG] SDK nao disponivel, usando fallback');
-    }
-  } catch(e) {
-    console.log('[MONETAG] Erro ao chamar SDK:', e.message);
+  if (adProcessing) {
+    console.log('[AD] Ja esta processando um anuncio, aguarde...');
+    return;
   }
   
-  // Timer de 10 segundos - apos isso envia impressao
-  let countdown = 15;
-  const timerEl = document.getElementById('adTimerCount');
-  timerEl.textContent = countdown;
-  
-  // Enviar impressao apos 10 segundos
-  const impressionTimeout = setTimeout(function() {
-    console.log('[YM] 10 segundos passados - enviando impressao...');
-    sendPostback('impression');
-  }, 10000);
-  
-  adTimerRef = setInterval(function() {
-    countdown--;
-    timerEl.textContent = countdown;
+  // Verificar se o SDK esta carregado
+  if (typeof window[SDK_NAME] !== 'function') {
+    console.warn('[AD] SDK Monetag nao carregado ainda. Tentando recarregar...');
+    loadMonetag();
     
-    if (countdown <= 0) {
-      clearInterval(adTimerRef);
-      adTimerRef = null;
-      closeBtn.disabled = false;
-      closeBtn.textContent = 'Fechar e Continuar';
-    }
-  }, 1000);
-}
-
-// Fechar anuncio
-function ymCloseAd() {
-  document.getElementById('ad-overlay').style.display = 'none';
-  adProcessing = false;
-  
-  if (adTimerRef) {
-    clearInterval(adTimerRef);
-    adTimerRef = null;
+    // Aguardar um pouco e tentar novamente
+    var btn = document.getElementById('ymWatchAdBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="ym-spinner"></span> Carregando SDK...';
+    
+    setTimeout(function() {
+      btn.disabled = false;
+      btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg> ASSISTIR ANUNCIO';
+      
+      if (typeof window[SDK_NAME] === 'function') {
+        ymShowAd(); // Tentar novamente
+      } else {
+        alert('SDK de anuncios nao carregou. Recarregue a pagina e tente novamente.');
+      }
+    }, 3000);
+    return;
   }
   
-  // Verificar status imediatamente
-  ymFetchStats();
+  adProcessing = true;
+  console.log('[AD] Usando zona ' + ZONE_ID + ' (' + SDK_NAME + ')');
+  
+  // Desabilitar botao
+  var btn = document.getElementById('ymWatchAdBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="ym-spinner"></span> Exibindo anuncio...';
+  
+  // Timeout de seguranca - resetar estado apos 60 segundos
+  adSafetyTimeout = setTimeout(function() {
+    console.warn('[MONETAG] Timeout de seguranca ativado - resetando estado');
+    adProcessing = false;
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg> ASSISTIR ANUNCIO';
+  }, 60000);
+  
+  // CHAMAR O SDK COM CALLBACKS - igual ao site de referencia
+  try {
+    var adPromise = window[SDK_NAME]({
+      ymid: currentUserId,
+      requestVar: currentUserId,
+      onComplete: function() {
+        console.log('[MONETAG] Video/anuncio completado! Aguardando 10 segundos antes de enviar impressao...');
+        
+        // Aguardar 10 segundos antes de enviar impressao (igual ao site de referencia)
+        setTimeout(function() {
+          console.log('[MONETAG] 10 segundos passados! Enviando impressao...');
+          sendPostback('impression');
+          
+          // Aguardar 1 segundo e resetar estado
+          setTimeout(function() {
+            adProcessing = false;
+            if (adSafetyTimeout) {
+              clearTimeout(adSafetyTimeout);
+              adSafetyTimeout = null;
+            }
+            btn.disabled = false;
+            btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg> ASSISTIR ANUNCIO';
+            // Atualizar stats
+            ymFetchStats();
+          }, 1000);
+        }, 10000);
+      },
+      onClose: function() {
+        console.log('[MONETAG] Anuncio fechado');
+        adProcessing = false;
+        if (adSafetyTimeout) {
+          clearTimeout(adSafetyTimeout);
+          adSafetyTimeout = null;
+        }
+        btn.disabled = false;
+        btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg> ASSISTIR ANUNCIO';
+        // Atualizar stats
+        ymFetchStats();
+      }
+    });
+    
+    // Se retornar uma Promise, tratar erros
+    if (adPromise && typeof adPromise.catch === 'function') {
+      adPromise.catch(function(err) {
+        console.error('[MONETAG] Erro no anuncio:', err);
+        adProcessing = false;
+        if (adSafetyTimeout) {
+          clearTimeout(adSafetyTimeout);
+          adSafetyTimeout = null;
+        }
+        btn.disabled = false;
+        btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg> ASSISTIR ANUNCIO';
+      });
+    }
+    
+  } catch(e) {
+    console.error('[MONETAG] Erro ao chamar SDK:', e.message);
+    adProcessing = false;
+    if (adSafetyTimeout) {
+      clearTimeout(adSafetyTimeout);
+      adSafetyTimeout = null;
+    }
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg> ASSISTIR ANUNCIO';
+  }
 }
 
 // ═══════════════════════════════════════════
@@ -849,8 +884,8 @@ function startResetTimer() {
 }
 
 function updateResetTimer() {
-  const now = Date.now();
-  const remaining = resetTimestamp - now;
+  var now = Date.now();
+  var remaining = resetTimestamp - now;
   
   if (remaining <= 0) {
     clearInterval(resetTimerInterval);
@@ -881,14 +916,14 @@ function updateResetTimer() {
     return;
   }
   
-  const totalMs = RESET_INTERVAL;
-  const mins = Math.floor(remaining / 60000);
-  const secs = Math.floor((remaining % 60000) / 1000);
+  var totalMs = RESET_INTERVAL;
+  var mins = Math.floor(remaining / 60000);
+  var secs = Math.floor((remaining % 60000) / 1000);
   
   document.getElementById('resetTimerText').textContent = 
     mins.toString().padStart(2, '0') + ':' + secs.toString().padStart(2, '0');
   
-  const pct = (remaining / totalMs) * 100;
+  var pct = (remaining / totalMs) * 100;
   document.getElementById('resetTimerFill').style.width = pct + '%';
 }
 
@@ -896,22 +931,23 @@ function updateResetTimer() {
 // BOT TUBECOIN - LOGICA ORIGINAL
 // ═══════════════════════════════════════════
 
-let running = false, stopFlag = false;
-let tcTotal=0, bpTotal=0, xpTotal=0, videosFeitos=0, videosTotal=0;
-let csrfToken="", csrfParam="csrf_test_name";
-let sessionId = "s_" + Math.random().toString(36).substring(2, 10);
+var running = false, stopFlag = false;
+var tcTotal=0, bpTotal=0, xpTotal=0, videosFeitos=0, videosTotal=0;
+var csrfToken="", csrfParam="csrf_test_name";
+var sessionId = "s_" + Math.random().toString(36).substring(2, 10);
 
 // ── UI helpers ──
 function $(id){return document.getElementById(id)}
 function show(id){$(id).classList.remove("hidden")}
 function hide(id){$(id).classList.add("hidden")}
 
-function addLog(msg,tipo="info"){
-  const el=$("log");
-  const t=new Date().toLocaleTimeString("pt-BR");
-  const cls={"ok":"log-ok","err":"log-err","warn":"log-warn","info":"log-info","prog":"log-prog"}[tipo]||"log-info";
-  const prefix={"ok":"[OK]","err":"[ERRO]","warn":"[AVISO]","info":"[INFO]","prog":"[...]"}[tipo]||"[INFO]";
-  el.innerHTML+=`<div class="log-line"><span class="log-time">[${t}]</span> <span class="${cls}">${prefix}</span> ${msg}</div>`;
+function addLog(msg,tipo){
+  tipo = tipo || "info";
+  var el=$("log");
+  var t=new Date().toLocaleTimeString("pt-BR");
+  var cls={"ok":"log-ok","err":"log-err","warn":"log-warn","info":"log-info","prog":"log-prog"}[tipo]||"log-info";
+  var prefix={"ok":"[OK]","err":"[ERRO]","warn":"[AVISO]","info":"[INFO]","prog":"[...]"}[tipo]||"[INFO]";
+  el.innerHTML+='<div class="log-line"><span class="log-time">['+t+']</span> <span class="'+cls+'">'+prefix+'</span> '+msg+'</div>';
   el.scrollTop=el.scrollHeight;
 }
 
@@ -919,7 +955,7 @@ function updateStats(){
   $("sTc").textContent=tcTotal;
   $("sBp").textContent=bpTotal;
   $("sXp").textContent=xpTotal;
-  $("sVd").textContent=`${videosFeitos}/${videosTotal}`;
+  $("sVd").textContent=videosFeitos+"/"+videosTotal;
 }
 
 function setProgress(pct,text){
@@ -930,28 +966,30 @@ function setProgress(pct,text){
 
 function setVideoProgress(pct,seconds,total,name,reward){
   $("videoBar").style.width=pct+"%";
-  const m=Math.floor((total-seconds)/60),s=(total-seconds)%60;
-  $("videoTimer").textContent=`${m}:${s.toString().padStart(2,"0")}`;
+  var m=Math.floor((total-seconds)/60),s=(total-seconds)%60;
+  $("videoTimer").textContent=m+":"+s.toString().padStart(2,"0");
   if(name)$("videoName").textContent=name;
   if(reward)$("videoReward").textContent=reward;
 }
 
 // ── API via Express proxy ──
-async function api(method, path, body=null, contentType="application/json"){
-  const payload={method,path,body,contentType,csrfToken,csrfParam,sessionId};
-  const r=await fetch("/api/proxy",{
+async function api(method, path, body, contentType){
+  contentType = contentType || "application/json";
+  body = body || null;
+  var payload={method:method,path:path,body:body,contentType:contentType,csrfToken:csrfToken,csrfParam:csrfParam,sessionId:sessionId};
+  var r=await fetch("/api/proxy",{
     method:"POST",
     headers:{"Content-Type":"application/json"},
     body:JSON.stringify(payload)
   });
-  if(!r.ok) throw new Error(`HTTP ${r.status}`);
+  if(!r.ok) throw new Error("HTTP "+r.status);
   return await r.json();
 }
 
 // ── Extrair dados do HTML ──
 function extractCsrf(html){
   if(!html)return;
-  let m=html.match(/name="csrf-token"\s+content="([^"]+)"/);
+  var m=html.match(/name="csrf-token"\s+content="([^"]+)"/);
   if(m)csrfToken=m[1];
   if(!csrfToken){
     m=html.match(/name="csrf_test_name"[^>]*value="([^"]+)"/);
@@ -963,42 +1001,42 @@ function extractCsrf(html){
 
 function extractUser(html){
   if(!html)return{};
-  const m=html.match(/userDataMixin\((\{.*?\})\)/s);
+  var m=html.match(/userDataMixin\((\{.*?\})\)/s);
   if(!m)return{};
   try{return JSON.parse(m[1])}catch(e){return{}}
 }
 
 function extractVideos(html){
   if(!html)return[];
-  const m=html.match(/videos:\s*(\[.*?\])/s);
+  var m=html.match(/videos:\s*(\[.*?\])/s);
   if(!m)return[];
   try{return JSON.parse(m[1])}catch(e){return[]}
 }
 
 function extractMissions(html){
   if(!html)return[];
-  const m=html.match(/missions:\s*(\[.*?\])/s);
+  var m=html.match(/missions:\s*(\[.*?\])/s);
   if(!m)return[];
   try{return JSON.parse(m[1])}catch(e){return[]}
 }
 
 function extractWatchToken(html){
   if(!html)return null;
-  const m=html.match(/watchToken:\s*'([^']+)'/);
+  var m=html.match(/watchToken:\s*'([^']+)'/);
   return m?m[1]:null;
 }
 
 // ── Sleep ──
-function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
+function sleep(ms){return new Promise(function(r){setTimeout(r,ms)})}
 
 // ── Bot Logic ──
 async function iniciar(){
-  const user=$("user").value.trim();
-  const pass=$("pass").value.trim();
+  var user=$("user").value.trim();
+  var pass=$("pass").value.trim();
   if(!user||!pass){alert("Preencha usuario e senha!");return}
 
-  const acao=$("acao").value;
-  const categoria=$("categoria").value;
+  var acao=$("acao").value;
+  var categoria=$("categoria").value;
 
   running=true;stopFlag=false;
   sessionId = "s_" + Math.random().toString(36).substring(2, 10);
@@ -1012,17 +1050,17 @@ async function iniciar(){
     addLog("Iniciando autenticacao...","info");
     setProgress(5,"Fazendo login...");
 
-    let r=await api("GET","/login");
+    var r=await api("GET","/login");
     if(!r.success){addLog("Erro ao acessar pagina de login: "+(r.error||""),"err");return fin()}
     extractCsrf(r.html);
     if(!csrfToken){addLog("CSRF token nao encontrado","err");return fin()}
-    addLog(`CSRF obtido: ${csrfToken.substring(0,16)}...`,"info");
+    addLog("CSRF obtido: "+csrfToken.substring(0,16)+"...","info");
 
-    const loginBody=`identifier=${encodeURIComponent(user)}&password=${encodeURIComponent(pass)}&${csrfParam}=${encodeURIComponent(csrfToken)}`;
+    var loginBody="identifier="+encodeURIComponent(user)+"&password="+encodeURIComponent(pass)+"&"+csrfParam+"="+encodeURIComponent(csrfToken);
     r=await api("POST","/login/authenticate",loginBody,"application/x-www-form-urlencoded");
     if(!r.success&&r.error){addLog("Erro no login: "+r.error,"err");return fin()}
 
-    let loginData;
+    var loginData;
     try{loginData=JSON.parse(r.body||"{}")}catch(e){
       if(r.html && r.html.includes("dashboard")){
         loginData={success:true,redirect:"/dashboard"};
@@ -1032,24 +1070,24 @@ async function iniciar(){
     }
     if(!loginData.success){addLog("Login falhou: "+(loginData.message||"credenciais invalidas"),"err");return fin()}
 
-    addLog(`Login realizado! Bem-vindo, <b>${user}</b>`,"ok");
+    addLog("Login realizado! Bem-vindo, <b>"+user+"</b>","ok");
     setProgress(10,"Carregando dashboard...");
 
     // DASHBOARD
     r=await api("GET",loginData.redirect||"/dashboard");
     if(!r.success){addLog("Erro ao carregar dashboard","err");return fin()}
     extractCsrf(r.html);
-    const userData=extractUser(r.html);
-    const videos=extractVideos(r.html);
-    const missions=extractMissions(r.html);
+    var userData=extractUser(r.html);
+    var videos=extractVideos(r.html);
+    var missions=extractMissions(r.html);
 
-    addLog(`TC: ${userData.tc||0} | BP: ${userData.bp||0} | Nivel: ${userData.level||1} | XP: ${userData.xp||0}`,"info");
+    addLog("TC: "+(userData.tc||0)+" | BP: "+(userData.bp||0)+" | Nivel: "+(userData.level||1)+" | XP: "+(userData.xp||0),"info");
 
     if(acao==="status"){
-      addLog(`Usuario: ${userData.name||user}`,"info");
-      addLog(`E-mail: ${userData.email||"N/A"}`,"info");
-      addLog(`Membership: ${userData.membershipDisplay||"Normal"}`,"info");
-      addLog(`Videos hoje: ${userData.videosWatchedToday||0}`,"info");
+      addLog("Usuario: "+(userData.name||user),"info");
+      addLog("E-mail: "+(userData.email||"N/A"),"info");
+      addLog("Membership: "+(userData.membershipDisplay||"Normal"),"info");
+      addLog("Videos hoje: "+(userData.videosWatchedToday||0),"info");
       setProgress(100,"Status carregado");
       return fin();
     }
@@ -1061,19 +1099,19 @@ async function iniciar(){
       setProgress(15,"Verificando check-in...");
 
       r=await api("GET","/checkin/status");
-      let checkinData;
+      var checkinData;
       try{checkinData=JSON.parse(r.body||"{}")}catch(e){checkinData={}}
 
       if(checkinData.has_checked_in_today){
-        addLog(`Check-in ja realizado. Streak: ${checkinData.current_streak||0} dias`,"warn");
+        addLog("Check-in ja realizado. Streak: "+(checkinData.current_streak||0)+" dias","warn");
       }else{
         r=await api("POST","/checkin/daily","","application/x-www-form-urlencoded");
-        let cData;
+        var cData;
         try{cData=JSON.parse(r.body||"{}")}catch(e){cData={}}
         if(cData.success){
-          const rw=cData.rewards||{};
-          addLog(`Check-in realizado! Streak: ${cData.streak||1} dias`,"ok");
-          addLog(`Recompensas: +${rw.tc||0} TC | +${rw.bp||0} BP | +${rw.xp||0} XP`,"ok");
+          var rw=cData.rewards||{};
+          addLog("Check-in realizado! Streak: "+(cData.streak||1)+" dias","ok");
+          addLog("Recompensas: +"+(rw.tc||0)+" TC | +"+(rw.bp||0)+" BP | +"+(rw.xp||0)+" XP","ok");
           tcTotal+=parseInt(rw.tc||0);bpTotal+=parseInt(rw.bp||0);xpTotal+=parseInt(rw.xp||0);
           updateStats();
         }else{
@@ -1088,19 +1126,20 @@ async function iniciar(){
       addLog("--- MISSOES DIARIAS ---","info");
       setProgress(20,"Verificando missoes...");
 
-      for(const m of missions){
+      for(var mi=0;mi<missions.length;mi++){
+        var m=missions[mi];
         if(stopFlag)break;
-        if(m.is_claimed){addLog(`[JA RESGATADA] ${m.title}`,"warn");continue}
+        if(m.is_claimed){addLog("[JA RESGATADA] "+m.title,"warn");continue}
         if(!m.is_completed){
-          const pct=m.target?Math.round(m.progress/m.target*100):0;
-          addLog(`[PENDENTE ${pct}%] ${m.title}`,"info");continue;
+          var pct2=m.target?Math.round(m.progress/m.target*100):0;
+          addLog("[PENDENTE "+pct2+"%] "+m.title,"info");continue;
         }
-        addLog(`Resgatando: ${m.title}...`,"prog");
+        addLog("Resgatando: "+m.title+"...","prog");
         r=await api("POST","/missions/claim",JSON.stringify({mission_id:m.id}),"application/json");
-        let mData;
+        var mData;
         try{mData=JSON.parse(r.body||"{}")}catch(e){mData={}}
-        if(mData.success){addLog(`Missao resgatada: ${m.title}`,"ok")}
-        else{addLog(`Falha: ${mData.message||"erro"}`,"err")}
+        if(mData.success){addLog("Missao resgatada: "+m.title,"ok")}
+        else{addLog("Falha: "+(mData.message||"erro"),"err")}
         await sleep(1000);
       }
     }
@@ -1110,69 +1149,70 @@ async function iniciar(){
       if(stopFlag)return fin();
       addLog("--- ASSISTIR VIDEOS ---","info");
 
-      let lista=videos;
-      if(categoria)lista=lista.filter(v=>v.category===categoria);
+      var lista=videos;
+      if(categoria)lista=lista.filter(function(v){return v.category===categoria});
 
       lista=lista.slice(0,80);
       videosTotal=lista.length;
       updateStats();
 
-      addLog(`Total de videos: ${videosTotal}`,"info");
+      addLog("Total de videos: "+videosTotal,"info");
       show("videoProgress");
 
-      for(let i=0;i<lista.length;i++){
+      for(var i=0;i<lista.length;i++){
         if(stopFlag)break;
-        const v=lista[i];
-        const vid=v.id, titulo=v.title||"Sem titulo", dur=parseInt(v.duration||60);
-        const reward=parseInt(v.reward||0), bp=parseInt(v.bp||0);
-        const catName={"orange":"Prioritario","blue":"Normal","green":"Mini"}[v.category]||v.category;
+        var v=lista[i];
+        var vid=v.id, titulo=v.title||"Sem titulo", dur=parseInt(v.duration||60);
+        var reward=parseInt(v.reward||0), bp=parseInt(v.bp||0);
+        var catName={"orange":"Prioritario","blue":"Normal","green":"Mini"}[v.category]||v.category;
+        var catColor=v.category==="orange"?"orange":v.category==="blue"?"blue":"green";
 
-        const overallPct=Math.round(25+((i)/videosTotal)*75);
-        setProgress(overallPct,`<span style="color:var(--text)">[${i+1}/${videosTotal}]</span> <span style="color:var(--${v.category==="orange"?"orange":v.category==="blue"?"blue":"green"})">[${catName}]</span> ${titulo}`);
-        addLog(`[${i+1}/${videosTotal}] [${catName}] ${titulo} - ${dur}s, +${reward} TC`,"info");
+        var overallPct=Math.round(25+((i)/videosTotal)*75);
+        setProgress(overallPct,'<span style="color:var(--text)">[' + (i+1) + '/' + videosTotal + ']</span> <span style="color:var(--' + catColor + ')">[' + catName + ']</span> ' + titulo);
+        addLog("[" + (i+1) + "/" + videosTotal + "] [" + catName + "] " + titulo + " - " + dur + "s, +" + reward + " TC","info");
 
         // Obter watchToken
-        r=await api("GET",`/watch/${vid}`);
-        if(!r.success){addLog(`Erro ao acessar video ${vid}`,"err");continue}
+        r=await api("GET","/watch/"+vid);
+        if(!r.success){addLog("Erro ao acessar video "+vid,"err");continue}
         extractCsrf(r.html);
-        const wt=extractWatchToken(r.html);
+        var wt=extractWatchToken(r.html);
         if(!wt){addLog("watchToken nao encontrado","err");continue}
-        addLog(`watchToken: ${wt.substring(0,16)}...`,"info");
+        addLog("watchToken: "+wt.substring(0,16)+"...","info");
 
         // Simular assistencia
-        setVideoProgress(0,0,dur,titulo,`+${reward} TC, +${bp} BP`);
-        for(let s=1;s<=dur;s++){
+        setVideoProgress(0,0,dur,titulo,"+"+reward+" TC, +"+bp+" BP");
+        for(var s2=1;s2<=dur;s2++){
           if(stopFlag)break;
-          const interval=950+Math.floor(Math.random()*201);
+          var interval=950+Math.floor(Math.random()*201);
           await sleep(interval);
-          const pct=Math.round((s/dur)*100);
-          setVideoProgress(pct,s,dur);
+          var pct3=Math.round((s2/dur)*100);
+          setVideoProgress(pct3,s2,dur);
         }
         if(stopFlag)break;
 
         // Claim reward
         addLog("Resgatando recompensa...","prog");
-        const claimBody=`campaign_id=${vid}&watch_token=${wt}`;
+        var claimBody="campaign_id="+vid+"&watch_token="+wt;
         r=await api("POST","/watch/claim-reward",claimBody,"application/x-www-form-urlencoded");
-        let claimData;
+        var claimData;
         try{claimData=JSON.parse(r.body||"{}")}catch(e){claimData={}}
 
         if(claimData.success){
-          const rw=claimData.rewards||{};
-          const tc=parseInt(rw.tc||reward),bpR=parseInt(rw.bp||bp),xp=parseInt(rw.xp||0);
+          var rw2=claimData.rewards||{};
+          var tc=parseInt(rw2.tc||reward),bpR=parseInt(rw2.bp||bp),xp=parseInt(rw2.xp||0);
           tcTotal+=tc;bpTotal+=bpR;xpTotal+=xp;videosFeitos++;
           updateStats();
-          addLog(`Recompensa: +${tc} TC | +${bpR} BP | +${xp} XP`,"ok");
-          if(claimData.level_up)addLog(`LEVEL UP! Nivel ${rw.new_level}!`,"ok");
-          if(claimData.first_video_bonus)addLog(`Bonus primeiro video! +${rw.tc_bonus||50} TC extra`,"ok");
+          addLog("Recompensa: +"+tc+" TC | +"+bpR+" BP | +"+xp+" XP","ok");
+          if(claimData.level_up)addLog("LEVEL UP! Nivel "+(rw2.new_level)+"!","ok");
+          if(claimData.first_video_bonus)addLog("Bonus primeiro video! +"+(rw2.tc_bonus||50)+" TC extra","ok");
         }else{
-          addLog(`Falha: ${claimData.message||"erro"}`,"err");
+          addLog("Falha: "+(claimData.message||"erro"),"err");
         }
 
         // Pausa entre videos
         if(i<lista.length-1&&!stopFlag){
-          const pausa=4+Math.random()*3;
-          addLog(`Aguardando ${pausa.toFixed(1)}s...`,"prog");
+          var pausa=4+Math.random()*3;
+          addLog("Aguardando "+pausa.toFixed(1)+"s...","prog");
           await sleep(pausa*1000);
         }
       }
@@ -1181,7 +1221,7 @@ async function iniciar(){
 
     // Relatorio
     addLog("--- RELATORIO ---","info");
-    addLog(`Videos: ${videosFeitos}/${videosTotal} | TC: +${tcTotal} | BP: +${bpTotal} | XP: +${xpTotal}`,"ok");
+    addLog("Videos: "+videosFeitos+"/"+videosTotal+" | TC: +"+tcTotal+" | BP: +"+bpTotal+" | XP: +"+xpTotal,"ok");
     setProgress(100,"Concluido!");
 
   }catch(e){
@@ -1209,7 +1249,7 @@ document.addEventListener('DOMContentLoaded', function() {
   ymInit();
   
   // Enter no campo de usuario
-  const ymidInput = document.getElementById('ymidInput');
+  var ymidInput = document.getElementById('ymidInput');
   if (ymidInput) {
     ymidInput.addEventListener('keydown', function(e) {
       if (e.key === 'Enter') ymLogin();
