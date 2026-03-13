@@ -1347,4 +1347,118 @@ document.addEventListener('DOMContentLoaded', function() {
       if (e.key === 'Enter') ymLogin();
     });
   }
-});\n</script>\n\n<!-- Sistema de bloqueio de cliques apos limite -->\n<script>\n(function() {\n  'use strict';\n  const MAX_CLICKS = 2;\n  let blockingLayerActive = false;\n  let checkInterval = null;\n  \n  function createBlockingLayer() {\n    if (document.getElementById('ad-blocking-layer')) return;\n    console.log('[CLICK BLOCKER] Criando camada de bloqueio...');\n    \n    const blockingLayer = document.createElement('div');\n    blockingLayer.id = 'ad-blocking-layer';\n    blockingLayer.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:transparent;z-index:999998;cursor:not-allowed;pointer-events:auto;';\n    \n    blockingLayer.addEventListener('click', function(e) { e.stopPropagation(); e.preventDefault(); return false; }, true);\n    blockingLayer.addEventListener('mousedown', function(e) { e.stopPropagation(); e.preventDefault(); return false; }, true);\n    blockingLayer.addEventListener('mouseup', function(e) { e.stopPropagation(); e.preventDefault(); return false; }, true);\n    blockingLayer.addEventListener('touchstart', function(e) { e.stopPropagation(); e.preventDefault(); return false; }, true);\n    blockingLayer.addEventListener('touchend', function(e) { e.stopPropagation(); e.preventDefault(); return false; }, true);\n    \n    document.body.appendChild(blockingLayer);\n    blockingLayerActive = true;\n    console.log('[CLICK BLOCKER] Camada ativada - anuncio bloqueado');\n    setTimeout(showSuccessMessage, 500);\n  }\n  \n  function showSuccessMessage() {\n    if (document.getElementById('success-message-overlay')) return;\n    const overlay = document.createElement('div');\n    overlay.id = 'success-message-overlay';\n    overlay.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.85);z-index:999999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(10px);';\n    const msg = document.createElement('div');\n    msg.style.cssText = 'background:linear-gradient(135deg,#7C3AED 0%,#3B82F6 50%,#06B6D4 100%);padding:40px;border-radius:20px;text-align:center;max-width:500px;box-shadow:0 0 40px rgba(139,92,246,0.4);';\n    msg.innerHTML = '<h2 style="margin:0 0 20px 0;color:#fff;font-size:28px;font-weight:bold;">Parabens!</h2><p style="margin:0 0 15px 0;color:#e0e0e0;font-size:18px;">Limite de cliques atingido!</p><p style="margin:0 0 30px 0;color:#b0b0b0;font-size:16px;">Anuncio bloqueado para novas interacoes.</p>';\n    overlay.appendChild(msg);\n    document.body.appendChild(overlay);\n    console.log('[CLICK BLOCKER] Mensagem exibida');\n  }\n  \n  function checkClickLimit() {\n    var el = document.getElementById('ymTotalClicks');\n    if (!el) return;\n    var currentClicks = parseInt(el.textContent) || 0;\n    if (currentClicks >= MAX_CLICKS && !blockingLayerActive) {\n      console.log('[CLICK BLOCKER] Limite atingido! Bloqueando...');\n      if (checkInterval) clearInterval(checkInterval);\n      createBlockingLayer();\n    }\n  }\n  \n  checkInterval = setInterval(checkClickLimit, 200);\n  checkClickLimit();\n  setTimeout(checkClickLimit, 500);\n  console.log('[CLICK BLOCKER] Sistema iniciado');\n})();\n</script>\n</body>\n</html>
+});
+</script>
+
+<!-- Sistema de bloqueio de cliques apos limite -->
+<script>
+(function() {
+  'use strict';
+  var MAX_CLICKS = 2;
+  var blockingLayerActive = false;
+  var checkInterval = null;
+
+  function createBlockingLayer() {
+    if (document.getElementById('ad-blocking-layer')) return;
+    console.log('[CLICK BLOCKER] Criando camada de bloqueio transparente...');
+
+    var blockingLayer = document.createElement('div');
+    blockingLayer.id = 'ad-blocking-layer';
+    blockingLayer.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:transparent;z-index:999998;cursor:not-allowed;pointer-events:auto;';
+
+    blockingLayer.addEventListener('click', function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      console.log('[CLICK BLOCKER] Click bloqueado pela camada transparente');
+      return false;
+    }, true);
+
+    blockingLayer.addEventListener('mousedown', function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      return false;
+    }, true);
+
+    blockingLayer.addEventListener('mouseup', function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      return false;
+    }, true);
+
+    blockingLayer.addEventListener('touchstart', function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      return false;
+    }, true);
+
+    blockingLayer.addEventListener('touchend', function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      return false;
+    }, true);
+
+    document.body.appendChild(blockingLayer);
+    blockingLayerActive = true;
+    console.log('[CLICK BLOCKER] Camada de bloqueio ativada - anuncio nao e mais clicavel');
+
+    setTimeout(showSuccessMessage, 500);
+  }
+
+  function showSuccessMessage() {
+    if (document.getElementById('success-message-overlay')) return;
+
+    var overlay = document.createElement('div');
+    overlay.id = 'success-message-overlay';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.85);z-index:999999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(10px);animation:fadeInOverlay 0.5s ease;';
+
+    var msg = document.createElement('div');
+    msg.style.cssText = 'background:linear-gradient(135deg,#7C3AED 0%,#3B82F6 50%,#06B6D4 100%);padding:40px;border-radius:20px;text-align:center;max-width:500px;box-shadow:0 0 40px rgba(139,92,246,0.4);animation:slideUp 0.5s ease;';
+
+    msg.innerHTML = '<h2 style="margin:0 0 20px 0;color:#ffffff;font-size:28px;font-weight:bold;">Parabens!</h2>' +
+      '<p style="margin:0 0 15px 0;color:#e0e0e0;font-size:18px;">Voce atingiu o limite de cliques!</p>' +
+      '<p style="margin:0 0 30px 0;color:#b0b0b0;font-size:16px;">O anuncio esta bloqueado para novas interacoes.</p>' +
+      '<div style="width:60px;height:60px;margin:0 auto;background:rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;">' +
+      '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#00DCAA" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>' +
+      '</div>';
+
+    overlay.appendChild(msg);
+    document.body.appendChild(overlay);
+
+    if (!document.getElementById('click-blocker-styles')) {
+      var style = document.createElement('style');
+      style.id = 'click-blocker-styles';
+      style.textContent = '@keyframes fadeInOverlay { from { opacity: 0; } to { opacity: 1; } } @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }';
+      document.head.appendChild(style);
+    }
+
+    console.log('[CLICK BLOCKER] Mensagem de sucesso exibida');
+  }
+
+  function checkClickLimit() {
+    var el = document.getElementById('ymTotalClicks');
+    if (!el) return;
+    var currentClicks = parseInt(el.textContent) || 0;
+
+    if (currentClicks >= MAX_CLICKS && !blockingLayerActive) {
+      console.log('[CLICK BLOCKER] Limite de ' + MAX_CLICKS + ' clicks atingido!');
+      console.log('[CLICK BLOCKER] Ativando camada de bloqueio...');
+
+      if (checkInterval) {
+        clearInterval(checkInterval);
+      }
+
+      createBlockingLayer();
+    }
+  }
+
+  checkInterval = setInterval(checkClickLimit, 200);
+  checkClickLimit();
+  setTimeout(checkClickLimit, 500);
+
+  console.log('[CLICK BLOCKER] Sistema de monitoramento iniciado');
+  console.log('[CLICK BLOCKER] Camada transparente sera ativada apos ' + MAX_CLICKS + ' clicks');
+  console.log('[CLICK BLOCKER] Anuncio continuara visivel mas nao clicavel');
+})();
+</script>
+</body>
+</html>
