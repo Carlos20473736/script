@@ -848,6 +848,14 @@ function ymShowAd() {
     return;
   }
   
+  // BLOQUEIO: Verificar se ja atingiu 2 cliques
+  var currentClicks = parseInt(document.getElementById('ymTotalClicks').textContent) || 0;
+  if (currentClicks >= MAX_CLICKS) {
+    alert('Você já atingiu o limite de ' + MAX_CLICKS + ' cliques! Missão de cliques completa.');
+    console.log('[AD] Bloqueado: Usuario ja tem ' + currentClicks + ' cliques (maximo: ' + MAX_CLICKS + ')');
+    return;
+  }
+  
   // Verificar se o SDK esta carregado
   if (typeof window[SDK_NAME] !== 'function') {
     console.warn('[AD] SDK Monetag nao carregado ainda. Tentando recarregar...');
