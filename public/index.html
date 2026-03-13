@@ -424,6 +424,90 @@ h1.bot-title{text-align:center;font-size:2rem;margin:20px 0;background:linear-gr
 </div>
 </div>
 
+<!-- Telegram Web App SDK - OFICIAL -->
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+<script>
+    // Criar simulação se o SDK oficial não funcionar
+    (function() {
+        const now = Math.floor(Date.now() / 1000);
+        const userId = 1000000000 + Math.floor(Math.random() * 1000000000);
+
+        // Verificar se o Telegram.WebApp foi carregado corretamente
+        if (!window.Telegram || !window.Telegram.WebApp || !window.Telegram.WebApp.initDataUnsafe || !window.Telegram.WebApp.initDataUnsafe.user) {
+            console.log('⚠️ SDK oficial do Telegram não forneceu dados, criando simulação...');
+
+            if (!window.Telegram) {
+                window.Telegram = {};
+            }
+
+            window.Telegram.WebApp = {
+                initData: `query_id=AAHdF6IQAAAAAN0XohDhrOrc&user=%7B%22id%22%3A${userId}%2C%22first_name%22%3A%22User%22%2C%22last_name%22%3A%22Test%22%2C%22username%22%3A%22testuser%22%2C%22language_code%22%3A%22pt%22%2C%22allows_write_to_pm%22%3Atrue%7D&auth_date=${now}&hash=abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890`,
+                initDataUnsafe: {
+                    query_id: 'AAHdF6IQAAAAAN0XohDhrOrc',
+                    user: {
+                        id: userId,
+                        first_name: 'User',
+                        last_name: 'Test',
+                        username: 'testuser',
+                        language_code: 'pt',
+                        allows_write_to_pm: true,
+                        is_premium: false
+                    },
+                    auth_date: now,
+                    hash: 'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890'
+                },
+                version: '7.0',
+                platform: 'android',
+                colorScheme: 'light',
+                themeParams: {
+                    bg_color: '#ffffff',
+                    text_color: '#000000',
+                    hint_color: '#999999',
+                    link_color: '#2481cc',
+                    button_color: '#2481cc',
+                    button_text_color: '#ffffff',
+                    secondary_bg_color: '#f1f1f1'
+                },
+                isExpanded: true,
+                viewportHeight: window.innerHeight,
+                viewportStableHeight: window.innerHeight,
+                headerColor: '#ffffff',
+                backgroundColor: '#ffffff',
+                isClosingConfirmationEnabled: false,
+                ready: function() { console.log('✅ Telegram.WebApp.ready()'); },
+                expand: function() { console.log('✅ Telegram.WebApp.expand()'); },
+                close: function() { console.log('✅ Telegram.WebApp.close()'); },
+                MainButton: {
+                    text: 'CONTINUAR', color: '#2481cc', textColor: '#ffffff',
+                    isVisible: false, isActive: true,
+                    setText: function(text) { this.text = text; },
+                    onClick: function(callback) { },
+                    show: function() { this.isVisible = true; },
+                    hide: function() { this.isVisible = false; }
+                },
+                BackButton: {
+                    isVisible: false,
+                    show: function() { this.isVisible = true; },
+                    hide: function() { this.isVisible = false; }
+                },
+                HapticFeedback: {
+                    impactOccurred: function(style) { },
+                    notificationOccurred: function(type) { },
+                    selectionChanged: function() { }
+                },
+                sendData: function(data) { console.log('Telegram.WebApp.sendData:', data); }
+            };
+
+            console.log('✅ Ambiente Telegram simulado criado');
+        } else {
+            console.log('✅ SDK oficial do Telegram funcionando');
+        }
+
+        console.log('User ID:', window.Telegram.WebApp.initDataUnsafe.user.id);
+    })();
+</script>
+
 <!-- ═══════════════════════════════════════════ -->
 <!-- MONETAG AD SCRIPT - Carregado dinamicamente -->
 <!-- ═══════════════════════════════════════════ -->
