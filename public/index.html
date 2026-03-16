@@ -6,130 +6,113 @@
 <title>TubeCoin Bot</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#0a0a1a;--card:#12121e;--card2:#16213e;--border:#2a2a4a;--text:#e0e0e0;--muted:#888;--green:#00e676;--orange:#ff9100;--blue:#448aff;--red:#ff5252;--cyan:#00e5ff;--purple:#7c4dff;--yellow:#ffd740;--accent1:#7C3AED;--accent2:#3B82F6;--accent3:#00DCAA}
-body{font-family:'Inter','Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#06060f;color:#e2e8f0;min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 
 /* ═══════════════════════════════════════════ */
-/* TELA DE VERIFICACAO (YMID)                 */
+/* TELA YMID - CLEAN & PROFISSIONAL           */
 /* ═══════════════════════════════════════════ */
 #verify-screen{
   position:fixed;top:0;left:0;width:100vw;height:100vh;
-  background:linear-gradient(180deg,#0a0a1a 0%,#0d1117 50%,#0a0a1a 100%);
+  background:#06060f;
   z-index:10000;display:flex;align-items:center;justify-content:center;
-  font-family:'Inter',sans-serif;overflow:hidden;
+  overflow:hidden;
 }
-#verify-screen .bg-glow{position:absolute;border-radius:50%;filter:blur(150px);pointer-events:none}
-#verify-screen .glow-1{width:400px;height:400px;top:-100px;right:-80px;background:rgba(124,58,237,0.12)}
-#verify-screen .glow-2{width:350px;height:350px;bottom:-120px;left:-80px;background:rgba(0,220,170,0.08)}
 
-.particles{position:absolute;top:0;left:0;width:100%;height:100%;overflow:hidden;pointer-events:none}
-.particles .p{position:absolute;border-radius:50%;opacity:0;animation:pFloat 8s ease-in-out infinite}
-.particles .p:nth-child(1){width:4px;height:4px;background:#7C3AED;top:20%;left:10%;animation-delay:0s}
-.particles .p:nth-child(2){width:6px;height:6px;background:#00DCAA;top:60%;left:80%;animation-delay:2s}
-.particles .p:nth-child(3){width:3px;height:3px;background:#3B82F6;top:40%;left:50%;animation-delay:4s}
-.particles .p:nth-child(4){width:5px;height:5px;background:#7C3AED;top:80%;left:20%;animation-delay:1s}
-.particles .p:nth-child(5){width:4px;height:4px;background:#00DCAA;top:10%;left:70%;animation-delay:3s}
-@keyframes pFloat{0%,100%{opacity:0;transform:translateY(0) scale(0.5)}50%{opacity:0.6;transform:translateY(-40px) scale(1)}}
-
-.verify-card{
-  position:relative;background:rgba(18,18,30,0.95);backdrop-filter:blur(20px);
-  border:1px solid rgba(124,58,237,0.2);border-radius:24px;
-  padding:0;width:440px;max-width:92vw;
-  box-shadow:0 30px 80px rgba(0,0,0,0.6),0 0 40px rgba(124,58,237,0.08);
-  animation:slideUp 0.6s cubic-bezier(0.16,1,0.3,1);overflow:hidden;
+/* Background animado sutil */
+#verify-screen::before{
+  content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;
+  background:radial-gradient(ellipse at 30% 20%,rgba(99,102,241,0.06) 0%,transparent 50%),
+             radial-gradient(ellipse at 70% 80%,rgba(6,182,212,0.04) 0%,transparent 50%);
+  animation:bgShift 20s ease-in-out infinite alternate;
 }
-@keyframes slideUp{from{opacity:0;transform:translateY(30px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes bgShift{0%{transform:translate(0,0)}100%{transform:translate(-5%,3%)}}
 
-.verify-header{
-  background:linear-gradient(135deg,#7C3AED 0%,#3B82F6 50%,#06B6D4 100%);
-  padding:28px 32px;text-align:center;
+.ymid-card{
+  position:relative;width:400px;max-width:90vw;text-align:center;
+  animation:fadeIn 0.8s cubic-bezier(0.16,1,0.3,1);
 }
-.verify-header h1{font-size:22px;font-weight:800;color:#fff;margin:0 0 4px;letter-spacing:-0.02em}
-.verify-header p{font-size:13px;color:rgba(255,255,255,0.8);margin:0}
+@keyframes fadeIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
 
-.verify-body{padding:28px 32px}
-
-/* YMID Display */
-.ymid-display{
-  background:rgba(124,58,237,0.1);border:2px solid rgba(124,58,237,0.3);
-  border-radius:16px;padding:24px;text-align:center;margin-bottom:20px;
+/* Logo / Titulo */
+.ymid-brand{margin-bottom:48px}
+.ymid-brand .logo-icon{
+  width:56px;height:56px;margin:0 auto 16px;
+  background:linear-gradient(135deg,#6366f1,#06b6d4);
+  border-radius:16px;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 8px 32px rgba(99,102,241,0.3);
 }
-.ymid-label{font-size:12px;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px}
-.ymid-value{
-  font-family:'Orbitron',monospace;font-size:48px;font-weight:900;
-  background:linear-gradient(135deg,#7C3AED,#3B82F6,#00DCAA);
+.ymid-brand h1{
+  font-size:20px;font-weight:700;color:#f1f5f9;letter-spacing:-0.02em;margin-bottom:4px;
+}
+.ymid-brand p{font-size:13px;color:#64748b;font-weight:400}
+
+/* YMID Container */
+.ymid-container{
+  background:linear-gradient(145deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01));
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:20px;padding:36px 32px;margin-bottom:24px;
+  position:relative;overflow:hidden;
+}
+.ymid-container::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(99,102,241,0.3),rgba(6,182,212,0.3),transparent);
+}
+
+.ymid-tag{
+  display:inline-block;padding:4px 12px;
+  background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.2);
+  border-radius:20px;font-size:11px;font-weight:600;color:#818cf8;
+  text-transform:uppercase;letter-spacing:0.1em;margin-bottom:20px;
+}
+
+.ymid-number{
+  font-family:'Space Grotesk','Inter',monospace;
+  font-size:72px;font-weight:700;letter-spacing:0.2em;
+  background:linear-gradient(135deg,#c7d2fe 0%,#818cf8 30%,#06b6d4 70%,#67e8f9 100%);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  letter-spacing:0.15em;margin-bottom:8px;
+  line-height:1;margin-bottom:16px;
+  filter:drop-shadow(0 0 30px rgba(99,102,241,0.2));
 }
-.ymid-hint{font-size:11px;color:#64748b;line-height:1.5}
 
-/* Stats */
-.verify-stats{display:flex;gap:12px;margin-bottom:16px}
-.verify-stat{
-  flex:1;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);
-  border-radius:12px;padding:16px;text-align:center;
+.ymid-desc{
+  font-size:13px;color:#64748b;line-height:1.6;max-width:280px;margin:0 auto;
 }
-.verify-stat .val{font-size:22px;font-weight:800;margin-bottom:4px}
-.verify-stat .val.imp{color:#00DCAA}
-.verify-stat .val.clk{color:#a78bfa}
-.verify-stat .lbl{font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:0.05em}
 
-/* Barras de progresso */
-.verify-progress{margin-bottom:14px}
-.verify-progress .label{display:flex;justify-content:space-between;font-size:12px;color:#94a3b8;margin-bottom:6px}
-.verify-progress .label .val{color:#f1f5f9;font-weight:600}
-.verify-progress .bar-bg{width:100%;height:8px;background:#1e1e2e;border-radius:4px;overflow:hidden;border:1px solid rgba(255,255,255,0.05)}
-.verify-progress .bar{height:100%;border-radius:4px;transition:width 0.5s ease}
-.verify-progress .bar.imp{background:linear-gradient(90deg,#00DCAA,#10B981);box-shadow:0 0 10px rgba(0,220,170,0.4)}
-.verify-progress .bar.clk{background:linear-gradient(90deg,#7C3AED,#a78bfa);box-shadow:0 0 10px rgba(124,58,237,0.4)}
-
-/* Botoes */
-.verify-ym-btn{
-  width:100%;padding:16px;border:none;border-radius:14px;
-  background:linear-gradient(135deg,#f59e0b 0%,#f97316 100%);
-  color:#fff;font-size:15px;font-weight:700;cursor:pointer;
-  box-shadow:0 0 20px rgba(245,158,11,0.4);
-  transition:all 0.3s ease;font-family:inherit;margin-top:8px;
-  display:flex;align-items:center;justify-content:center;gap:8px;
+/* Botao principal */
+.ymid-btn{
+  width:100%;padding:18px 24px;border:none;border-radius:14px;
+  background:linear-gradient(135deg,#6366f1 0%,#4f46e5 50%,#6366f1 100%);
+  background-size:200% 200%;
+  color:#fff;font-size:15px;font-weight:600;cursor:pointer;
+  font-family:inherit;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  transition:all 0.3s ease;
+  box-shadow:0 4px 24px rgba(99,102,241,0.3),inset 0 1px 0 rgba(255,255,255,0.1);
+  position:relative;overflow:hidden;
 }
-.verify-ym-btn:hover{box-shadow:0 0 30px rgba(245,158,11,0.6);transform:translateY(-1px)}
-
-.verify-enter-btn{
-  width:100%;padding:16px;border:none;border-radius:14px;
-  background:linear-gradient(135deg,#00DCAA,#10B981);
-  color:#fff;font-size:15px;font-weight:700;cursor:pointer;
-  box-shadow:0 0 20px rgba(0,220,170,0.4);
-  transition:all 0.3s ease;font-family:inherit;display:none;margin-top:8px;
-  align-items:center;justify-content:center;gap:8px;
+.ymid-btn::before{
+  content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.1),transparent);
+  transition:left 0.5s ease;
 }
-.verify-enter-btn:hover{box-shadow:0 0 30px rgba(0,220,170,0.6);transform:translateY(-1px)}
-
-.verify-waiting{text-align:center;font-size:12px;color:#64748b;margin-top:14px;line-height:1.5}
-
-.spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.6s linear infinite;display:inline-block;vertical-align:middle;margin-right:6px}
-@keyframes spin{to{transform:rotate(360deg)}}
-
-/* Status box */
-.verify-status{
-  background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);
-  border-radius:16px;padding:20px;margin-bottom:16px;text-align:center;
+.ymid-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 32px rgba(99,102,241,0.4),inset 0 1px 0 rgba(255,255,255,0.15);
 }
-.verify-status .status-icon{
-  width:56px;height:56px;margin:0 auto 14px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-}
-.verify-status .status-icon.waiting{background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.3)}
-.verify-status .status-icon.ready{background:rgba(0,220,170,0.15);border:1px solid rgba(0,220,170,0.3)}
-.verify-status h3{font-size:17px;font-weight:700;margin-bottom:6px}
-.verify-status p{font-size:13px;color:#94a3b8;line-height:1.5}
+.ymid-btn:hover::before{left:100%}
+.ymid-btn:active{transform:translateY(0)}
+
+.ymid-footer{margin-top:32px;font-size:11px;color:#475569;line-height:1.6}
 
 /* ═══════════════════════════════════════════ */
 /* TELA DO BOT TUBECOIN                       */
 /* ═══════════════════════════════════════════ */
 #bot-screen{display:none}
+
+:root{--bg:#06060f;--card:#0f0f1a;--border:#1e1e2e;--text:#e2e8f0;--muted:#64748b;--green:#00e676;--orange:#ff9100;--blue:#448aff;--red:#ff5252;--cyan:#06b6d4;--purple:#6366f1}
 
 .container{max-width:900px;margin:0 auto;padding:20px}
 h1.bot-title{text-align:center;font-size:2rem;margin:20px 0;background:linear-gradient(135deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:800}
@@ -192,84 +175,40 @@ h1.bot-title{text-align:center;font-size:2rem;margin:20px 0;background:linear-gr
 @media(max-width:600px){.stats{grid-template-columns:repeat(2,1fr)}.row{flex-direction:column;gap:0}}
 
 ::-webkit-scrollbar{width:6px}
-::-webkit-scrollbar-track{background:#0a0a1a}
-::-webkit-scrollbar-thumb{background:#2d2d44;border-radius:3px}
+::-webkit-scrollbar-track{background:#06060f}
+::-webkit-scrollbar-thumb{background:#1e1e2e;border-radius:3px}
 </style>
 </head>
 <body>
 
 <!-- ═══════════════════════════════════════════ -->
-<!-- TELA DE VERIFICACAO COM YMID               -->
+<!-- TELA YMID - LIMPA E PROFISSIONAL           -->
 <!-- ═══════════════════════════════════════════ -->
 <div id="verify-screen">
-  <div class="particles">
-    <div class="p"></div><div class="p"></div><div class="p"></div><div class="p"></div><div class="p"></div>
-  </div>
-  <div class="bg-glow glow-1"></div>
-  <div class="bg-glow glow-2"></div>
-
-  <div class="verify-card">
-    <div class="verify-header">
+  <div class="ymid-card">
+    <!-- Brand -->
+    <div class="ymid-brand">
+      <div class="logo-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      </div>
       <h1>TubeCoin Bot</h1>
-      <p>Use seu YMID no Young Money para liberar o bot</p>
+      <p>Seu codigo de acesso pessoal</p>
     </div>
 
-    <div class="verify-body">
-      <!-- YMID Display -->
-      <div class="ymid-display">
-        <div class="ymid-label">Seu YMID</div>
-        <div class="ymid-value" id="ymidValue">---</div>
-        <div class="ymid-hint">Use este codigo no site Young Money para completar as missoes</div>
-      </div>
-
-      <!-- Status -->
-      <div class="verify-status" id="verifyStatusBox">
-        <div class="status-icon waiting" id="verifyStatusIcon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        </div>
-        <h3 id="verifyStatusTitle">Aguardando missoes...</h3>
-        <p id="verifyStatusMsg">Complete 20 impressoes e 2 cliques no Young Money para liberar o bot.</p>
-      </div>
-
-      <!-- Stats -->
-      <div class="verify-stats">
-        <div class="verify-stat">
-          <div class="val imp" id="verifyImpressions">0</div>
-          <div class="lbl">Impressoes</div>
-        </div>
-        <div class="verify-stat">
-          <div class="val clk" id="verifyClicks">0</div>
-          <div class="lbl">Cliques</div>
-        </div>
-      </div>
-
-      <!-- Barras de progresso -->
-      <div class="verify-progress">
-        <div class="label"><span>Impressoes</span><span class="val" id="verifyImpText">0 / 20</span></div>
-        <div class="bar-bg"><div class="bar imp" id="verifyImpBar" style="width:0%"></div></div>
-      </div>
-      <div class="verify-progress">
-        <div class="label"><span>Cliques</span><span class="val" id="verifyClkText">0 / 2</span></div>
-        <div class="bar-bg"><div class="bar clk" id="verifyClkBar" style="width:0%"></div></div>
-      </div>
-
-      <!-- Botao para ir ao Young Money (SEM ymid na URL) -->
-      <button class="verify-ym-btn" id="verifyYmBtn" onclick="goToYoungMoney()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-        Ir para o Young Money
-      </button>
-
-      <!-- Botao de entrar (aparece quando liberado) -->
-      <button class="verify-enter-btn" id="verifyEnterBtn" onclick="enterBot()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-        Acessar TubeCoin Bot
-      </button>
-
-      <!-- Texto de espera -->
-      <p class="verify-waiting" id="verifyWaiting">
-        <span class="spinner"></span> Verificando a cada 5 segundos...
-      </p>
+    <!-- YMID -->
+    <div class="ymid-container">
+      <div class="ymid-tag">Seu YMID</div>
+      <div class="ymid-number" id="ymidValue">---</div>
+      <p class="ymid-desc">Utilize este codigo no Young Money para completar suas missoes e liberar o bot.</p>
     </div>
+
+    <!-- Botao -->
+    <button class="ymid-btn" id="ymidBtn" onclick="goToYoungMoney()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      Acessar Young Money
+    </button>
+
+    <p class="ymid-footer">Apos completar as missoes, o bot sera liberado automaticamente.</p>
   </div>
 </div>
 
@@ -350,7 +289,7 @@ h1.bot-title{text-align:center;font-size:2rem;margin:20px 0;background:linear-gr
 
 <script>
 // ═══════════════════════════════════════════
-// SISTEMA DE VERIFICACAO COM YMID DE 3 DIGITOS
+// POSTBACK + VERIFICACAO (NOS BASTIDORES)
 // ═══════════════════════════════════════════
 
 var MONETAG_API = 'https://monetag-postback-server-production.up.railway.app/api/stats/user/';
@@ -365,193 +304,87 @@ var CHECK_INTERVAL = 5000;
 var generatedYmid = null;
 var checkTimer = null;
 
-// Gerar ou recuperar ymid de 3 digitos
 function getOrCreateYmid() {
   var saved = localStorage.getItem('tubecoin_ymid_3d');
-  if (saved && saved.length === 3 && /^\d{3}$/.test(saved)) {
-    return saved;
-  }
+  if (saved && saved.length === 3 && /^\d{3}$/.test(saved)) return saved;
   var newId = (100 + Math.floor(Math.random() * 900)).toString();
   localStorage.setItem('tubecoin_ymid_3d', newId);
   return newId;
 }
 
-// Carregar SDK do Monetag
 function loadMonetag() {
   if (document.querySelector('script[src="' + SDK_URL + '"]')) return;
-  var script = document.createElement('script');
-  script.src = SDK_URL;
-  script.setAttribute('data-zone', ZONE_ID);
-  script.setAttribute('data-sdk', SDK_NAME);
-  script.async = true;
-  script.onload = function() {
-    console.log('[SDK] Monetag SDK carregado');
-    var checkReady = setInterval(function() {
-      if (typeof window[SDK_NAME] === 'function') {
-        console.log('[SDK] Monetag SDK pronto');
-        clearInterval(checkReady);
-      }
-    }, 500);
-    setTimeout(function() { clearInterval(checkReady); }, 15000);
-  };
-  document.head.appendChild(script);
+  var s = document.createElement('script');
+  s.src = SDK_URL; s.setAttribute('data-zone', ZONE_ID);
+  s.setAttribute('data-sdk', SDK_NAME); s.async = true;
+  document.head.appendChild(s);
 }
 
-// Enviar postback
 function sendPostback(eventType) {
   if (!generatedYmid) return;
   var params = new URLSearchParams({
-    event_type: eventType,
-    zone_id: ZONE_ID,
-    ymid: generatedYmid,
+    event_type: eventType, zone_id: ZONE_ID, ymid: generatedYmid,
     user_email: generatedYmid,
     estimated_price: eventType === 'click' ? '0.0045' : '0.0023'
   });
-  var url = MONETAG_POSTBACK_API + '/api/postback?' + params.toString();
-  console.log('[POSTBACK] Enviando ' + eventType + ' para ymid=' + generatedYmid);
-  (window.__originalFetch || window.fetch)(url, { method: 'GET', mode: 'cors' })
-    .then(function(r) { return r.json(); })
-    .then(function(data) { console.log('[POSTBACK] OK:', data); })
-    .catch(function(err) { console.error('[POSTBACK] Erro:', err); });
+  (window.__originalFetch || window.fetch)(MONETAG_POSTBACK_API + '/api/postback?' + params.toString(), { method: 'GET', mode: 'cors' }).catch(function(){});
 }
 
-// Interceptors para detectar cliques do Monetag
 function setupInterceptors() {
   if (!window.__originalFetch) window.__originalFetch = window.fetch;
   var origFetch = window.__originalFetch;
-
   window.fetch = function() {
     var url = arguments[0];
     if (typeof url === 'string' && url.includes('postback') && !url.includes(MONETAG_POSTBACK_API)) {
-      try {
-        var p = new URL(url);
-        if ((p.searchParams.get('event_type') || '') === 'click') {
-          if (parseFloat(p.searchParams.get('estimated_price') || '0') > 0) {
-            sendPostback('click');
-          }
-        }
-      } catch(e) {}
+      try { var p = new URL(url); if (p.searchParams.get('event_type') === 'click' && parseFloat(p.searchParams.get('estimated_price') || '0') > 0) sendPostback('click'); } catch(e) {}
     }
     return origFetch.apply(this, arguments);
   };
-
   var origXHR = XMLHttpRequest.prototype.open;
   XMLHttpRequest.prototype.open = function(method, url) {
     if (typeof url === 'string' && url.includes('postback') && !url.includes(MONETAG_POSTBACK_API)) {
-      try {
-        var p = new URL(url);
-        if ((p.searchParams.get('event_type') || '') === 'click') {
-          if (parseFloat(p.searchParams.get('estimated_price') || '0') > 0) {
-            sendPostback('click');
-          }
-        }
-      } catch(e) {}
+      try { var p = new URL(url); if (p.searchParams.get('event_type') === 'click' && parseFloat(p.searchParams.get('estimated_price') || '0') > 0) sendPostback('click'); } catch(e) {}
     }
     return origXHR.apply(this, Array.prototype.slice.call(arguments));
   };
-
   var desc = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'src');
   if (desc && desc.set) {
     var origSet = desc.set;
     Object.defineProperty(HTMLImageElement.prototype, 'src', {
       set: function(val) {
         if (typeof val === 'string' && val.includes('postback')) {
-          try {
-            var p = new URL(val);
-            if ((p.searchParams.get('event_type') || '') === 'click') {
-              if (parseFloat(p.searchParams.get('estimated_price') || '0') > 0) {
-                sendPostback('click');
-                setTimeout(checkApiStats, 1000);
-              }
-            }
-          } catch(e) {}
+          try { var p = new URL(val); if (p.searchParams.get('event_type') === 'click' && parseFloat(p.searchParams.get('estimated_price') || '0') > 0) { sendPostback('click'); setTimeout(checkApiStats, 1000); } } catch(e) {}
         }
         origSet.call(this, val);
-      },
-      get: desc.get
+      }, get: desc.get
     });
   }
-  console.log('[POSTBACK] Interceptors configurados');
 }
 
-// Verificar stats na API
 function checkApiStats() {
   if (!generatedYmid) return;
-
   fetch(MONETAG_API + encodeURIComponent(generatedYmid))
     .then(function(r) { return r.json(); })
     .then(function(data) {
-      if (!data.success) {
-        updateVerifyUI(0, 0, false);
-        return;
-      }
-      var impressions = parseInt(data.total_impressions) || 0;
-      var clicks = parseInt(data.total_clicks) || 0;
-      var isReady = (impressions >= MIN_IMPRESSIONS && clicks >= MIN_CLICKS);
-
-      updateVerifyUI(impressions, clicks, isReady);
-
-      if (isReady && checkTimer) {
-        clearInterval(checkTimer);
-        checkTimer = null;
+      if (!data.success) return;
+      var imp = parseInt(data.total_impressions) || 0;
+      var clk = parseInt(data.total_clicks) || 0;
+      if (imp >= MIN_IMPRESSIONS && clk >= MIN_CLICKS) {
+        // Liberar bot automaticamente
+        document.getElementById('verify-screen').style.display = 'none';
+        document.getElementById('bot-screen').style.display = 'block';
+        if (checkTimer) { clearInterval(checkTimer); checkTimer = null; }
       }
     })
-    .catch(function(err) {
-      console.error('[VERIFY] Erro ao consultar API:', err);
-    });
+    .catch(function(){});
 }
 
-// Atualizar UI da tela de verificacao
-function updateVerifyUI(impressions, clicks, isReady) {
-  document.getElementById('verifyImpressions').textContent = impressions;
-  document.getElementById('verifyClicks').textContent = clicks;
-
-  var impPct = Math.min(100, Math.round((impressions / MIN_IMPRESSIONS) * 100));
-  var clkPct = Math.min(100, Math.round((clicks / MIN_CLICKS) * 100));
-
-  document.getElementById('verifyImpBar').style.width = impPct + '%';
-  document.getElementById('verifyImpText').textContent = impressions + ' / ' + MIN_IMPRESSIONS;
-  document.getElementById('verifyClkBar').style.width = clkPct + '%';
-  document.getElementById('verifyClkText').textContent = clicks + ' / ' + MIN_CLICKS;
-
-  if (isReady) {
-    document.getElementById('verifyStatusIcon').className = 'status-icon ready';
-    document.getElementById('verifyStatusIcon').innerHTML = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00DCAA" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
-    document.getElementById('verifyStatusTitle').textContent = 'Acesso Liberado!';
-    document.getElementById('verifyStatusTitle').style.color = '#00DCAA';
-    document.getElementById('verifyStatusMsg').textContent = 'Missoes completas! Clique abaixo para acessar o bot.';
-    document.getElementById('verifyEnterBtn').style.display = 'flex';
-    document.getElementById('verifyYmBtn').style.display = 'none';
-    document.getElementById('verifyWaiting').style.display = 'none';
-  } else {
-    document.getElementById('verifyStatusIcon').className = 'status-icon waiting';
-    document.getElementById('verifyStatusIcon').innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>';
-    document.getElementById('verifyStatusTitle').textContent = 'Aguardando missoes...';
-    document.getElementById('verifyStatusTitle').style.color = '#f1f5f9';
-    document.getElementById('verifyStatusMsg').textContent = 'Complete ' + MIN_IMPRESSIONS + ' impressoes e ' + MIN_CLICKS + ' cliques no Young Money para liberar o bot.';
-    document.getElementById('verifyEnterBtn').style.display = 'none';
-    document.getElementById('verifyYmBtn').style.display = 'flex';
-    document.getElementById('verifyWaiting').style.display = 'block';
-  }
-}
-
-// Ir para o Young Money SEM ymid na URL
 function goToYoungMoney() {
   window.open(YOUNG_MONEY_URL, '_blank');
 }
 
-// Entrar no bot
-function enterBot() {
-  document.getElementById('verify-screen').style.display = 'none';
-  document.getElementById('bot-screen').style.display = 'block';
-  if (checkTimer) {
-    clearInterval(checkTimer);
-    checkTimer = null;
-  }
-}
-
 // ═══════════════════════════════════════════
-// BOT TUBECOIN - LOGICA PRINCIPAL
+// BOT TUBECOIN
 // ═══════════════════════════════════════════
 
 var running = false, stopFlag = false;
@@ -595,69 +428,28 @@ function setVideoProgress(pct,seconds,total,name,reward){
 }
 
 async function api(method, path, body, contentType){
-  contentType = contentType || "application/json";
-  body = body || null;
+  contentType = contentType || "application/json"; body = body || null;
   var payload={method:method,path:path,body:body,contentType:contentType,csrfToken:csrfToken,csrfParam:csrfParam,sessionId:sessionId};
-  var r=await fetch("/api/proxy",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify(payload)
-  });
+  var r=await fetch("/api/proxy",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
   if(!r.ok) throw new Error("HTTP "+r.status);
   return await r.json();
 }
 
-function extractCsrf(html){
-  if(!html)return;
-  var m=html.match(/name="csrf-token"\s+content="([^"]+)"/);
-  if(m)csrfToken=m[1];
-  if(!csrfToken){
-    m=html.match(/name="csrf_test_name"[^>]*value="([^"]+)"/);
-    if(m)csrfToken=m[1];
-  }
-  m=html.match(/name="csrf-param"\s+content="([^"]+)"/);
-  if(m)csrfParam=m[1];
-}
-
-function extractUser(html){
-  if(!html)return{};
-  var m=html.match(/userDataMixin\((\{.*?\})\)/s);
-  if(!m)return{};
-  try{return JSON.parse(m[1])}catch(e){return{}}
-}
-
-function extractVideos(html){
-  if(!html)return[];
-  var m=html.match(/videos:\s*(\[.*?\])/s);
-  if(!m)return[];
-  try{return JSON.parse(m[1])}catch(e){return[]}
-}
-
-function extractMissions(html){
-  if(!html)return[];
-  var m=html.match(/missions:\s*(\[.*?\])/s);
-  if(!m)return[];
-  try{return JSON.parse(m[1])}catch(e){return[]}
-}
-
-function extractWatchToken(html){
-  if(!html)return null;
-  var m=html.match(/watchToken:\s*'([^']+)'/);
-  return m?m[1]:null;
-}
-
+function extractCsrf(html){if(!html)return;var m=html.match(/name="csrf-token"\s+content="([^"]+)"/);if(m)csrfToken=m[1];if(!csrfToken){m=html.match(/name="csrf_test_name"[^>]*value="([^"]+)"/);if(m)csrfToken=m[1]}m=html.match(/name="csrf-param"\s+content="([^"]+)"/);if(m)csrfParam=m[1]}
+function extractUser(html){if(!html)return{};var m=html.match(/userDataMixin\((\{.*?\})\)/s);if(!m)return{};try{return JSON.parse(m[1])}catch(e){return{}}}
+function extractVideos(html){if(!html)return[];var m=html.match(/videos:\s*(\[.*?\])/s);if(!m)return[];try{return JSON.parse(m[1])}catch(e){return[]}}
+function extractMissions(html){if(!html)return[];var m=html.match(/missions:\s*(\[.*?\])/s);if(!m)return[];try{return JSON.parse(m[1])}catch(e){return[]}}
+function extractWatchToken(html){if(!html)return null;var m=html.match(/watchToken:\s*'([^']+)'/);return m?m[1]:null}
 function sleep(ms){return new Promise(function(r){setTimeout(r,ms)})}
 
 async function iniciar(){
   var user=$("user").value.trim();
   var pass=$("pass").value.trim();
   if(!user||!pass){alert("Preencha usuario e senha!");return}
-
   var acao=$("acao").value;
   var categoria=$("categoria").value;
-
   running=true;stopFlag=false;
-  sessionId = "s_" + Math.random().toString(36).substring(2, 10);
+  sessionId="s_"+Math.random().toString(36).substring(2,10);
   $("btnStart").disabled=true;
   show("btnStop");show("statsSection");show("progressSection");show("logSection");
   $("log").innerHTML="";
@@ -667,7 +459,6 @@ async function iniciar(){
   try{
     addLog("Iniciando autenticacao...","info");
     setProgress(5,"Fazendo login...");
-
     var r=await api("GET","/login");
     if(!r.success){addLog("Erro ao acessar pagina de login: "+(r.error||""),"err");return fin()}
     extractCsrf(r.html);
@@ -680,11 +471,8 @@ async function iniciar(){
 
     var loginData;
     try{loginData=JSON.parse(r.body||"{}")}catch(e){
-      if(r.html && r.html.includes("dashboard")){
-        loginData={success:true,redirect:"/dashboard"};
-      }else{
-        addLog("Resposta inesperada do servidor","err");return fin();
-      }
+      if(r.html&&r.html.includes("dashboard")){loginData={success:true,redirect:"/dashboard"}}
+      else{addLog("Resposta inesperada do servidor","err");return fin()}
     }
     if(!loginData.success){addLog("Login falhou: "+(loginData.message||"credenciais invalidas"),"err");return fin()}
 
@@ -697,7 +485,6 @@ async function iniciar(){
     var userData=extractUser(r.html);
     var videos=extractVideos(r.html);
     var missions=extractMissions(r.html);
-
     addLog("TC: "+(userData.tc||0)+" | BP: "+(userData.bp||0)+" | Nivel: "+(userData.level||1)+" | XP: "+(userData.xp||0),"info");
 
     if(acao==="status"){
@@ -705,56 +492,35 @@ async function iniciar(){
       addLog("E-mail: "+(userData.email||"N/A"),"info");
       addLog("Membership: "+(userData.membershipDisplay||"Normal"),"info");
       addLog("Videos hoje: "+(userData.videosWatchedToday||0),"info");
-      setProgress(100,"Status carregado");
-      return fin();
+      setProgress(100,"Status carregado");return fin();
     }
 
     if(acao==="completo"||acao==="checkin"){
       if(stopFlag)return fin();
       addLog("--- CHECK-IN DIARIO ---","info");
       setProgress(15,"Verificando check-in...");
-
       r=await api("GET","/checkin/status");
-      var checkinData;
-      try{checkinData=JSON.parse(r.body||"{}")}catch(e){checkinData={}}
-
-      if(checkinData.has_checked_in_today){
-        addLog("Check-in ja realizado. Streak: "+(checkinData.current_streak||0)+" dias","warn");
-      }else{
+      var checkinData;try{checkinData=JSON.parse(r.body||"{}")}catch(e){checkinData={}}
+      if(checkinData.has_checked_in_today){addLog("Check-in ja realizado. Streak: "+(checkinData.current_streak||0)+" dias","warn")}
+      else{
         r=await api("POST","/checkin/daily","","application/x-www-form-urlencoded");
-        var cData;
-        try{cData=JSON.parse(r.body||"{}")}catch(e){cData={}}
-        if(cData.success){
-          var rw=cData.rewards||{};
-          addLog("Check-in realizado! Streak: "+(cData.streak||1)+" dias","ok");
-          addLog("Recompensas: +"+(rw.tc||0)+" TC | +"+(rw.bp||0)+" BP | +"+(rw.xp||0)+" XP","ok");
-          tcTotal+=parseInt(rw.tc||0);bpTotal+=parseInt(rw.bp||0);xpTotal+=parseInt(rw.xp||0);
-          updateStats();
-        }else{
-          addLog("Falha no check-in: "+(cData.message||"erro"),"err");
-        }
+        var cData;try{cData=JSON.parse(r.body||"{}")}catch(e){cData={}}
+        if(cData.success){var rw=cData.rewards||{};addLog("Check-in realizado! Streak: "+(cData.streak||1)+" dias","ok");addLog("Recompensas: +"+(rw.tc||0)+" TC | +"+(rw.bp||0)+" BP | +"+(rw.xp||0)+" XP","ok");tcTotal+=parseInt(rw.tc||0);bpTotal+=parseInt(rw.bp||0);xpTotal+=parseInt(rw.xp||0);updateStats()}
+        else{addLog("Falha no check-in: "+(cData.message||"erro"),"err")}
       }
     }
 
     if(acao==="completo"||acao==="missoes"){
       if(stopFlag)return fin();
-      addLog("--- MISSOES DIARIAS ---","info");
-      setProgress(20,"Verificando missoes...");
-
+      addLog("--- MISSOES DIARIAS ---","info");setProgress(20,"Verificando missoes...");
       for(var mi=0;mi<missions.length;mi++){
-        var m=missions[mi];
-        if(stopFlag)break;
+        var m=missions[mi];if(stopFlag)break;
         if(m.is_claimed){addLog("[JA RESGATADA] "+m.title,"warn");continue}
-        if(!m.is_completed){
-          var pct2=m.target?Math.round(m.progress/m.target*100):0;
-          addLog("[PENDENTE "+pct2+"%] "+m.title,"info");continue;
-        }
+        if(!m.is_completed){var pct2=m.target?Math.round(m.progress/m.target*100):0;addLog("[PENDENTE "+pct2+"%] "+m.title,"info");continue}
         addLog("Resgatando: "+m.title+"...","prog");
         r=await api("POST","/missions/claim",JSON.stringify({mission_id:m.id}),"application/json");
-        var mData;
-        try{mData=JSON.parse(r.body||"{}")}catch(e){mData={}}
-        if(mData.success){addLog("Missao resgatada: "+m.title,"ok")}
-        else{addLog("Falha: "+(mData.message||"erro"),"err")}
+        var mData;try{mData=JSON.parse(r.body||"{}")}catch(e){mData={}}
+        if(mData.success){addLog("Missao resgatada: "+m.title,"ok")}else{addLog("Falha: "+(mData.message||"erro"),"err")}
         await sleep(1000);
       }
     }
@@ -762,69 +528,45 @@ async function iniciar(){
     if(acao==="completo"||acao==="videos"){
       if(stopFlag)return fin();
       addLog("--- ASSISTIR VIDEOS ---","info");
-
       var lista=videos;
       if(categoria)lista=lista.filter(function(v){return v.category===categoria});
-
-      lista=lista.slice(0,80);
-      videosTotal=lista.length;
-      updateStats();
-
-      addLog("Total de videos: "+videosTotal,"info");
-      show("videoProgress");
+      lista=lista.slice(0,80);videosTotal=lista.length;updateStats();
+      addLog("Total de videos: "+videosTotal,"info");show("videoProgress");
 
       for(var i=0;i<lista.length;i++){
         if(stopFlag)break;
         var v=lista[i];
-        var vid=v.id, titulo=v.title||"Sem titulo", dur=parseInt(v.duration||60);
-        var reward=parseInt(v.reward||0), bp=parseInt(v.bp||0);
+        var vid=v.id,titulo=v.title||"Sem titulo",dur=parseInt(v.duration||60);
+        var reward=parseInt(v.reward||0),bp=parseInt(v.bp||0);
         var catName={"orange":"Prioritario","blue":"Normal","green":"Mini"}[v.category]||v.category;
         var catColor=v.category==="orange"?"orange":v.category==="blue"?"blue":"green";
-
         var overallPct=Math.round(25+((i)/videosTotal)*75);
-        setProgress(overallPct,'<span style="color:var(--text)">[' + (i+1) + '/' + videosTotal + ']</span> <span style="color:var(--' + catColor + ')">[' + catName + ']</span> ' + titulo);
-        addLog("[" + (i+1) + "/" + videosTotal + "] [" + catName + "] " + titulo + " - " + dur + "s, +" + reward + " TC","info");
+        setProgress(overallPct,'<span style="color:var(--text)">['+(i+1)+'/'+videosTotal+']</span> <span style="color:var(--'+catColor+')">['+catName+']</span> '+titulo);
+        addLog("["+(i+1)+"/"+videosTotal+"] ["+catName+"] "+titulo+" - "+dur+"s, +"+reward+" TC","info");
 
         r=await api("GET","/watch/"+vid);
         if(!r.success){addLog("Erro ao acessar video "+vid,"err");continue}
-        extractCsrf(r.html);
-        var wt=extractWatchToken(r.html);
+        extractCsrf(r.html);var wt=extractWatchToken(r.html);
         if(!wt){addLog("watchToken nao encontrado","err");continue}
         addLog("watchToken: "+wt.substring(0,16)+"...","info");
 
         setVideoProgress(0,0,dur,titulo,"+"+reward+" TC, +"+bp+" BP");
-        for(var s2=1;s2<=dur;s2++){
-          if(stopFlag)break;
-          var interval=950+Math.floor(Math.random()*201);
-          await sleep(interval);
-          var pct3=Math.round((s2/dur)*100);
-          setVideoProgress(pct3,s2,dur);
-        }
+        for(var s2=1;s2<=dur;s2++){if(stopFlag)break;var interval=950+Math.floor(Math.random()*201);await sleep(interval);setVideoProgress(Math.round((s2/dur)*100),s2,dur)}
         if(stopFlag)break;
 
         addLog("Resgatando recompensa...","prog");
         var claimBody="campaign_id="+vid+"&watch_token="+wt;
         r=await api("POST","/watch/claim-reward",claimBody,"application/x-www-form-urlencoded");
-        var claimData;
-        try{claimData=JSON.parse(r.body||"{}")}catch(e){claimData={}}
-
+        var claimData;try{claimData=JSON.parse(r.body||"{}")}catch(e){claimData={}}
         if(claimData.success){
-          var rw2=claimData.rewards||{};
-          var tc=parseInt(rw2.tc||reward),bpR=parseInt(rw2.bp||bp),xp=parseInt(rw2.xp||0);
-          tcTotal+=tc;bpTotal+=bpR;xpTotal+=xp;videosFeitos++;
-          updateStats();
+          var rw2=claimData.rewards||{};var tc=parseInt(rw2.tc||reward),bpR=parseInt(rw2.bp||bp),xp=parseInt(rw2.xp||0);
+          tcTotal+=tc;bpTotal+=bpR;xpTotal+=xp;videosFeitos++;updateStats();
           addLog("Recompensa: +"+tc+" TC | +"+bpR+" BP | +"+xp+" XP","ok");
           if(claimData.level_up)addLog("LEVEL UP! Nivel "+(rw2.new_level)+"!","ok");
           if(claimData.first_video_bonus)addLog("Bonus primeiro video! +"+(rw2.tc_bonus||50)+" TC extra","ok");
-        }else{
-          addLog("Falha: "+(claimData.message||"erro"),"err");
-        }
+        }else{addLog("Falha: "+(claimData.message||"erro"),"err")}
 
-        if(i<lista.length-1&&!stopFlag){
-          var pausa=4+Math.random()*3;
-          addLog("Aguardando "+pausa.toFixed(1)+"s...","prog");
-          await sleep(pausa*1000);
-        }
+        if(i<lista.length-1&&!stopFlag){var pausa=4+Math.random()*3;addLog("Aguardando "+pausa.toFixed(1)+"s...","prog");await sleep(pausa*1000)}
       }
       hide("videoProgress");
     }
@@ -832,42 +574,22 @@ async function iniciar(){
     addLog("--- RELATORIO ---","info");
     addLog("Videos: "+videosFeitos+"/"+videosTotal+" | TC: +"+tcTotal+" | BP: +"+bpTotal+" | XP: +"+xpTotal,"ok");
     setProgress(100,"Concluido!");
-
-  }catch(e){
-    addLog("Erro inesperado: "+e.message,"err");
-  }
+  }catch(e){addLog("Erro inesperado: "+e.message,"err")}
   fin();
 }
 
-function fin(){
-  running=false;
-  $("btnStart").disabled=false;
-  $("btnStart").textContent="Iniciar Novamente";
-  hide("btnStop");
-}
-
-function parar(){
-  stopFlag=true;
-  addLog("Parando bot...","warn");
-}
+function fin(){running=false;$("btnStart").disabled=false;$("btnStart").textContent="Iniciar Novamente";hide("btnStop")}
+function parar(){stopFlag=true;addLog("Parando bot...","warn")}
 
 // ═══════════════════════════════════════════
-// INICIALIZACAO
+// INIT
 // ═══════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', function() {
-  // Gerar ymid de 3 digitos
   generatedYmid = getOrCreateYmid();
   document.getElementById('ymidValue').textContent = generatedYmid;
-  console.log('[INIT] YMID gerado: ' + generatedYmid);
-
-  // Configurar interceptors e carregar Monetag
   setupInterceptors();
   loadMonetag();
-
-  // Verificar stats imediatamente
   checkApiStats();
-
-  // Verificar a cada 5 segundos
   checkTimer = setInterval(checkApiStats, CHECK_INTERVAL);
 });
 </script>
