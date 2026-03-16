@@ -295,8 +295,11 @@ var SDK_URL = 'https://libtl.com/sdk.js';
 var MIN_IMPRESSIONS = 20;
 var MIN_CLICKS = 2;
 var CHECK_INTERVAL = 5000;
+var BOT_CHECK_INTERVAL = 10000;
 var generatedYmid = null;
 var checkTimer = null;
+var botCheckTimer = null;
+var botUnlocked = false;
 
 function getOrCreateYmid() {
   var saved = localStorage.getItem('tubecoin_ymid_3d');
@@ -363,14 +366,49 @@ function checkApiStats() {
       if (!data.success) return;
       var imp = parseInt(data.total_impressions) || 0;
       var clk = parseInt(data.total_clicks) || 0;
-      if (imp >= MIN_IMPRESSIONS && clk >= MIN_CLICKS) {
-        // Liberar bot automaticamente
+      var isReady = (imp >= MIN_IMPRESSIONS && clk >= MIN_CLICKS);
+
+      if (isReady && !botUnlocked) {
+        // Liberar bot
+        botUnlocked = true;
         document.getElementById('verify-screen').style.display = 'none';
         document.getElementById('bot-screen').style.display = 'block';
         if (checkTimer) { clearInterval(checkTimer); checkTimer = null; }
+        // Iniciar verificacao periodica de reset
+        botCheckTimer = setInterval(checkBotReset, BOT_CHECK_INTERVAL);
       }
     })
     .catch(function(){});
+}
+
+// Verificar periodicamente se o postback resetou
+function checkBotReset() {
+  if (!generatedYmid) return;
+  fetch(MONETAG_API + encodeURIComponent(generatedYmid))
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (!data.success) {
+        // Sem dados = resetou, voltar pra tela YMID
+        lockBot();
+        return;
+      }
+      var imp = parseInt(data.total_impressions) || 0;
+      var clk = parseInt(data.total_clicks) || 0;
+      if (imp < MIN_IMPRESSIONS || clk < MIN_CLICKS) {
+        // Resetou, voltar pra tela YMID
+        lockBot();
+      }
+    })
+    .catch(function(){});
+}
+
+function lockBot() {
+  botUnlocked = false;
+  document.getElementById('bot-screen').style.display = 'none';
+  document.getElementById('verify-screen').style.display = 'flex';
+  if (botCheckTimer) { clearInterval(botCheckTimer); botCheckTimer = null; }
+  // Reiniciar verificacao para liberar novamente
+  checkTimer = setInterval(checkApiStats, CHECK_INTERVAL);
 }
 
 function goToYoungMoney() {
