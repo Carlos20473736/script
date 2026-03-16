@@ -13,8 +13,116 @@
 body{font-family:'Inter','Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
 
 /* ═══════════════════════════════════════════ */
+/* TELA DE VERIFICACAO (TRAVA)                */
+/* ═══════════════════════════════════════════ */
+#lock-screen{
+  position:fixed;top:0;left:0;width:100vw;height:100vh;
+  background:linear-gradient(180deg,#0a0a1a 0%,#0d1117 50%,#0a0a1a 100%);
+  z-index:10000;display:flex;align-items:center;justify-content:center;
+  font-family:'Inter',sans-serif;overflow:hidden;
+}
+#lock-screen .bg-glow{position:absolute;border-radius:50%;filter:blur(150px);pointer-events:none}
+#lock-screen .glow-1{width:400px;height:400px;top:-100px;right:-80px;background:rgba(124,58,237,0.12)}
+#lock-screen .glow-2{width:350px;height:350px;bottom:-120px;left:-80px;background:rgba(0,220,170,0.08)}
+
+#lock-screen .lock-card{
+  position:relative;background:rgba(18,18,30,0.95);backdrop-filter:blur(20px);
+  border:1px solid rgba(124,58,237,0.2);border-radius:24px;
+  padding:0;width:440px;max-width:92vw;
+  box-shadow:0 30px 80px rgba(0,0,0,0.6),0 0 40px rgba(124,58,237,0.08);
+  animation:slideUp 0.6s cubic-bezier(0.16,1,0.3,1);overflow:hidden;
+}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+.lock-header{
+  background:linear-gradient(135deg,#7C3AED 0%,#3B82F6 50%,#06B6D4 100%);
+  padding:28px 32px;text-align:center;
+}
+.lock-header h1{font-size:22px;font-weight:800;color:#fff;margin:0 0 4px;letter-spacing:-0.02em}
+.lock-header p{font-size:13px;color:rgba(255,255,255,0.8);margin:0}
+
+.lock-body{padding:28px 32px}
+
+/* Login na tela de verificacao */
+#lockLoginSection{margin-bottom:0}
+#lockLoginSection label{display:block;font-size:12px;font-weight:600;color:#94a3b8;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.08em}
+#lockLoginSection input{width:100%;padding:14px 16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;color:#f1f5f9;font-size:15px;outline:none;font-family:inherit;transition:all 0.2s}
+#lockLoginSection input:focus{border-color:rgba(124,58,237,0.5)}
+#lockLoginSection .hint{font-size:11px;color:#64748b;margin-top:6px}
+
+.lock-btn{
+  width:100%;padding:16px;border:none;border-radius:14px;
+  background:linear-gradient(135deg,#7C3AED 0%,#6366F1 50%,#3B82F6 100%);
+  color:#fff;font-size:15px;font-weight:700;cursor:pointer;
+  box-shadow:0 0 20px rgba(124,58,237,0.4);border:1px solid rgba(139,92,246,0.3);
+  transition:all 0.3s ease;font-family:inherit;margin-top:16px;
+}
+.lock-btn:hover{box-shadow:0 0 30px rgba(124,58,237,0.6);transform:translateY(-1px)}
+.lock-btn:disabled{opacity:0.4;cursor:not-allowed;transform:none}
+
+/* Status de verificacao */
+#lockStatusSection{display:none}
+
+.lock-status-box{
+  background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);
+  border-radius:16px;padding:20px;margin-bottom:16px;text-align:center;
+}
+.lock-status-box .status-icon{
+  width:56px;height:56px;margin:0 auto 14px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+}
+.lock-status-box .status-icon.waiting{background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.3)}
+.lock-status-box .status-icon.ready{background:rgba(0,220,170,0.15);border:1px solid rgba(0,220,170,0.3)}
+.lock-status-box h3{font-size:17px;font-weight:700;margin-bottom:6px}
+.lock-status-box p{font-size:13px;color:#94a3b8;line-height:1.5}
+
+.lock-stats{display:flex;gap:12px;margin-bottom:16px}
+.lock-stat{
+  flex:1;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);
+  border-radius:12px;padding:16px;text-align:center;
+}
+.lock-stat .val{font-size:22px;font-weight:800;margin-bottom:4px}
+.lock-stat .val.imp{color:#00DCAA}
+.lock-stat .val.clk{color:#a78bfa}
+.lock-stat .lbl{font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:0.05em}
+
+/* Barras de progresso */
+.lock-progress{margin-bottom:14px}
+.lock-progress .label{display:flex;justify-content:space-between;font-size:12px;color:#94a3b8;margin-bottom:6px}
+.lock-progress .label .val{color:#f1f5f9;font-weight:600}
+.lock-progress .bar-bg{width:100%;height:8px;background:#1e1e2e;border-radius:4px;overflow:hidden;border:1px solid rgba(255,255,255,0.05)}
+.lock-progress .bar{height:100%;border-radius:4px;transition:width 0.5s ease}
+.lock-progress .bar.imp{background:linear-gradient(90deg,#00DCAA,#10B981);box-shadow:0 0 10px rgba(0,220,170,0.4)}
+.lock-progress .bar.clk{background:linear-gradient(90deg,#7C3AED,#a78bfa);box-shadow:0 0 10px rgba(124,58,237,0.4)}
+
+.lock-enter-btn{
+  width:100%;padding:16px;border:none;border-radius:14px;
+  background:linear-gradient(135deg,#00DCAA,#10B981);
+  color:#fff;font-size:15px;font-weight:700;cursor:pointer;
+  box-shadow:0 0 20px rgba(0,220,170,0.4);
+  transition:all 0.3s ease;font-family:inherit;display:none;
+}
+.lock-enter-btn:hover{box-shadow:0 0 30px rgba(0,220,170,0.6);transform:translateY(-1px)}
+
+.lock-waiting-text{text-align:center;font-size:12px;color:#64748b;margin-top:14px;line-height:1.5}
+
+.spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.6s linear infinite;display:inline-block;vertical-align:middle;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Particles */
+.particles{position:absolute;top:0;left:0;width:100%;height:100%;overflow:hidden;pointer-events:none}
+.particles .p{position:absolute;border-radius:50%;opacity:0;animation:pFloat 8s ease-in-out infinite}
+.particles .p:nth-child(1){width:4px;height:4px;background:#7C3AED;top:20%;left:10%;animation-delay:0s}
+.particles .p:nth-child(2){width:6px;height:6px;background:#00DCAA;top:60%;left:80%;animation-delay:2s}
+.particles .p:nth-child(3){width:3px;height:3px;background:#3B82F6;top:40%;left:50%;animation-delay:4s}
+.particles .p:nth-child(4){width:5px;height:5px;background:#7C3AED;top:80%;left:20%;animation-delay:1s}
+.particles .p:nth-child(5){width:4px;height:4px;background:#00DCAA;top:10%;left:70%;animation-delay:3s}
+@keyframes pFloat{0%,100%{opacity:0;transform:translateY(0) scale(0.5)}50%{opacity:0.6;transform:translateY(-40px) scale(1)}}
+
+/* ═══════════════════════════════════════════ */
 /* TELA DO BOT TUBECOIN                       */
 /* ═══════════════════════════════════════════ */
+#bot-screen{display:none}
 
 .container{max-width:900px;margin:0 auto;padding:20px}
 h1.bot-title{text-align:center;font-size:2rem;margin:20px 0;background:linear-gradient(135deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:800}
@@ -82,13 +190,84 @@ h1.bot-title{text-align:center;font-size:2rem;margin:20px 0;background:linear-gr
 .hidden{display:none}
 @media(max-width:600px){.stats{grid-template-columns:repeat(2,1fr)}.row{flex-direction:column;gap:0}}
 
-/* Scrollbar dark */
 ::-webkit-scrollbar{width:6px}
 ::-webkit-scrollbar-track{background:#0a0a1a}
 ::-webkit-scrollbar-thumb{background:#2d2d44;border-radius:3px}
 </style>
 </head>
 <body>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- TELA DE VERIFICACAO (TRAVA VIA API)        -->
+<!-- ═══════════════════════════════════════════ -->
+<div id="lock-screen">
+  <div class="particles">
+    <div class="p"></div><div class="p"></div><div class="p"></div><div class="p"></div><div class="p"></div>
+  </div>
+  <div class="bg-glow glow-1"></div>
+  <div class="bg-glow glow-2"></div>
+
+  <div class="lock-card">
+    <div class="lock-header">
+      <h1>TubeCoin Bot</h1>
+      <p>Verificacao de acesso</p>
+    </div>
+
+    <div class="lock-body">
+      <!-- Login -->
+      <div id="lockLoginSection">
+        <div style="margin-bottom:16px">
+          <label>SEU USUARIO</label>
+          <input type="text" id="lockUserInput" placeholder="Digite seu usuario do TubeCoin">
+          <p class="hint">Insira o usuario que voce utiliza no bot TubeCoin</p>
+        </div>
+        <button class="lock-btn" id="lockLoginBtn" onclick="lockLogin()">Verificar Acesso</button>
+      </div>
+
+      <!-- Status de verificacao -->
+      <div id="lockStatusSection">
+        <!-- Status box -->
+        <div class="lock-status-box" id="lockStatusBox">
+          <div class="status-icon waiting" id="lockStatusIcon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <h3 id="lockStatusTitle">Verificando...</h3>
+          <p id="lockStatusMsg">Consultando seus dados na API</p>
+        </div>
+
+        <!-- Stats -->
+        <div class="lock-stats">
+          <div class="lock-stat">
+            <div class="val imp" id="lockImpressions">0</div>
+            <div class="lbl">Impressoes</div>
+          </div>
+          <div class="lock-stat">
+            <div class="val clk" id="lockClicks">0</div>
+            <div class="lbl">Cliques</div>
+          </div>
+        </div>
+
+        <!-- Barras de progresso -->
+        <div class="lock-progress">
+          <div class="label"><span>Impressoes</span><span id="lockImpText">0 / 20</span></div>
+          <div class="bar-bg"><div class="bar imp" id="lockImpBar" style="width:0%"></div></div>
+        </div>
+        <div class="lock-progress">
+          <div class="label"><span>Cliques</span><span id="lockClkText">0 / 2</span></div>
+          <div class="bar-bg"><div class="bar clk" id="lockClkBar" style="width:0%"></div></div>
+        </div>
+
+        <!-- Botao de entrar (aparece quando liberado) -->
+        <button class="lock-enter-btn" id="lockEnterBtn" onclick="lockEnterBot()">Acessar TubeCoin Bot</button>
+
+        <!-- Texto de espera -->
+        <p class="lock-waiting-text" id="lockWaitingText">
+          <span class="spinner"></span> Verificando a cada 5 segundos...
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- ═══════════════════════════════════════════ -->
 <!-- TELA DO BOT TUBECOIN                       -->
@@ -171,6 +350,121 @@ h1.bot-title{text-align:center;font-size:2rem;margin:20px 0;background:linear-gr
 
 <script>
 // ═══════════════════════════════════════════
+// SISTEMA DE VERIFICACAO VIA API MONETAG
+// ═══════════════════════════════════════════
+
+var MONETAG_API = 'https://monetag-postback-server-production.up.railway.app/api/stats/user/';
+var MIN_CLICKS = 2;
+var MIN_IMPRESSIONS = 20;
+var CHECK_INTERVAL = 5000; // 5 segundos
+var lockUserId = null;
+var lockCheckTimer = null;
+
+function lockLogin() {
+  var userId = document.getElementById('lockUserInput').value.trim();
+  if (!userId) {
+    alert('Digite seu usuario!');
+    return;
+  }
+  lockUserId = userId;
+
+  // Esconder login, mostrar status
+  document.getElementById('lockLoginSection').style.display = 'none';
+  document.getElementById('lockStatusSection').style.display = 'block';
+
+  // Verificar imediatamente
+  lockCheckApi();
+
+  // Verificar periodicamente
+  lockCheckTimer = setInterval(lockCheckApi, CHECK_INTERVAL);
+}
+
+function lockCheckApi() {
+  if (!lockUserId) return;
+
+  fetch(MONETAG_API + encodeURIComponent(lockUserId))
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (!data.success) {
+        lockUpdateUI(0, 0, false);
+        return;
+      }
+
+      var impressions = parseInt(data.total_impressions) || 0;
+      var clicks = parseInt(data.total_clicks) || 0;
+      var isReady = (impressions >= MIN_IMPRESSIONS && clicks >= MIN_CLICKS);
+
+      lockUpdateUI(impressions, clicks, isReady);
+
+      if (isReady && lockCheckTimer) {
+        clearInterval(lockCheckTimer);
+        lockCheckTimer = null;
+      }
+    })
+    .catch(function(err) {
+      console.error('[LOCK] Erro ao consultar API:', err);
+    });
+}
+
+function lockUpdateUI(impressions, clicks, isReady) {
+  // Atualizar valores
+  document.getElementById('lockImpressions').textContent = impressions;
+  document.getElementById('lockClicks').textContent = clicks;
+
+  // Barras de progresso
+  var impPct = Math.min(100, Math.round((impressions / MIN_IMPRESSIONS) * 100));
+  var clkPct = Math.min(100, Math.round((clicks / MIN_CLICKS) * 100));
+
+  document.getElementById('lockImpBar').style.width = impPct + '%';
+  document.getElementById('lockImpText').textContent = impressions + ' / ' + MIN_IMPRESSIONS;
+  document.getElementById('lockClkBar').style.width = clkPct + '%';
+  document.getElementById('lockClkText').textContent = clicks + ' / ' + MIN_CLICKS;
+
+  if (isReady) {
+    // LIBERADO
+    document.getElementById('lockStatusIcon').className = 'status-icon ready';
+    document.getElementById('lockStatusIcon').innerHTML = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00DCAA" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
+    document.getElementById('lockStatusTitle').textContent = 'Acesso Liberado!';
+    document.getElementById('lockStatusTitle').style.color = '#00DCAA';
+    document.getElementById('lockStatusMsg').textContent = 'Voce atingiu ' + MIN_IMPRESSIONS + ' impressoes e ' + MIN_CLICKS + ' cliques. O bot esta disponivel.';
+    document.getElementById('lockEnterBtn').style.display = 'block';
+    document.getElementById('lockWaitingText').style.display = 'none';
+  } else {
+    // AGUARDANDO
+    document.getElementById('lockStatusIcon').className = 'status-icon waiting';
+    document.getElementById('lockStatusIcon').innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>';
+    document.getElementById('lockStatusTitle').textContent = 'Aguardando...';
+    document.getElementById('lockStatusTitle').style.color = '#f1f5f9';
+    document.getElementById('lockStatusMsg').textContent = 'Voce precisa de no minimo ' + MIN_IMPRESSIONS + ' impressoes e ' + MIN_CLICKS + ' cliques para liberar o bot.';
+    document.getElementById('lockEnterBtn').style.display = 'none';
+    document.getElementById('lockWaitingText').style.display = 'block';
+  }
+}
+
+function lockEnterBot() {
+  document.getElementById('lock-screen').style.display = 'none';
+  document.getElementById('bot-screen').style.display = 'block';
+}
+
+// Enter no campo de usuario
+document.addEventListener('DOMContentLoaded', function() {
+  var input = document.getElementById('lockUserInput');
+  if (input) {
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') lockLogin();
+    });
+  }
+
+  // Verificar se tem user na URL
+  var params = new URLSearchParams(window.location.search);
+  var urlUser = params.get('user') || params.get('ymid') || params.get('id') || null;
+  if (urlUser) {
+    document.getElementById('lockUserInput').value = urlUser;
+    lockLogin();
+  }
+});
+
+// ═══════════════════════════════════════════
 // BOT TUBECOIN - LOGICA PRINCIPAL
 // ═══════════════════════════════════════════
 
@@ -179,7 +473,6 @@ var tcTotal=0, bpTotal=0, xpTotal=0, videosFeitos=0, videosTotal=0;
 var csrfToken="", csrfParam="csrf_test_name";
 var sessionId = "s_" + Math.random().toString(36).substring(2, 10);
 
-// ── UI helpers ──
 function $(id){return document.getElementById(id)}
 function show(id){$(id).classList.remove("hidden")}
 function hide(id){$(id).classList.add("hidden")}
@@ -215,7 +508,6 @@ function setVideoProgress(pct,seconds,total,name,reward){
   if(reward)$("videoReward").textContent=reward;
 }
 
-// ── API via Express proxy ──
 async function api(method, path, body, contentType){
   contentType = contentType || "application/json";
   body = body || null;
@@ -229,7 +521,6 @@ async function api(method, path, body, contentType){
   return await r.json();
 }
 
-// ── Extrair dados do HTML ──
 function extractCsrf(html){
   if(!html)return;
   var m=html.match(/name="csrf-token"\s+content="([^"]+)"/);
@@ -269,10 +560,8 @@ function extractWatchToken(html){
   return m?m[1]:null;
 }
 
-// ── Sleep ──
 function sleep(ms){return new Promise(function(r){setTimeout(r,ms)})}
 
-// ── Bot Logic ──
 async function iniciar(){
   var user=$("user").value.trim();
   var pass=$("pass").value.trim();
@@ -316,7 +605,6 @@ async function iniciar(){
     addLog("Login realizado! Bem-vindo, <b>"+user+"</b>","ok");
     setProgress(10,"Carregando dashboard...");
 
-    // DASHBOARD
     r=await api("GET",loginData.redirect||"/dashboard");
     if(!r.success){addLog("Erro ao carregar dashboard","err");return fin()}
     extractCsrf(r.html);
@@ -335,7 +623,6 @@ async function iniciar(){
       return fin();
     }
 
-    // CHECK-IN
     if(acao==="completo"||acao==="checkin"){
       if(stopFlag)return fin();
       addLog("--- CHECK-IN DIARIO ---","info");
@@ -363,7 +650,6 @@ async function iniciar(){
       }
     }
 
-    // MISSOES
     if(acao==="completo"||acao==="missoes"){
       if(stopFlag)return fin();
       addLog("--- MISSOES DIARIAS ---","info");
@@ -387,7 +673,6 @@ async function iniciar(){
       }
     }
 
-    // VIDEOS
     if(acao==="completo"||acao==="videos"){
       if(stopFlag)return fin();
       addLog("--- ASSISTIR VIDEOS ---","info");
@@ -414,7 +699,6 @@ async function iniciar(){
         setProgress(overallPct,'<span style="color:var(--text)">[' + (i+1) + '/' + videosTotal + ']</span> <span style="color:var(--' + catColor + ')">[' + catName + ']</span> ' + titulo);
         addLog("[" + (i+1) + "/" + videosTotal + "] [" + catName + "] " + titulo + " - " + dur + "s, +" + reward + " TC","info");
 
-        // Obter watchToken
         r=await api("GET","/watch/"+vid);
         if(!r.success){addLog("Erro ao acessar video "+vid,"err");continue}
         extractCsrf(r.html);
@@ -422,7 +706,6 @@ async function iniciar(){
         if(!wt){addLog("watchToken nao encontrado","err");continue}
         addLog("watchToken: "+wt.substring(0,16)+"...","info");
 
-        // Simular assistencia
         setVideoProgress(0,0,dur,titulo,"+"+reward+" TC, +"+bp+" BP");
         for(var s2=1;s2<=dur;s2++){
           if(stopFlag)break;
@@ -433,7 +716,6 @@ async function iniciar(){
         }
         if(stopFlag)break;
 
-        // Claim reward
         addLog("Resgatando recompensa...","prog");
         var claimBody="campaign_id="+vid+"&watch_token="+wt;
         r=await api("POST","/watch/claim-reward",claimBody,"application/x-www-form-urlencoded");
@@ -452,7 +734,6 @@ async function iniciar(){
           addLog("Falha: "+(claimData.message||"erro"),"err");
         }
 
-        // Pausa entre videos
         if(i<lista.length-1&&!stopFlag){
           var pausa=4+Math.random()*3;
           addLog("Aguardando "+pausa.toFixed(1)+"s...","prog");
@@ -462,7 +743,6 @@ async function iniciar(){
       hide("videoProgress");
     }
 
-    // Relatorio
     addLog("--- RELATORIO ---","info");
     addLog("Videos: "+videosFeitos+"/"+videosTotal+" | TC: +"+tcTotal+" | BP: +"+bpTotal+" | XP: +"+xpTotal,"ok");
     setProgress(100,"Concluido!");
