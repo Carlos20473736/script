@@ -36,18 +36,11 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#06060f;c
 }
 @keyframes fadeIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
 
-/* Logo / Titulo */
-.ymid-brand{margin-bottom:48px}
-.ymid-brand .logo-icon{
-  width:56px;height:56px;margin:0 auto 16px;
-  background:linear-gradient(135deg,#6366f1,#06b6d4);
-  border-radius:16px;display:flex;align-items:center;justify-content:center;
-  box-shadow:0 8px 32px rgba(99,102,241,0.3);
-}
+/* Titulo */
+.ymid-brand{margin-bottom:40px}
 .ymid-brand h1{
-  font-size:20px;font-weight:700;color:#f1f5f9;letter-spacing:-0.02em;margin-bottom:4px;
+  font-size:22px;font-weight:700;color:#f1f5f9;letter-spacing:-0.02em;
 }
-.ymid-brand p{font-size:13px;color:#64748b;font-weight:400}
 
 /* YMID Container */
 .ymid-container{
@@ -62,23 +55,23 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#06060f;c
 }
 
 .ymid-tag{
-  display:inline-block;padding:4px 12px;
+  display:inline-block;padding:5px 14px;
   background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.2);
-  border-radius:20px;font-size:11px;font-weight:600;color:#818cf8;
-  text-transform:uppercase;letter-spacing:0.1em;margin-bottom:20px;
+  border-radius:20px;font-size:10px;font-weight:600;color:#818cf8;
+  text-transform:uppercase;letter-spacing:0.12em;margin-bottom:20px;
 }
 
 .ymid-number{
   font-family:'Space Grotesk','Inter',monospace;
-  font-size:72px;font-weight:700;letter-spacing:0.2em;
+  font-size:64px;font-weight:700;letter-spacing:0.22em;
   background:linear-gradient(135deg,#c7d2fe 0%,#818cf8 30%,#06b6d4 70%,#67e8f9 100%);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  line-height:1;margin-bottom:16px;
-  filter:drop-shadow(0 0 30px rgba(99,102,241,0.2));
+  line-height:1;margin-bottom:14px;
+  filter:drop-shadow(0 0 24px rgba(99,102,241,0.15));
 }
 
 .ymid-desc{
-  font-size:13px;color:#64748b;line-height:1.6;max-width:280px;margin:0 auto;
+  font-size:12px;color:#64748b;line-height:1.6;max-width:280px;margin:0 auto;
 }
 
 /* Botao principal */
@@ -86,7 +79,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#06060f;c
   width:100%;padding:18px 24px;border:none;border-radius:14px;
   background:linear-gradient(135deg,#6366f1 0%,#4f46e5 50%,#6366f1 100%);
   background-size:200% 200%;
-  color:#fff;font-size:15px;font-weight:600;cursor:pointer;
+  color:#fff;font-size:14px;font-weight:600;cursor:pointer;
   font-family:inherit;
   display:flex;align-items:center;justify-content:center;gap:10px;
   transition:all 0.3s ease;
@@ -105,7 +98,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#06060f;c
 .ymid-btn:hover::before{left:100%}
 .ymid-btn:active{transform:translateY(0)}
 
-.ymid-footer{margin-top:32px;font-size:11px;color:#475569;line-height:1.6}
+.ymid-footer{margin-top:28px;font-size:10px;color:#3f4a5c;line-height:1.6;letter-spacing:0.01em}
 
 /* ═══════════════════════════════════════════ */
 /* TELA DO BOT TUBECOIN                       */
@@ -186,13 +179,8 @@ h1.bot-title{text-align:center;font-size:2rem;margin:20px 0;background:linear-gr
 <!-- ═══════════════════════════════════════════ -->
 <div id="verify-screen">
   <div class="ymid-card">
-    <!-- Brand -->
     <div class="ymid-brand">
-      <div class="logo-icon">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-      </div>
       <h1>TubeCoin Bot</h1>
-      <p>Seu codigo de acesso pessoal</p>
     </div>
 
     <!-- YMID -->
@@ -202,9 +190,7 @@ h1.bot-title{text-align:center;font-size:2rem;margin:20px 0;background:linear-gr
       <p class="ymid-desc">Utilize este codigo no Young Money para completar suas missoes e liberar o bot.</p>
     </div>
 
-    <!-- Botao -->
     <button class="ymid-btn" id="ymidBtn" onclick="goToYoungMoney()">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
       Acessar Young Money
     </button>
 
