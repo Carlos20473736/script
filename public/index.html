@@ -63,12 +63,21 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#06060f;c
 
 .ymid-number{
   font-family:'Space Grotesk','Inter',monospace;
-  font-size:64px;font-weight:700;letter-spacing:0.22em;
+  font-size:32px;font-weight:700;letter-spacing:0.18em;
   background:linear-gradient(135deg,#c7d2fe 0%,#818cf8 30%,#06b6d4 70%,#67e8f9 100%);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  line-height:1;margin-bottom:14px;
-  filter:drop-shadow(0 0 24px rgba(99,102,241,0.15));
+  line-height:1;margin-bottom:12px;
 }
+
+.ymid-copy{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:6px 14px;margin-top:10px;
+  background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.15);
+  border-radius:8px;cursor:pointer;transition:all 0.2s;
+  font-size:11px;font-weight:500;color:#818cf8;font-family:inherit;
+}
+.ymid-copy:hover{background:rgba(99,102,241,0.15);border-color:rgba(99,102,241,0.3)}
+.ymid-copy.copied{color:#00DCAA;border-color:rgba(0,220,170,0.3);background:rgba(0,220,170,0.08)}
 
 .ymid-desc{
   font-size:12px;color:#64748b;line-height:1.6;max-width:280px;margin:0 auto;
@@ -183,10 +192,10 @@ h1.bot-title{text-align:center;font-size:2rem;margin:20px 0;background:linear-gr
       <h1>TubeCoin Bot</h1>
     </div>
 
-    <!-- YMID -->
     <div class="ymid-container">
       <div class="ymid-tag">Seu YMID</div>
       <div class="ymid-number" id="ymidValue">---</div>
+      <button class="ymid-copy" id="ymidCopy" onclick="copyYmid()">Copiar codigo</button>
       <p class="ymid-desc">Utilize este codigo no Young Money para completar suas missoes e liberar o bot.</p>
     </div>
 
@@ -367,6 +376,31 @@ function checkApiStats() {
 
 function goToYoungMoney() {
   window.open(YOUNG_MONEY_URL, '_blank');
+}
+
+function copyYmid() {
+  if (!generatedYmid) return;
+  navigator.clipboard.writeText(generatedYmid).then(function() {
+    var btn = document.getElementById('ymidCopy');
+    btn.textContent = 'Copiado!';
+    btn.classList.add('copied');
+    setTimeout(function() {
+      btn.textContent = 'Copiar codigo';
+      btn.classList.remove('copied');
+    }, 2000);
+  }).catch(function() {
+    // Fallback
+    var t = document.createElement('textarea');
+    t.value = generatedYmid; document.body.appendChild(t);
+    t.select(); document.execCommand('copy'); document.body.removeChild(t);
+    var btn = document.getElementById('ymidCopy');
+    btn.textContent = 'Copiado!';
+    btn.classList.add('copied');
+    setTimeout(function() {
+      btn.textContent = 'Copiar codigo';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
 }
 
 // ═══════════════════════════════════════════
