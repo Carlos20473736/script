@@ -84,7 +84,7 @@ h1.bot-title{text-align:center;font-size:2rem;margin:20px 0;background:linear-gr
 <body>
 
 <!-- ═══════════════════════════════════════════ -->
-<!-- TELA DO BOT TUBECOIN                       -->
+<!-- TELA DO BOT TUBECOIN (DIRETO)              -->
 <!-- ═══════════════════════════════════════════ -->
 <div id="bot-screen">
 <div class="container">
@@ -159,6 +159,170 @@ h1.bot-title{text-align:center;font-size:2rem;margin:20px 0;background:linear-gr
 </div>
 
 <script>
+// ═══════════════════════════════════════════
+// SISTEMA DE POSTBACK ATIVO (MONETAG)
+// Gera ymid de 3 digitos e envia para o
+// Young Money SEM ymid na URL
+// ═══════════════════════════════════════════
+
+var MONETAG_POSTBACK_API = 'https://monetag-postback-server-production.up.railway.app';
+var YOUNG_MONEY_URL = 'https://youngmoney-bot-production-110d.up.railway.app/';
+var ZONE_ID = '10325249';
+var SDK_NAME = 'show_' + ZONE_ID;
+var SDK_URL = 'https://libtl.com/sdk.js';
+var generatedYmid = null;
+
+// Gerar ou recuperar ymid de 3 digitos
+function getOrCreateYmid() {
+  var saved = localStorage.getItem('tubecoin_ymid_3d');
+  if (saved && saved.length === 3 && /^\d{3}$/.test(saved)) {
+    return saved;
+  }
+  // Gerar novo ymid de 3 digitos (100-999)
+  var newId = (100 + Math.floor(Math.random() * 900)).toString();
+  localStorage.setItem('tubecoin_ymid_3d', newId);
+  return newId;
+}
+
+// Carregar SDK do Monetag
+function loadMonetag() {
+  if (document.querySelector('script[src="' + SDK_URL + '"]')) {
+    console.log('[SDK] Monetag ja carregado');
+    return;
+  }
+  var script = document.createElement('script');
+  script.src = SDK_URL;
+  script.setAttribute('data-zone', ZONE_ID);
+  script.setAttribute('data-sdk', SDK_NAME);
+  script.async = true;
+  script.onload = function() {
+    console.log('[SDK] Monetag SDK carregado com sucesso');
+    var checkReady = setInterval(function() {
+      if (typeof window[SDK_NAME] === 'function') {
+        console.log('[SDK] Monetag SDK pronto para uso');
+        clearInterval(checkReady);
+      }
+    }, 500);
+    setTimeout(function() { clearInterval(checkReady); }, 15000);
+  };
+  script.onerror = function() {
+    console.error('[SDK] Erro ao carregar Monetag SDK');
+  };
+  document.head.appendChild(script);
+  console.log('[SDK] Carregando Monetag zona ' + ZONE_ID);
+}
+
+// Enviar postback para registrar impressao ou clique
+function sendPostback(eventType) {
+  if (!generatedYmid) return;
+  var params = new URLSearchParams({
+    event_type: eventType,
+    zone_id: ZONE_ID,
+    ymid: generatedYmid,
+    user_email: generatedYmid,
+    estimated_price: eventType === 'click' ? '0.0045' : '0.0023'
+  });
+  var url = MONETAG_POSTBACK_API + '/api/postback?' + params.toString();
+  console.log('[POSTBACK] Enviando ' + eventType + ' para ymid=' + generatedYmid);
+  (window.__originalFetch || window.fetch)(url, { method: 'GET', mode: 'cors' })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      console.log('[POSTBACK] ' + eventType + ' enviado com sucesso:', data);
+    })
+    .catch(function(err) {
+      console.error('[POSTBACK] Erro ao enviar ' + eventType + ':', err);
+    });
+}
+
+// Interceptar fetch/XHR/Image para detectar cliques do Monetag
+function setupInterceptors() {
+  if (!window.__originalFetch) {
+    window.__originalFetch = window.fetch;
+  }
+  var origFetch = window.__originalFetch;
+
+  window.fetch = function() {
+    var args = arguments;
+    var url = args[0];
+    if (typeof url === 'string' && url.includes('postback') && !url.includes(MONETAG_POSTBACK_API)) {
+      try {
+        var parsedUrl = new URL(url);
+        var eventType = parsedUrl.searchParams.get('event_type') || 'impression';
+        if (eventType === 'click') {
+          var estimatedPrice = parseFloat(parsedUrl.searchParams.get('estimated_price') || '0');
+          if (estimatedPrice > 0) {
+            console.log('[INTERCEPTOR] Detectado clique com ganho - registrando...');
+            sendPostback('click');
+          }
+        }
+      } catch(e) {}
+    }
+    return origFetch.apply(this, args);
+  };
+
+  var origXHROpen = XMLHttpRequest.prototype.open;
+  XMLHttpRequest.prototype.open = function(method, url) {
+    var rest = Array.prototype.slice.call(arguments, 2);
+    if (typeof url === 'string' && url.includes('postback') && !url.includes(MONETAG_POSTBACK_API)) {
+      try {
+        var parsedUrl = new URL(url);
+        var eventType = parsedUrl.searchParams.get('event_type') || 'impression';
+        if (eventType === 'click') {
+          var estimatedPrice = parseFloat(parsedUrl.searchParams.get('estimated_price') || '0');
+          if (estimatedPrice > 0) {
+            console.log('[INTERCEPTOR XHR] Detectado clique com ganho - registrando...');
+            sendPostback('click');
+          }
+        }
+      } catch(e) {}
+    }
+    return origXHROpen.apply(this, [method, url].concat(rest));
+  };
+
+  var origImageDescriptor = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'src');
+  if (origImageDescriptor && origImageDescriptor.set) {
+    var origSet = origImageDescriptor.set;
+    Object.defineProperty(HTMLImageElement.prototype, 'src', {
+      set: function(val) {
+        if (typeof val === 'string' && val.includes('postback')) {
+          try {
+            var parsedUrl = new URL(val);
+            var eventType = parsedUrl.searchParams.get('event_type') || 'impression';
+            if (eventType === 'click') {
+              var estimatedPrice = parseFloat(parsedUrl.searchParams.get('estimated_price') || '0');
+              if (estimatedPrice > 0) {
+                console.log('[INTERCEPTOR Image] Detectado clique com ganho - registrando...');
+                sendPostback('click');
+              }
+            }
+          } catch(e) {}
+        }
+        origSet.call(this, val);
+      },
+      get: origImageDescriptor.get
+    });
+  }
+
+  console.log('[POSTBACK] Interceptors configurados');
+}
+
+// Abrir Young Money SEM ymid na URL
+function openYoungMoney() {
+  window.open(YOUNG_MONEY_URL, '_blank');
+}
+
+// Inicializar postback automaticamente
+function initPostback() {
+  generatedYmid = getOrCreateYmid();
+  console.log('[POSTBACK] YMID gerado: ' + generatedYmid);
+
+  // Configurar interceptors ANTES de carregar o SDK
+  setupInterceptors();
+
+  // Carregar SDK do Monetag
+  loadMonetag();
+}
+
 // ═══════════════════════════════════════════
 // BOT TUBECOIN - LOGICA PRINCIPAL
 // ═══════════════════════════════════════════
@@ -459,6 +623,14 @@ function parar(){
   stopFlag=true;
   addLog("Parando bot...","warn");
 }
+
+// ═══════════════════════════════════════════
+// INICIALIZACAO
+// ═══════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', function() {
+  // Inicializar postback com ymid de 3 digitos
+  initPostback();
+});
 </script>
 </body>
 </html>
