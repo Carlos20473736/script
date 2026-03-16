@@ -114,7 +114,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#06060f;c
 /* ═══════════════════════════════════════════ */
 #bot-screen{display:none}
 
-:root{--bg:#06060f;--card:#0f0f1a;--border:#1e1e2e;--text:#e2e8f0;--muted:#64748b;--green:#00e676;--orange:#ff9100;--blue:#448aff;--red:#ff5252;--cyan:#06b6d4;--purple:#6366f1}
+:root{--bg:#06060f;--card:#0f0f1a;--border:#1e1e2e;--text:#e2e8f0;--muted:#64748b;--green:#00e676;--orange:#ff9100;--blue:#448aff;--red:#ff5252;--cyan:#06b6d4;--purple:#6366f1;--gold:#f5a623}
 
 .container{max-width:900px;margin:0 auto;padding:20px}
 h1.bot-title{text-align:center;font-size:2rem;margin:20px 0;background:linear-gradient(135deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:800}
@@ -136,6 +136,20 @@ h1.bot-title{text-align:center;font-size:2rem;margin:20px 0;background:linear-gr
 .btn-start:disabled{opacity:.4;cursor:not-allowed;transform:none}
 .btn-stop{background:var(--red);color:#fff;margin-top:10px}
 .btn-stop:hover{opacity:.85}
+
+/* Membership Card */
+.membership-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:20px;display:none}
+.membership-card.active{display:block}
+.membership-header{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.membership-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;font-size:.85rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.badge-golden{background:linear-gradient(135deg,#f5a623,#f7c948);color:#1a1a2e;box-shadow:0 2px 12px rgba(245,166,35,.3)}
+.badge-normal{background:var(--border);color:var(--muted)}
+.badge-pioneer{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff}
+.membership-info{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.membership-stat{background:var(--bg);border-radius:10px;padding:10px 14px;text-align:center}
+.membership-stat .val{font-size:1.1rem;font-weight:700;color:var(--gold)}
+.membership-stat .lbl{font-size:.7rem;color:var(--muted);margin-top:2px}
+.membership-stat.limit .val{color:var(--cyan)}
 
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
 .stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center}
@@ -172,9 +186,10 @@ h1.bot-title{text-align:center;font-size:2rem;margin:20px 0;background:linear-gr
 .log-warn{color:var(--orange)}
 .log-info{color:var(--blue)}
 .log-prog{color:var(--cyan)}
+.log-gold{color:var(--gold)}
 
 .hidden{display:none}
-@media(max-width:600px){.stats{grid-template-columns:repeat(2,1fr)}.row{flex-direction:column;gap:0}}
+@media(max-width:600px){.stats{grid-template-columns:repeat(2,1fr)}.row{flex-direction:column;gap:0}.membership-info{grid-template-columns:repeat(2,1fr)}}
 
 ::-webkit-scrollbar{width:6px}
 ::-webkit-scrollbar-track{background:#06060f}
@@ -247,6 +262,32 @@ h1.bot-title{text-align:center;font-size:2rem;margin:20px 0;background:linear-gr
 </div>
 <button class="btn btn-start" id="btnStart" onclick="iniciar()">Iniciar Bot</button>
 <button class="btn btn-stop hidden" id="btnStop" onclick="parar()">Parar Bot</button>
+</div>
+
+<!-- Membership Card -->
+<div class="membership-card" id="membershipCard">
+<div class="membership-header">
+<span class="membership-badge" id="membershipBadge">-</span>
+<span style="font-size:.85rem;color:var(--muted)" id="membershipExpiry"></span>
+</div>
+<div class="membership-info">
+<div class="membership-stat limit">
+<div class="val" id="mLimit">-</div>
+<div class="lbl">Limite Diario</div>
+</div>
+<div class="membership-stat">
+<div class="val" id="mWatched">-</div>
+<div class="lbl">Assistidos Hoje</div>
+</div>
+<div class="membership-stat">
+<div class="val" id="mRemaining">-</div>
+<div class="lbl">Restantes</div>
+</div>
+<div class="membership-stat">
+<div class="val" id="mBonus">-</div>
+<div class="lbl">Bonus TC</div>
+</div>
+</div>
 </div>
 
 <div class="stats hidden" id="statsSection">
@@ -441,13 +482,16 @@ function copyYmid() {
 }
 
 // ═══════════════════════════════════════════
-// BOT TUBECOIN
+// BOT TUBECOIN (com deteccao Golden VIP)
 // ═══════════════════════════════════════════
 
 var running = false, stopFlag = false;
 var tcTotal=0, bpTotal=0, xpTotal=0, videosFeitos=0, videosTotal=0;
 var csrfToken="", csrfParam="csrf_test_name";
 var sessionId = "s_" + Math.random().toString(36).substring(2, 10);
+
+// Limites por membership
+var MEMBERSHIP_LIMITS = { "GOLDEN": 120, "NORMAL": 80, "PIONEER": 80 };
 
 function $(id){return document.getElementById(id)}
 function show(id){$(id).classList.remove("hidden")}
@@ -457,8 +501,8 @@ function addLog(msg,tipo){
   tipo = tipo || "info";
   var el=$("log");
   var t=new Date().toLocaleTimeString("pt-BR");
-  var cls={"ok":"log-ok","err":"log-err","warn":"log-warn","info":"log-info","prog":"log-prog"}[tipo]||"log-info";
-  var prefix={"ok":"[OK]","err":"[ERRO]","warn":"[AVISO]","info":"[INFO]","prog":"[...]"}[tipo]||"[INFO]";
+  var cls={"ok":"log-ok","err":"log-err","warn":"log-warn","info":"log-info","prog":"log-prog","gold":"log-gold"}[tipo]||"log-info";
+  var prefix={"ok":"[OK]","err":"[ERRO]","warn":"[AVISO]","info":"[INFO]","prog":"[...]","gold":"[VIP]"}[tipo]||"[INFO]";
   el.innerHTML+='<div class="log-line"><span class="log-time">['+t+']</span> <span class="'+cls+'">'+prefix+'</span> '+msg+'</div>';
   el.scrollTop=el.scrollHeight;
 }
@@ -484,6 +528,46 @@ function setVideoProgress(pct,seconds,total,name,reward){
   if(reward)$("videoReward").textContent=reward;
 }
 
+// ── Membership UI ──
+function showMembershipCard(userData, dailyProgress){
+  var card=$("membershipCard");
+  card.classList.add("active");
+
+  var membership = String(userData.membership || "NORMAL").toUpperCase();
+  var isGolden = userData.isGolden === true || membership === "GOLDEN";
+  var earningsBonus = parseInt(userData.earningsBonus || 0);
+
+  // Badge
+  var badge=$("membershipBadge");
+  badge.textContent = isGolden ? "GOLDEN" : (membership === "PIONEER" ? "PIONEIRO" : "NORMAL");
+  badge.className = "membership-badge " + (isGolden ? "badge-golden" : (membership === "PIONEER" ? "badge-pioneer" : "badge-normal"));
+
+  // Expiry
+  var expiry=$("membershipExpiry");
+  if(userData.membershipExpiration && userData.membershipExpiration.has_membership){
+    var days = userData.membershipExpiration.days_remaining || 0;
+    if(userData.membershipExpiration.is_permanent){
+      expiry.textContent = "Permanente";
+    } else {
+      expiry.textContent = "Expira em " + days + " dia" + (days!==1?"s":"");
+    }
+  } else {
+    expiry.textContent = "";
+  }
+
+  // Limites
+  var videosLimit = dailyProgress ? parseInt(dailyProgress.videosLimit || 0) : (MEMBERSHIP_LIMITS[membership] || 80);
+  var videosToday = dailyProgress ? parseInt(dailyProgress.videosToday || 0) : parseInt(userData.videosWatchedToday || 0);
+  var remaining = Math.max(0, videosLimit - videosToday);
+
+  $("mLimit").textContent = videosLimit + " videos";
+  $("mWatched").textContent = videosToday;
+  $("mRemaining").textContent = remaining;
+  $("mBonus").textContent = earningsBonus > 0 ? ("+" + earningsBonus + "%") : "0%";
+
+  return { membership: membership, isGolden: isGolden, earningsBonus: earningsBonus, videosLimit: videosLimit, videosToday: videosToday, remaining: remaining };
+}
+
 async function api(method, path, body, contentType){
   contentType = contentType || "application/json"; body = body || null;
   var payload={method:method,path:path,body:body,contentType:contentType,csrfToken:csrfToken,csrfParam:csrfParam,sessionId:sessionId};
@@ -497,6 +581,15 @@ function extractUser(html){if(!html)return{};var m=html.match(/userDataMixin\((\
 function extractVideos(html){if(!html)return[];var m=html.match(/videos:\s*(\[.*?\])/s);if(!m)return[];try{return JSON.parse(m[1])}catch(e){return[]}}
 function extractMissions(html){if(!html)return[];var m=html.match(/missions:\s*(\[.*?\])/s);if(!m)return[];try{return JSON.parse(m[1])}catch(e){return[]}}
 function extractWatchToken(html){if(!html)return null;var m=html.match(/watchToken:\s*'([^']+)'/);return m?m[1]:null}
+
+// ── Extrair dailyProgress do dashboard ──
+function extractDailyProgress(html){
+  if(!html)return null;
+  var m=html.match(/dailyProgress:\s*(\{[^}]+\})/);
+  if(!m)return null;
+  try{return JSON.parse(m[1])}catch(e){return null}
+}
+
 function sleep(ms){return new Promise(function(r){setTimeout(r,ms)})}
 
 async function iniciar(){
@@ -542,13 +635,40 @@ async function iniciar(){
     var userData=extractUser(r.html);
     var videos=extractVideos(r.html);
     var missions=extractMissions(r.html);
+    var dailyProgress=extractDailyProgress(r.html);
+
     addLog("TC: "+(userData.tc||0)+" | BP: "+(userData.bp||0)+" | Nivel: "+(userData.level||1)+" | XP: "+(userData.xp||0),"info");
 
+    // ── DETECTAR MEMBERSHIP ──
+    var memberInfo = showMembershipCard(userData, dailyProgress);
+
+    if(memberInfo.isGolden){
+      addLog("=== GOLDEN VIP DETECTADO ===","gold");
+      addLog("Plano: <b style=\"color:#f5a623\">GOLDEN</b> | Bonus: +"+memberInfo.earningsBonus+"% TC | Limite: <b>"+memberInfo.videosLimit+"</b> videos/dia","gold");
+      if(userData.membershipExpiration && userData.membershipExpiration.days_remaining){
+        addLog("Expiracao: "+userData.membershipExpiration.days_remaining+" dias restantes ("+(userData.membershipExpiresAt||"")+")","gold");
+      }
+    } else {
+      addLog("Plano: "+memberInfo.membership+" | Limite: "+memberInfo.videosLimit+" videos/dia","info");
+    }
+
+    addLog("Progresso hoje: "+memberInfo.videosToday+"/"+memberInfo.videosLimit+" videos assistidos | Restam: "+memberInfo.remaining,"info");
+
     if(acao==="status"){
+      addLog("=== STATUS DA CONTA ===","info");
       addLog("Usuario: "+(userData.name||user),"info");
       addLog("E-mail: "+(userData.email||"N/A"),"info");
-      addLog("Membership: "+(userData.membershipDisplay||"Normal"),"info");
-      addLog("Videos hoje: "+(userData.videosWatchedToday||0),"info");
+      addLog("Membership: <b>"+(memberInfo.isGolden?"Golden VIP":(memberInfo.membership==="PIONEER"?"Pioneiro":"Normal"))+"</b>","info");
+      if(memberInfo.isGolden){
+        addLog("Bonus de ganhos: +"+memberInfo.earningsBonus+"%","gold");
+        addLog("Limite diario: "+memberInfo.videosLimit+" videos","gold");
+      }
+      addLog("Videos hoje: "+memberInfo.videosToday+"/"+memberInfo.videosLimit,"info");
+      if(dailyProgress){
+        addLog("Missoes: "+(dailyProgress.missionsCompleted||0)+"/"+(dailyProgress.missionsTotal||5),"info");
+        addLog("TC ganho hoje: "+(dailyProgress.tcEarnedToday||0),"info");
+      }
+      addLog("Saldo: "+(userData.tc||0)+" TC | "+(userData.bp||0)+" BP","info");
       setProgress(100,"Status carregado");return fin();
     }
 
@@ -585,51 +705,89 @@ async function iniciar(){
     if(acao==="completo"||acao==="videos"){
       if(stopFlag)return fin();
       addLog("--- ASSISTIR VIDEOS ---","info");
-      var lista=videos;
-      if(categoria)lista=lista.filter(function(v){return v.category===categoria});
-      lista=lista.slice(0,80);videosTotal=lista.length;updateStats();
-      addLog("Total de videos: "+videosTotal,"info");show("videoProgress");
 
-      for(var i=0;i<lista.length;i++){
-        if(stopFlag)break;
-        var v=lista[i];
-        var vid=v.id,titulo=v.title||"Sem titulo",dur=parseInt(v.duration||60);
-        var reward=parseInt(v.reward||0),bp=parseInt(v.bp||0);
-        var catName={"orange":"Prioritario","blue":"Normal","green":"Mini"}[v.category]||v.category;
-        var catColor=v.category==="orange"?"orange":v.category==="blue"?"blue":"green";
-        var overallPct=Math.round(25+((i)/videosTotal)*75);
-        setProgress(overallPct,'<span style="color:var(--text)">['+(i+1)+'/'+videosTotal+']</span> <span style="color:var(--'+catColor+')">['+catName+']</span> '+titulo);
-        addLog("["+(i+1)+"/"+videosTotal+"] ["+catName+"] "+titulo+" - "+dur+"s, +"+reward+" TC","info");
+      // ── DETECCAO DINAMICA DO LIMITE ──
+      var maxVideos = memberInfo.videosLimit;
+      var jaAssistidos = memberInfo.videosToday;
+      var videosRestantes = memberInfo.remaining;
 
-        r=await api("GET","/watch/"+vid);
-        if(!r.success){addLog("Erro ao acessar video "+vid,"err");continue}
-        extractCsrf(r.html);var wt=extractWatchToken(r.html);
-        if(!wt){addLog("watchToken nao encontrado","err");continue}
-        addLog("watchToken: "+wt.substring(0,16)+"...","info");
-
-        setVideoProgress(0,0,dur,titulo,"+"+reward+" TC, +"+bp+" BP");
-        for(var s2=1;s2<=dur;s2++){if(stopFlag)break;var interval=950+Math.floor(Math.random()*201);await sleep(interval);setVideoProgress(Math.round((s2/dur)*100),s2,dur)}
-        if(stopFlag)break;
-
-        addLog("Resgatando recompensa...","prog");
-        var claimBody="campaign_id="+vid+"&watch_token="+wt;
-        r=await api("POST","/watch/claim-reward",claimBody,"application/x-www-form-urlencoded");
-        var claimData;try{claimData=JSON.parse(r.body||"{}")}catch(e){claimData={}}
-        if(claimData.success){
-          var rw2=claimData.rewards||{};var tc=parseInt(rw2.tc||reward),bpR=parseInt(rw2.bp||bp),xp=parseInt(rw2.xp||0);
-          tcTotal+=tc;bpTotal+=bpR;xpTotal+=xp;videosFeitos++;updateStats();
-          addLog("Recompensa: +"+tc+" TC | +"+bpR+" BP | +"+xp+" XP","ok");
-          if(claimData.level_up)addLog("LEVEL UP! Nivel "+(rw2.new_level)+"!","ok");
-          if(claimData.first_video_bonus)addLog("Bonus primeiro video! +"+(rw2.tc_bonus||50)+" TC extra","ok");
-        }else{addLog("Falha: "+(claimData.message||"erro"),"err")}
-
-        if(i<lista.length-1&&!stopFlag){var pausa=4+Math.random()*3;addLog("Aguardando "+pausa.toFixed(1)+"s...","prog");await sleep(pausa*1000)}
+      if(memberInfo.isGolden){
+        addLog("<b style=\"color:#f5a623\">Golden VIP ativo!</b> Limite expandido: "+maxVideos+" videos/dia (+"+memberInfo.earningsBonus+"% bonus TC)","gold");
       }
-      hide("videoProgress");
+
+      if(videosRestantes <= 0){
+        addLog("Limite diario atingido! Ja assistiu "+jaAssistidos+"/"+maxVideos+" videos hoje.","warn");
+        addLog("Nao ha mais videos disponiveis para hoje.","warn");
+      } else {
+        addLog("Videos disponiveis para assistir: "+videosRestantes+" ("+jaAssistidos+"/"+maxVideos+" ja assistidos)","info");
+
+        var lista=videos;
+        if(categoria)lista=lista.filter(function(v){return v.category===categoria});
+
+        // Limitar ao numero de videos restantes (Golden=120, Normal=80)
+        lista=lista.slice(0, videosRestantes);
+        videosTotal=lista.length;updateStats();
+
+        addLog("Total de videos na fila: "+videosTotal+" (limite: "+maxVideos+")","info");
+        show("videoProgress");
+
+        for(var i=0;i<lista.length;i++){
+          if(stopFlag)break;
+          var v=lista[i];
+          var vid=v.id,titulo=v.title||"Sem titulo",dur=parseInt(v.duration||60);
+          var reward=parseInt(v.reward||0),bp=parseInt(v.bp||0);
+          var catName={"orange":"Prioritario","blue":"Normal","green":"Mini"}[v.category]||v.category;
+          var catColor=v.category==="orange"?"orange":v.category==="blue"?"blue":"green";
+
+          // Calcular bonus Golden
+          var bonusTC = memberInfo.isGolden ? Math.round(reward * memberInfo.earningsBonus / 100) : 0;
+          var estimatedReward = reward + bonusTC;
+
+          var overallPct=Math.round(25+((i)/videosTotal)*75);
+          setProgress(overallPct,'<span style="color:var(--text)">['+(i+1)+'/'+videosTotal+']</span> <span style="color:var(--'+catColor+')">['+catName+']</span> '+titulo);
+          addLog("["+(i+1)+"/"+videosTotal+"] ["+catName+"] "+titulo+" - "+dur+"s, +"+reward+" TC"+(bonusTC>0?' <span style="color:#f5a623">(+'+bonusTC+' bonus Golden)</span>':""),"info");
+
+          // Atualizar contagem na membership card
+          $("mWatched").textContent = jaAssistidos + (i+1);
+          $("mRemaining").textContent = Math.max(0, videosRestantes - (i+1));
+
+          r=await api("GET","/watch/"+vid);
+          if(!r.success){addLog("Erro ao acessar video "+vid,"err");continue}
+          extractCsrf(r.html);var wt=extractWatchToken(r.html);
+          if(!wt){addLog("watchToken nao encontrado","err");continue}
+          addLog("watchToken: "+wt.substring(0,16)+"...","info");
+
+          setVideoProgress(0,0,dur,titulo,"+"+estimatedReward+" TC, +"+bp+" BP");
+          for(var s2=1;s2<=dur;s2++){if(stopFlag)break;var interval=950+Math.floor(Math.random()*201);await sleep(interval);setVideoProgress(Math.round((s2/dur)*100),s2,dur)}
+          if(stopFlag)break;
+
+          addLog("Resgatando recompensa...","prog");
+          var claimBody="campaign_id="+vid+"&watch_token="+wt;
+          r=await api("POST","/watch/claim-reward",claimBody,"application/x-www-form-urlencoded");
+          var claimData;try{claimData=JSON.parse(r.body||"{}")}catch(e){claimData={}}
+          if(claimData.success){
+            var rw2=claimData.rewards||{};var tc=parseInt(rw2.tc||reward),bpR=parseInt(rw2.bp||bp),xp=parseInt(rw2.xp||0);
+            var tcBonus=parseInt(rw2.tc_bonus||0);
+            tcTotal+=tc;bpTotal+=bpR;xpTotal+=xp;videosFeitos++;updateStats();
+            var rewardMsg="Recompensa: +"+tc+" TC";
+            if(tcBonus>0) rewardMsg+=' <span style="color:#f5a623">(base: '+(rw2.tc_base||reward)+', bonus Golden: +'+tcBonus+')</span>';
+            rewardMsg+=" | +"+bpR+" BP | +"+xp+" XP";
+            addLog(rewardMsg,"ok");
+            if(claimData.level_up)addLog("LEVEL UP! Nivel "+(rw2.new_level)+"!","ok");
+            if(claimData.first_video_bonus)addLog("Bonus primeiro video! +"+(rw2.tc_bonus||50)+" TC extra","ok");
+          }else{addLog("Falha: "+(claimData.message||"erro"),"err")}
+
+          if(i<lista.length-1&&!stopFlag){var pausa=4+Math.random()*3;addLog("Aguardando "+pausa.toFixed(1)+"s...","prog");await sleep(pausa*1000)}
+        }
+        hide("videoProgress");
+      }
     }
 
     addLog("--- RELATORIO ---","info");
     addLog("Videos: "+videosFeitos+"/"+videosTotal+" | TC: +"+tcTotal+" | BP: +"+bpTotal+" | XP: +"+xpTotal,"ok");
+    if(memberInfo && memberInfo.isGolden){
+      addLog('<span style="color:#f5a623">Bonus Golden aplicado: +'+memberInfo.earningsBonus+'% em todos os ganhos de TC</span>',"gold");
+    }
     setProgress(100,"Concluido!");
   }catch(e){addLog("Erro inesperado: "+e.message,"err")}
   fin();
