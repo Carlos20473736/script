@@ -1,2453 +1,1778 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-    <title>Young Money - Minhas Tarefas</title>
-
-    <!-- Telegram Web App SDK - OFICIAL -->
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
-    <!-- VERIFICAÇÃO DO YMID NA URL -->
-    <script>
-    (function() {
-        'use strict';
-
-        function getUrlParam(param) {
-            var urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get(param);
-        }
-
-        // Aceitar ymid OU user_id na URL
-        var ymid = getUrlParam('ymid') || getUrlParam('user_id');
-        window.TELEGRAM_USER_ID = ymid;
-
-        function showLoginScreen() {
-            document.documentElement.innerHTML = '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Young Money</title><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:Inter,-apple-system,sans-serif;background:linear-gradient(135deg,#0a0e1a 0%,#0d1225 100%);color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}@keyframes pulse-glow{0%,100%{box-shadow:0 0 20px rgba(139,92,246,.3)}50%{box-shadow:0 0 40px rgba(139,92,246,.5)}}@keyframes fadeIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}.stars{position:fixed;top:0;left:0;width:100%;height:100%;background-image:radial-gradient(2px 2px at 20px 30px,rgba(255,255,255,.3),transparent),radial-gradient(2px 2px at 40px 70px,rgba(255,255,255,.2),transparent),radial-gradient(1px 1px at 90px 40px,rgba(255,255,255,.3),transparent),radial-gradient(2px 2px at 130px 80px,rgba(255,255,255,.2),transparent),radial-gradient(1px 1px at 160px 120px,rgba(255,255,255,.4),transparent);background-size:200px 200px;pointer-events:none}.card{background:rgba(15,20,35,.9);backdrop-filter:blur(20px);padding:3rem 2.5rem;border-radius:24px;text-align:center;max-width:90%;width:400px;border:1px solid rgba(139,92,246,.2);animation:fadeIn .5s ease-out,pulse-glow 3s ease-in-out infinite;position:relative}.icon{width:80px;height:80px;margin:0 auto 2rem;background:linear-gradient(135deg,rgba(139,92,246,.2),rgba(139,92,246,.1));border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid rgba(139,92,246,.3);animation:float 3s ease-in-out infinite}h1{font-size:1.75rem;font-weight:600;margin-bottom:.75rem;letter-spacing:-.5px}p{color:#64748b;font-size:.95rem;line-height:1.6;margin-bottom:1.5rem}input{width:100%;padding:14px 16px;background:rgba(255,255,255,.05);border:1px solid rgba(139,92,246,.3);border-radius:12px;color:#f1f5f9;font-size:1rem;outline:none;margin-bottom:1rem;text-align:center;transition:all .3s}input:focus{border-color:#8b5cf6;box-shadow:0 0 15px rgba(139,92,246,.3)}input::placeholder{color:#475569}button{width:100%;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,#8b5cf6,#a855f7);color:#fff;font-size:1rem;font-weight:700;cursor:pointer;box-shadow:0 4px 15px rgba(139,92,246,.4);transition:all .3s}button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(139,92,246,.6)}</style></head><body><div class="stars"></div><div class="card"><div class="icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="7" r="4" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><h1>Young Money</h1><p>Digite seu YMID para acessar</p><input type="text" id="ymidInput" placeholder="Digite seu YMID" autofocus /><button onclick="enterYmid()">ENTRAR</button></div><script>document.getElementById("ymidInput").addEventListener("keydown",function(e){if(e.key==="Enter")enterYmid()});function enterYmid(){var v=document.getElementById("ymidInput").value.trim();if(!v){alert("Digite seu YMID!");return}window.location.href=window.location.pathname+"?ymid="+encodeURIComponent(v)}<\/script></body></html>';
-        }
-
-        // Se não tem ymid, mostrar tela de login
-        if (!ymid || ymid.length === 0) {
-            showLoginScreen();
-        }
-    })();
-    </script>
-
-    <!-- PROTEÇÃO ANTI-INSPEÇÃO -->
-    <script>
-    (function(){
-        // Bloquear F12, Ctrl+Shift+I, Ctrl+U, clique direito
-        document.addEventListener('keydown',function(e){
-            if(e.keyCode===123||(e.ctrlKey&&e.shiftKey&&(e.keyCode===73||e.keyCode===74||e.keyCode===67))||(e.ctrlKey&&e.keyCode===85)){
-                e.preventDefault();return false;
-            }
-        },true);
-        document.addEventListener('contextmenu',function(e){e.preventDefault();return false;},true);
-        
-        // Detectar DevTools aberto
-        var d=false,t=160;
-        setInterval(function(){
-            if(window.outerWidth-window.innerWidth>t||window.outerHeight-window.innerHeight>t){
-                if(!d){d=true;document.body.innerHTML='';window.location.href='about:blank';}
-            }else{d=false;}
-        },1000);
-        
-        // Desabilitar console em produção
-        if(location.hostname!=='localhost'){
-            console.log=console.warn=console.error=console.info=console.debug=function(){};
-        }
-        
-        // Anti-tampering: detectar modificação de fetch/XHR
-        setInterval(function(){
-            if(!fetch.toString().includes('[native code]')){
-                document.body.innerHTML='';window.location.href='about:blank';
-            }
-        },5000);
-    })();
-    </script>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Rajdhani:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-
-    <style>
-        /* === RESET E CORREÇÕES GLOBAIS === */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html, body {
-            overflow-x: hidden;
-            max-width: 100vw;
-            width: 100%;
-            height: 100%;
-        }
-
-        :root {
-            --bg-primary: #0a0e1a;
-            --bg-secondary: #0d1225;
-            --text-primary: #ffffff;
-            --text-secondary: #a0aec0;
-            --purple-neon: #8b5cf6;
-            --cyan-neon: #00ddff;
-            --green-neon: #10b981;
-            --yellow-neon: #fbbf24;
-            --card-bg: rgba(20, 25, 45, 0.85);
-            --card-border: rgba(139, 92, 246, 0.4);
-            --orange-neon: #f97316;
-        }
-
-        /* ========================================
-           ESTILOS DA TELA DE MANUTENÇÃO NOTURNA
-           ======================================== */
-        .night-maintenance-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: transparent;
-            z-index: 99999;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .night-maintenance-overlay.active {
-            display: flex;
-        }
-
-        .maintenance-container {
-            max-width: 420px;
-            width: 100%;
-            text-align: center;
-            animation: fadeInUp 0.8s ease-out;
-        }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .moon-icon {
-            width: 120px;
-            height: 120px;
-            margin: 0 auto 30px;
-            position: relative;
-            animation: floatMoon 4s ease-in-out infinite;
-        }
-
-        @keyframes floatMoon {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-15px); }
-        }
-
-        .moon-icon svg {
-            width: 100%;
-            height: 100%;
-            filter: drop-shadow(0 0 30px rgba(139, 92, 246, 0.6));
-        }
-
-        .moon-stars {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-        }
-
-        .moon-star {
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            background: var(--cyan-neon);
-            border-radius: 50%;
-            animation: starTwinkle 2s ease-in-out infinite;
-        }
-
-        .moon-star:nth-child(1) { top: 10%; left: 10%; animation-delay: 0s; }
-        .moon-star:nth-child(2) { top: 5%; right: 20%; animation-delay: 0.5s; }
-        .moon-star:nth-child(3) { bottom: 20%; left: 5%; animation-delay: 1s; }
-        .moon-star:nth-child(4) { bottom: 10%; right: 10%; animation-delay: 1.5s; }
-        .moon-star:nth-child(5) { top: 30%; right: 5%; animation-delay: 0.3s; width: 6px; height: 6px; }
-
-        @keyframes starTwinkle {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.3; transform: scale(0.5); }
-        }
-
-        .maintenance-logo {
-            font-family: 'Orbitron', monospace;
-            font-size: 1.8rem;
-            font-weight: 700;
-            background: linear-gradient(90deg, var(--purple-neon), var(--cyan-neon));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 15px;
-            letter-spacing: 3px;
-        }
-
-        .maintenance-title {
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
-        }
-
-        .maintenance-subtitle {
-            font-family: 'Inter', sans-serif;
-            font-size: 1rem;
-            color: var(--text-secondary);
-            margin-bottom: 30px;
-            line-height: 1.6;
-        }
-
-        .maintenance-card {
-            background: rgba(20, 25, 45, 0.9);
-            border: 1px solid rgba(139, 92, 246, 0.3);
-            border-radius: 20px;
-            padding: 25px;
-            margin-bottom: 25px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 0 30px rgba(139, 92, 246, 0.1), inset 0 0 30px rgba(0, 0, 0, 0.2);
-        }
-
-        .countdown-container { margin-bottom: 20px; }
-
-        .countdown-label {
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 0.85rem;
-            color: var(--cyan-neon);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 15px;
-        }
-
-        .countdown-timer {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-        }
-
-        .countdown-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .countdown-value {
-            font-family: 'Orbitron', monospace;
-            font-size: 2.2rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            background: linear-gradient(180deg, rgba(139, 92, 246, 0.2) 0%, rgba(0, 221, 255, 0.1) 100%);
-            border: 1px solid rgba(139, 92, 246, 0.4);
-            border-radius: 12px;
-            padding: 10px 16px;
-            min-width: 65px;
-            text-shadow: 0 0 15px rgba(139, 92, 246, 0.5);
-        }
-
-        .countdown-unit {
-            font-family: 'Inter', sans-serif;
-            font-size: 0.7rem;
-            color: var(--text-secondary);
-            margin-top: 8px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .countdown-separator {
-            font-family: 'Orbitron', monospace;
-            font-size: 2.2rem;
-            color: var(--purple-neon);
-            align-self: flex-start;
-            padding-top: 10px;
-            animation: blinkSep 1s ease-in-out infinite;
-        }
-
-        @keyframes blinkSep {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-
-        .return-time {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            padding: 15px 20px;
-            background: linear-gradient(90deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.2) 50%, rgba(16, 185, 129, 0.1) 100%);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            border-radius: 12px;
-        }
-
-        .return-time i { font-size: 1.2rem; color: var(--green-neon); }
-        .return-time-text { font-family: 'Rajdhani', sans-serif; font-size: 1rem; color: var(--green-neon); font-weight: 600; }
-        .return-time-value { font-family: 'Orbitron', monospace; font-size: 1.2rem; color: var(--text-primary); font-weight: 700; }
-
-        .maintenance-message {
-            font-family: 'Inter', sans-serif;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            line-height: 1.6;
-            padding: 18px;
-            background: rgba(249, 115, 22, 0.1);
-            border: 1px solid rgba(249, 115, 22, 0.3);
-            border-radius: 12px;
-        }
-
-        .maintenance-message i { color: var(--orange-neon); margin-right: 8px; }
-
-        .pulse-ring {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 300px;
-            height: 300px;
-            border: 2px solid rgba(139, 92, 246, 0.15);
-            border-radius: 50%;
-            animation: pulseRingAnim 4s ease-out infinite;
-            pointer-events: none;
-        }
-
-        .pulse-ring:nth-child(2) { animation-delay: 1.3s; }
-        .pulse-ring:nth-child(3) { animation-delay: 2.6s; }
-
-        @keyframes pulseRingAnim {
-            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
-            100% { transform: translate(-50%, -50%) scale(2.5); opacity: 0; }
-        }
-
-        @media (max-width: 480px) {
-            .maintenance-logo { font-size: 1.5rem; }
-            .maintenance-title { font-size: 1.4rem; letter-spacing: 1px; }
-            .maintenance-subtitle { font-size: 0.9rem; }
-            .countdown-value { font-size: 1.8rem; padding: 8px 12px; min-width: 55px; }
-            .countdown-separator { font-size: 1.8rem; }
-            .moon-icon { width: 100px; height: 100px; }
-            .maintenance-card { padding: 20px; }
-        }
-
-        /* === FUNDO ESPACIAL COM ESTRELAS === */
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            min-height: 100vh;
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* Container do fundo de estrelas */
-        .stars-background {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            pointer-events: none;
-            background: linear-gradient(180deg, #0a0e1a 0%, #0d1225 50%, #0a0e1a 100%);
-        }
-
-        /* Estrelas pequenas */
-        .stars-small {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background-image:
-                radial-gradient(1px 1px at 10% 20%, rgba(255, 255, 255, 0.8) 0%, transparent 100%),
-                radial-gradient(1px 1px at 25% 35%, rgba(255, 255, 255, 0.6) 0%, transparent 100%),
-                radial-gradient(1px 1px at 40% 15%, rgba(255, 255, 255, 0.7) 0%, transparent 100%),
-                radial-gradient(1px 1px at 55% 45%, rgba(255, 255, 255, 0.5) 0%, transparent 100%),
-                radial-gradient(1px 1px at 70% 25%, rgba(255, 255, 255, 0.8) 0%, transparent 100%),
-                radial-gradient(1px 1px at 85% 55%, rgba(255, 255, 255, 0.6) 0%, transparent 100%),
-                radial-gradient(1px 1px at 15% 65%, rgba(255, 255, 255, 0.7) 0%, transparent 100%),
-                radial-gradient(1px 1px at 30% 80%, rgba(255, 255, 255, 0.5) 0%, transparent 100%),
-                radial-gradient(1px 1px at 45% 70%, rgba(255, 255, 255, 0.8) 0%, transparent 100%),
-                radial-gradient(1px 1px at 60% 85%, rgba(255, 255, 255, 0.6) 0%, transparent 100%),
-                radial-gradient(1px 1px at 75% 75%, rgba(255, 255, 255, 0.7) 0%, transparent 100%),
-                radial-gradient(1px 1px at 90% 90%, rgba(255, 255, 255, 0.5) 0%, transparent 100%),
-                radial-gradient(1px 1px at 5% 40%, rgba(255, 255, 255, 0.6) 0%, transparent 100%),
-                radial-gradient(1px 1px at 20% 50%, rgba(255, 255, 255, 0.7) 0%, transparent 100%),
-                radial-gradient(1px 1px at 35% 30%, rgba(255, 255, 255, 0.5) 0%, transparent 100%),
-                radial-gradient(1px 1px at 50% 60%, rgba(255, 255, 255, 0.8) 0%, transparent 100%),
-                radial-gradient(1px 1px at 65% 40%, rgba(255, 255, 255, 0.6) 0%, transparent 100%),
-                radial-gradient(1px 1px at 80% 10%, rgba(255, 255, 255, 0.7) 0%, transparent 100%),
-                radial-gradient(1px 1px at 95% 30%, rgba(255, 255, 255, 0.5) 0%, transparent 100%),
-                radial-gradient(1px 1px at 8% 85%, rgba(255, 255, 255, 0.8) 0%, transparent 100%);
-            animation: twinkle 4s ease-in-out infinite;
-        }
-
-        /* Estrelas médias */
-        .stars-medium {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background-image:
-                radial-gradient(2px 2px at 12% 28%, rgba(0, 221, 255, 0.6) 0%, transparent 100%),
-                radial-gradient(2px 2px at 28% 42%, rgba(139, 92, 246, 0.5) 0%, transparent 100%),
-                radial-gradient(2px 2px at 42% 18%, rgba(255, 255, 255, 0.7) 0%, transparent 100%),
-                radial-gradient(2px 2px at 58% 52%, rgba(0, 221, 255, 0.5) 0%, transparent 100%),
-                radial-gradient(2px 2px at 72% 32%, rgba(139, 92, 246, 0.6) 0%, transparent 100%),
-                radial-gradient(2px 2px at 88% 62%, rgba(255, 255, 255, 0.5) 0%, transparent 100%),
-                radial-gradient(2px 2px at 18% 72%, rgba(0, 221, 255, 0.7) 0%, transparent 100%),
-                radial-gradient(2px 2px at 32% 88%, rgba(139, 92, 246, 0.5) 0%, transparent 100%),
-                radial-gradient(2px 2px at 48% 78%, rgba(255, 255, 255, 0.6) 0%, transparent 100%),
-                radial-gradient(2px 2px at 62% 92%, rgba(0, 221, 255, 0.5) 0%, transparent 100%),
-                radial-gradient(2px 2px at 78% 82%, rgba(139, 92, 246, 0.7) 0%, transparent 100%),
-                radial-gradient(2px 2px at 92% 95%, rgba(255, 255, 255, 0.5) 0%, transparent 100%);
-            animation: twinkle 3s ease-in-out infinite reverse;
-        }
-
-        /* Estrelas grandes (brilhantes) */
-        .stars-large {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background-image:
-                radial-gradient(3px 3px at 15% 25%, rgba(255, 255, 255, 0.9) 0%, transparent 100%),
-                radial-gradient(3px 3px at 45% 55%, rgba(0, 221, 255, 0.8) 0%, transparent 100%),
-                radial-gradient(3px 3px at 75% 35%, rgba(139, 92, 246, 0.9) 0%, transparent 100%),
-                radial-gradient(3px 3px at 25% 75%, rgba(255, 255, 255, 0.8) 0%, transparent 100%),
-                radial-gradient(3px 3px at 85% 85%, rgba(0, 221, 255, 0.9) 0%, transparent 100%),
-                radial-gradient(3px 3px at 55% 15%, rgba(139, 92, 246, 0.8) 0%, transparent 100%);
-            animation: twinkle 5s ease-in-out infinite;
-        }
-
-        @keyframes twinkle {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        /* === HEADER === */
-        .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-            background: transparent;
-            padding: 0 1rem;
-        }
-
-        .header-title {
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            letter-spacing: 0.05em;
-        }
-
-        /* Linha decorativa abaixo do header */
-        .header::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 5%;
-            right: 5%;
-            height: 1px;
-            background: linear-gradient(90deg,
-                transparent 0%,
-                rgba(0, 221, 255, 0.3) 20%,
-                rgba(139, 92, 246, 0.5) 50%,
-                rgba(0, 221, 255, 0.3) 80%,
-                transparent 100%);
-        }
-
-        /* Pontos decorativos no header */
-        .header-dot {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: var(--cyan-neon);
-            border-radius: 50%;
-            bottom: -2px;
-        }
-
-        .header-dot.left {
-            left: 5%;
-        }
-
-        .header-dot.right {
-            right: 5%;
-        }
-
-        /* Botão Voltar */
-        .back-button {
-            position: absolute;
-            left: 1rem;
-            width: 2.5rem;
-            height: 2.5rem;
-            background: transparent;
-            border: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .back-button:hover {
-            transform: scale(1.1);
-        }
-
-        .back-button i {
-            color: var(--text-primary);
-            font-size: 1.25rem;
-        }
-
-        /* Botão Refresh */
-        .refresh-button {
-            position: absolute;
-            right: 1rem;
-            width: 2rem;
-            height: 2rem;
-            background: transparent;
-            border: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .refresh-button:hover {
-            transform: rotate(180deg);
-        }
-
-        .refresh-button i {
-            color: var(--text-secondary);
-            font-size: 1rem;
-        }
-
-        /* === LAYOUT PRINCIPAL === */
-        .main-content {
-            position: relative;
-            z-index: 1;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 80px 1rem 2rem;
-            gap: 1rem;
-        }
-
-        /* === TASK CARD (apenas instruções e barras de progresso) === */
-        .task-card {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 1rem;
-            padding: 1.5rem;
-            width: 100%;
-            max-width: 400px;
-            box-shadow:
-                0 0 30px rgba(139, 92, 246, 0.15),
-                inset 0 1px 0 rgba(255, 255, 255, 0.05);
-            position: relative;
-        }
-
-        /* Pontos decorativos nos cantos do card */
-        .task-card::before,
-        .task-card::after {
-            content: '';
-            position: absolute;
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-        }
-
-        .task-card::before {
-            top: -3px;
-            left: 20%;
-            background: var(--cyan-neon);
-            box-shadow: 0 0 8px var(--cyan-neon);
-        }
-
-        .task-card::after {
-            top: -3px;
-            right: 20%;
-            background: var(--purple-neon);
-            box-shadow: 0 0 8px var(--purple-neon);
-        }
-
-        /* Pontos adicionais */
-        .card-dots {
-            position: absolute;
-            bottom: -3px;
-            left: 0;
-            right: 0;
-            display: flex;
-            justify-content: space-around;
-            padding: 0 15%;
-        }
-
-        .card-dot {
-            width: 4px;
-            height: 4px;
-            background: rgba(139, 92, 246, 0.5);
-            border-radius: 50%;
-        }
-
-        .task-description {
-            color: var(--text-primary);
-            font-size: 0.95rem;
-            line-height: 1.6;
-            margin-bottom: 1.5rem;
-        }
-
-        .task-description strong {
-            color: var(--cyan-neon);
-        }
-
-        /* === PROGRESS SECTION === */
-        .progress-section {
-            margin-bottom: 0;
-        }
-
-        .progress-item {
-            margin-bottom: 1rem;
-        }
-
-        .progress-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .progress-label {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.5rem;
-            font-size: 0.875rem;
-            color: var(--text-primary);
-        }
-
-        .progress-label i {
-            margin-right: 0.5rem;
-            color: var(--text-secondary);
-        }
-
-        .progress-bar-container {
-            background: rgba(0, 0, 0, 0.4);
-            border-radius: 0.5rem;
-            height: 0.5rem;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .progress-bar {
-            height: 100%;
-            border-radius: 0.5rem;
-            transition: width 0.5s ease;
-            background: linear-gradient(90deg, var(--cyan-neon), var(--purple-neon));
-            box-shadow: 0 0 10px rgba(0, 221, 255, 0.5);
-        }
-
-        .progress-bar.completed {
-            background: linear-gradient(90deg, var(--green-neon), #34d399);
-            box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
-        }
-
-        /* === STATS GRID (FORA DO CARD) === */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.75rem;
-            width: 100%;
-            max-width: 400px;
-        }
-
-        .stat-box {
-            background: rgba(20, 25, 45, 0.7);
-            border: 1px solid rgba(139, 92, 246, 0.3);
-            border-radius: 0.75rem;
-            padding: 1.25rem 1rem;
-            text-align: center;
-        }
-
-        .stat-value {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--cyan-neon);
-            text-shadow: 0 0 15px rgba(0, 221, 255, 0.5);
-        }
-
-        .stat-label {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            margin-top: 0.25rem;
-        }
-
-        /* === BUTTONS (FORA DO CARD) === */
-        .button-container {
-            width: 100%;
-            max-width: 400px;
-        }
-
-        .ad-button {
-            width: 100%;
-            font-family: 'Rajdhani', sans-serif;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            padding: 1rem;
-            font-size: 1rem;
-            border: none;
-            background: linear-gradient(135deg, var(--purple-neon) 0%, #a855f7 100%);
-            color: white;
-            border-radius: 0.75rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
-        .ad-button:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.6);
-        }
-
-        .ad-button:active:not(:disabled) {
-            transform: translateY(0);
-        }
-
-        .ad-button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .ad-button i {
-            font-size: 1.1rem;
-        }
-
-        .spin-button {
-            background: linear-gradient(135deg, var(--green-neon) 0%, #34d399 100%);
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
-        }
-
-        .spin-button:hover:not(:disabled) {
-            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.6);
-        }
-
-        /* === STATUS MESSAGE === */
-        .status-message {
-            text-align: center;
-            padding: 1rem;
-            border-radius: 0.75rem;
-            margin-top: 1rem;
-            font-size: 0.9rem;
-            display: none;
-            width: 100%;
-            max-width: 400px;
-        }
-
-        .status-message.success {
-            background: rgba(16, 185, 129, 0.15);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            color: var(--green-neon);
-        }
-
-        .status-message.warning {
-            background: rgba(251, 191, 36, 0.15);
-            border: 1px solid rgba(251, 191, 36, 0.3);
-            color: var(--yellow-neon);
-        }
-
-        /* === SPINNER === */
-        .spinner {
-            display: inline-block;
-            width: 1rem;
-            height: 1rem;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: spin 0.6s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* === RESPONSIVE === */
-        @media (max-height: 700px) {
-            .main-content {
-                padding-top: 70px;
-                gap: 0.75rem;
-            }
-
-            .task-card {
-                padding: 1.25rem;
-            }
-
-            .task-description {
-                font-size: 0.875rem;
-                margin-bottom: 1rem;
-            }
-
-            .stat-value {
-                font-size: 1.75rem;
-            }
-
-            .ad-button {
-                padding: 0.875rem;
-            }
-        }
-
-        @media (max-height: 600px) {
-            .header {
-                height: 50px;
-            }
-
-            .main-content {
-                padding-top: 60px;
-                gap: 0.5rem;
-            }
-
-            .task-card {
-                padding: 1rem;
-            }
-
-            .progress-item {
-                margin-bottom: 0.75rem;
-            }
-
-            .stats-grid {
-                gap: 0.5rem;
-            }
-
-            .stat-box {
-                padding: 0.75rem;
-            }
-
-            .stat-value {
-                font-size: 1.5rem;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>TubeCoin Bot - Young Money</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a1a;--card:#12121e;--card2:#16213e;--border:#2a2a4a;--text:#e0e0e0;--muted:#888;--green:#00e676;--orange:#ff9100;--blue:#448aff;--red:#ff5252;--cyan:#00e5ff;--purple:#7c4dff;--yellow:#ffd740;--accent1:#7C3AED;--accent2:#3B82F6;--accent3:#00DCAA}
+body{font-family:'Inter','Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+/* ═══════════════════════════════════════════ */
+/* TELA YOUNG MONEY - MISSOES                 */
+/* ═══════════════════════════════════════════ */
+#ym-screen{
+  position:fixed;top:0;left:0;width:100vw;height:100vh;
+  background:linear-gradient(180deg,#0a0a1a 0%,#0d1117 50%,#0a0a1a 100%);
+  z-index:10000;display:flex;align-items:center;justify-content:center;
+  font-family:'Inter',sans-serif;overflow:hidden;
+}
+#ym-screen .ym-bg-glow{position:absolute;border-radius:50%;filter:blur(150px);pointer-events:none}
+#ym-screen .glow-1{width:400px;height:400px;top:-100px;right:-80px;background:rgba(124,58,237,0.12)}
+#ym-screen .glow-2{width:350px;height:350px;bottom:-120px;left:-80px;background:rgba(0,220,170,0.08)}
+
+#ym-screen .ym-card{
+  position:relative;background:rgba(18,18,30,0.95);backdrop-filter:blur(20px);
+  border:1px solid rgba(124,58,237,0.2);border-radius:24px;
+  padding:0;width:440px;max-width:92vw;
+  box-shadow:0 30px 80px rgba(0,0,0,0.6),0 0 40px rgba(124,58,237,0.08);
+  animation:ymSlideUp 0.6s cubic-bezier(0.16,1,0.3,1);overflow:hidden;
+}
+#ym-screen .ym-card::before{
+  content:'';position:absolute;top:-1px;left:-1px;right:-1px;bottom:-1px;
+  border-radius:24px;padding:1px;
+  background:linear-gradient(135deg,rgba(124,58,237,0.3),transparent 40%,transparent 60%,rgba(0,220,170,0.3));
+  -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;
+}
+@keyframes ymSlideUp{from{opacity:0;transform:translateY(30px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+.ym-header{
+  background:linear-gradient(135deg,#7C3AED 0%,#3B82F6 50%,#06B6D4 100%);
+  padding:28px 32px;text-align:center;
+}
+.ym-header h1{font-size:24px;font-weight:800;color:#fff;margin:0 0 4px;letter-spacing:-0.02em}
+.ym-header p{font-size:13px;color:rgba(255,255,255,0.8);margin:0}
+.ym-header .ym-id{
+  display:inline-block;margin-top:10px;padding:4px 14px;
+  background:rgba(255,255,255,0.2);border-radius:20px;
+  font-size:12px;color:#fff;font-weight:600;
+}
+
+.ym-body{padding:28px 32px}
+
+.ym-task{
+  background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);
+  border-radius:16px;padding:20px;margin-bottom:16px;
+  transition:all 0.3s ease;
+}
+.ym-task.completed{border-color:rgba(0,220,170,0.3);background:rgba(0,220,170,0.05)}
+.ym-task-header{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.ym-task-icon{
+  width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.ym-task-icon.clicks{background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.3)}
+.ym-task-icon.impressions{background:rgba(0,220,170,0.15);border:1px solid rgba(0,220,170,0.3)}
+.ym-task-title{font-size:15px;font-weight:600;color:#f1f5f9}
+.ym-task-subtitle{font-size:12px;color:#94a3b8;margin-top:2px}
+
+.ym-progress-bg{
+  width:100%;height:8px;background:#1e1e2e;border-radius:4px;overflow:hidden;
+  border:1px solid rgba(255,255,255,0.05);
+}
+.ym-progress-bar{height:100%;border-radius:4px;transition:width 0.5s ease}
+.ym-progress-bar.clicks{background:linear-gradient(90deg,#7C3AED,#a78bfa);box-shadow:0 0 10px rgba(124,58,237,0.4)}
+.ym-progress-bar.impressions{background:linear-gradient(90deg,#00DCAA,#10B981);box-shadow:0 0 10px rgba(0,220,170,0.4)}
+.ym-progress-text{display:flex;justify-content:space-between;font-size:12px;color:#94a3b8;margin-top:6px}
+.ym-progress-text .val{color:#f1f5f9;font-weight:600}
+
+.ym-ad-btn{
+  width:100%;padding:16px;border:none;border-radius:14px;
+  background:linear-gradient(135deg,#7C3AED 0%,#6366F1 50%,#3B82F6 100%);
+  color:#fff;font-size:15px;font-weight:700;cursor:pointer;
+  box-shadow:0 0 20px rgba(124,58,237,0.4);border:1px solid rgba(139,92,246,0.3);
+  transition:all 0.3s ease;font-family:inherit;margin-top:8px;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.ym-ad-btn:hover{box-shadow:0 0 30px rgba(124,58,237,0.6);transform:translateY(-1px)}
+.ym-ad-btn:disabled{opacity:0.4;cursor:not-allowed;transform:none}
+
+.ym-tip{
+  text-align:center;font-size:12px;color:#64748b;margin-top:16px;line-height:1.5;
+}
+
+.ym-completed-msg{
+  text-align:center;padding:20px;
+}
+.ym-completed-msg .check-icon{
+  width:64px;height:64px;margin:0 auto 16px;background:rgba(0,220,170,0.15);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  border:2px solid rgba(0,220,170,0.3);
+}
+.ym-completed-msg h3{font-size:20px;font-weight:700;color:#00DCAA;margin-bottom:8px}
+.ym-completed-msg p{font-size:13px;color:#94a3b8;margin-bottom:16px}
+.ym-enter-btn{
+  width:100%;padding:16px;border:none;border-radius:14px;
+  background:linear-gradient(135deg,#00DCAA,#10B981);
+  color:#fff;font-size:15px;font-weight:700;cursor:pointer;
+  box-shadow:0 0 20px rgba(0,220,170,0.4);
+  transition:all 0.3s ease;font-family:inherit;
+}
+.ym-enter-btn:hover{box-shadow:0 0 30px rgba(0,220,170,0.6);transform:translateY(-1px)}
+
+/* Stats cards */
+.ym-stats{display:flex;gap:12px;margin-bottom:16px}
+.ym-stat-card{
+  flex:1;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);
+  border-radius:12px;padding:16px;text-align:center;
+}
+.ym-stat-val{font-size:24px;font-weight:800;margin-bottom:4px}
+.ym-stat-val.imp-color{color:#00DCAA}
+.ym-stat-val.click-color{color:#a78bfa}
+.ym-stat-lbl{font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:0.05em}
+
+/* ═══════════════════════════════════════════ */
+/* TELA DO BOT TUBECOIN                       */
+/* ═══════════════════════════════════════════ */
+#bot-screen{display:none}
+
+.container{max-width:900px;margin:0 auto;padding:20px}
+h1.bot-title{text-align:center;font-size:2rem;margin:20px 0;background:linear-gradient(135deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:800}
+.subtitle{text-align:center;color:var(--muted);margin-bottom:30px;font-size:.9rem}
+
+/* Reset Timer Bar */
+.reset-bar{
+  background:var(--card);border:1px solid var(--border);border-radius:12px;
+  padding:14px 20px;margin-bottom:20px;display:flex;align-items:center;gap:12px;
+}
+.reset-bar .timer-icon{color:var(--orange);flex-shrink:0}
+.reset-bar .timer-text{font-size:13px;color:var(--muted)}
+.reset-bar .timer-text span{color:var(--orange);font-weight:700;font-size:15px}
+.reset-bar .timer-progress{flex:1;height:4px;background:rgba(255,255,255,0.05);border-radius:2px;overflow:hidden}
+.reset-bar .timer-fill{height:100%;background:linear-gradient(90deg,var(--orange),var(--red));border-radius:2px;transition:width 1s linear}
+
+/* Login */
+.login-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:30px;max-width:420px;margin:0 auto 30px}
+.login-card h2{font-size:1.2rem;margin-bottom:20px;color:var(--cyan)}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:.85rem;color:var(--muted);margin-bottom:6px}
+.field input,.field select{width:100%;padding:12px 14px;background:var(--bg);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:.95rem;outline:none;transition:border .2s}
+.field input:focus,.field select:focus{border-color:var(--cyan)}
+.field select option{background:var(--bg)}
+.row{display:flex;gap:12px}
+.row .field{flex:1}
+
+.btn{width:100%;padding:14px;border:none;border-radius:12px;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s}
+.btn-start{background:linear-gradient(135deg,var(--cyan),var(--purple));color:#fff}
+.btn-start:hover{opacity:.9;transform:translateY(-1px)}
+.btn-start:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.btn-stop{background:var(--red);color:#fff;margin-top:10px}
+.btn-stop:hover{opacity:.85}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center}
+.stat .val{font-size:1.5rem;font-weight:800}
+.stat .lbl{font-size:.75rem;color:var(--muted);margin-top:4px}
+.stat.tc .val{color:var(--orange)}
+.stat.bp .val{color:var(--cyan)}
+.stat.xp .val{color:var(--green)}
+.stat.vd .val{color:var(--purple)}
+
+/* Progress */
+.progress-section{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:20px}
+.progress-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.progress-header h3{font-size:1rem;color:var(--cyan)}
+.progress-header span{font-size:.85rem;color:var(--muted)}
+.progress-bar-bg{width:100%;height:8px;background:var(--bg);border-radius:4px;overflow:hidden;margin-bottom:8px}
+.progress-bar{height:100%;border-radius:4px;transition:width .3s;background:linear-gradient(90deg,var(--cyan),var(--purple))}
+.current-video{font-size:.85rem;color:var(--muted)}
+.current-video span{color:var(--text)}
+
+/* Video progress */
+.video-progress{margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
+.video-bar-bg{width:100%;height:6px;background:var(--bg);border-radius:3px;overflow:hidden;margin-top:8px}
+.video-bar{height:100%;border-radius:3px;transition:width .5s;background:linear-gradient(90deg,var(--green),var(--cyan))}
+.video-info{display:flex;justify-content:space-between;font-size:.8rem;color:var(--muted);margin-top:4px}
+
+/* Log */
+.log-section{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px}
+.log-section h3{font-size:1rem;color:var(--cyan);margin-bottom:12px}
+#log{max-height:350px;overflow-y:auto;font-family:'Cascadia Code','Fira Code',monospace;font-size:.8rem;line-height:1.6}
+#log::-webkit-scrollbar{width:6px}
+#log::-webkit-scrollbar-track{background:var(--bg);border-radius:3px}
+#log::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+.log-line{padding:2px 0}
+.log-time{color:var(--blue)}
+.log-ok{color:var(--green)}
+.log-err{color:var(--red)}
+.log-warn{color:var(--orange)}
+.log-info{color:var(--blue)}
+.log-prog{color:var(--cyan)}
+
+.hidden{display:none}
+@media(max-width:600px){.stats{grid-template-columns:repeat(2,1fr)}.row{flex-direction:column;gap:0}}
+
+/* Scrollbar dark */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:#0a0a1a}
+::-webkit-scrollbar-thumb{background:#2d2d44;border-radius:3px}
+
+/* Loading spinner */
+.ym-spinner{
+  width:20px;height:20px;border:2px solid rgba(255,255,255,0.3);
+  border-top-color:#fff;border-radius:50%;
+  animation:spin 0.6s linear infinite;display:inline-block;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Particles */
+.ym-particles{position:absolute;top:0;left:0;width:100%;height:100%;overflow:hidden;pointer-events:none}
+.ym-particles .p{position:absolute;border-radius:50%;opacity:0;animation:pFloat 8s ease-in-out infinite}
+.ym-particles .p:nth-child(1){width:4px;height:4px;background:#7C3AED;top:20%;left:10%;animation-delay:0s}
+.ym-particles .p:nth-child(2){width:6px;height:6px;background:#00DCAA;top:60%;left:80%;animation-delay:2s}
+.ym-particles .p:nth-child(3){width:3px;height:3px;background:#3B82F6;top:40%;left:50%;animation-delay:4s}
+.ym-particles .p:nth-child(4){width:5px;height:5px;background:#7C3AED;top:80%;left:20%;animation-delay:1s}
+.ym-particles .p:nth-child(5){width:4px;height:4px;background:#00DCAA;top:10%;left:70%;animation-delay:3s}
+@keyframes pFloat{0%,100%{opacity:0;transform:translateY(0) scale(0.5)}50%{opacity:0.6;transform:translateY(-40px) scale(1)}}
+</style>
 </head>
 <body>
 
-<!-- ========================================
-     TELA DE MANUTENÇÃO NOTURNA (21h - 00h)
-     ======================================== -->
-<div class="night-maintenance-overlay" id="nightMaintenanceOverlay">
-    <div class="pulse-ring"></div>
-    <div class="pulse-ring"></div>
-    <div class="pulse-ring"></div>
-
-    <div class="maintenance-container">
-        <div class="maintenance-logo">YOUNG MONEY</div>
-
-        <div class="moon-icon">
-            <div class="moon-stars">
-                <div class="moon-star"></div>
-                <div class="moon-star"></div>
-                <div class="moon-star"></div>
-                <div class="moon-star"></div>
-                <div class="moon-star"></div>
-            </div>
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M21.0672 11.8568L20.4253 11.469L21.0672 11.8568ZM12.1432 2.93276L11.7553 2.29085V2.29085L12.1432 2.93276ZM21.25 12C21.25 17.1086 17.1086 21.25 12 21.25V22.75C17.9371 22.75 22.75 17.9371 22.75 12H21.25ZM12 21.25C6.89137 21.25 2.75 17.1086 2.75 12H1.25C1.25 17.9371 6.06294 22.75 12 22.75V21.25ZM2.75 12C2.75 6.89137 6.89137 2.75 12 2.75V1.25C6.06294 1.25 1.25 6.06294 1.25 12H2.75ZM15.5 14.25C12.3244 14.25 9.75 11.6756 9.75 8.5H8.25C8.25 12.5041 11.4959 15.75 15.5 15.75V14.25ZM20.4253 11.469C19.4172 13.1373 17.5882 14.25 15.5 14.25V15.75C18.1349 15.75 20.4407 14.3439 21.7092 12.2447L20.4253 11.469ZM9.75 8.5C9.75 6.41182 10.8627 4.5828 12.531 3.57467L11.7553 2.29085C9.65609 3.5593 8.25 5.86509 8.25 8.5H9.75ZM12 2.75C11.9115 2.75 11.8077 2.71008 11.7324 2.63168C11.6686 2.56527 11.6538 2.50244 11.6503 2.47703C11.6461 2.44587 11.6482 2.35557 11.7553 2.29085L12.531 3.57467C13.0342 3.27065 13.196 2.71398 13.1368 2.27627C13.0754 1.82126 12.7166 1.25 12 1.25V2.75ZM21.7092 12.2447C21.6444 12.3518 21.5541 12.3539 21.523 12.3497C21.4976 12.3462 21.4347 12.3314 21.3683 12.2676C21.2899 12.1923 21.25 12.0885 21.25 12H22.75C22.75 11.2834 22.1787 10.9246 21.7237 10.8632C21.286 10.804 20.7293 10.9658 20.4253 11.469L21.7092 12.2447Z" fill="url(#moonGradient)"/>
-                <defs>
-                    <linearGradient id="moonGradient" x1="12" y1="1" x2="12" y2="23" gradientUnits="userSpaceOnUse">
-                        <stop stop-color="#8b5cf6"/>
-                        <stop offset="1" stop-color="#00ddff"/>
-                    </linearGradient>
-                </defs>
-            </svg>
-        </div>
-
-        <h1 class="maintenance-title">Hora de Descansar</h1>
-
-        <p class="maintenance-subtitle">
-            Nosso sistema está em manutenção noturna.<br>
-            Volte à meia-noite para continuar ganhando!
-        </p>
-
-        <div class="maintenance-card">
-            <div class="countdown-container">
-                <div class="countdown-label">Sistema volta em</div>
-                <div class="countdown-timer">
-                    <div class="countdown-item">
-                        <div class="countdown-value" id="countdownHours">00</div>
-                        <div class="countdown-unit">Horas</div>
-                    </div>
-                    <div class="countdown-separator">:</div>
-                    <div class="countdown-item">
-                        <div class="countdown-value" id="countdownMinutes">00</div>
-                        <div class="countdown-unit">Min</div>
-                    </div>
-                    <div class="countdown-separator">:</div>
-                    <div class="countdown-item">
-                        <div class="countdown-value" id="countdownSeconds">00</div>
-                        <div class="countdown-unit">Seg</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="return-time">
-                <i class="fas fa-clock"></i>
-                <span class="return-time-text">Retorno às</span>
-                <span class="return-time-value">00:00</span>
-            </div>
-        </div>
-
-        <div class="maintenance-message">
-            <i class="fas fa-moon"></i>
-            <strong>Manutenção diária:</strong> Das 21h às 00h realizamos atualizações para melhorar sua experiência. Aproveite para descansar e volte à meia-noite!
-        </div>
+<!-- ═══════════════════════════════════════════ -->
+<!-- TELA YOUNG MONEY - MISSOES                 -->
+<!-- ═══════════════════════════════════════════ -->
+<div id="ym-screen">
+  <div class="ym-particles">
+    <div class="p"></div><div class="p"></div><div class="p"></div><div class="p"></div><div class="p"></div>
+  </div>
+  <div class="ym-bg-glow glow-1"></div>
+  <div class="ym-bg-glow glow-2"></div>
+  
+  <div class="ym-card">
+    <div class="ym-header">
+      <h1>Missao Diaria</h1>
+      <p>Complete as tarefas abaixo para desbloquear suas recompensas</p>
+      <div class="ym-id" id="ymIdDisplay">ID: ---</div>
     </div>
+    
+    <div class="ym-body" id="ymTasksBody">
+      <!-- Login Section -->
+      <div id="ymLoginSection">
+        <div style="margin-bottom:20px">
+          <label style="display:block;font-size:12px;font-weight:600;color:#94a3b8;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.08em">SEU USUARIO</label>
+          <input type="text" id="ymidInput" placeholder="Digite seu usuario do TubeCoin" style="width:100%;padding:14px 16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;color:#f1f5f9;font-size:15px;outline:none;font-family:inherit;transition:all 0.2s">
+          <p style="font-size:11px;color:#64748b;margin-top:6px">Insira o usuario que voce utiliza no bot TubeCoin</p>
+        </div>
+        <button class="ym-ad-btn" id="ymLoginBtn" onclick="ymLogin()">
+          Entrar
+        </button>
+      </div>
+      
+      <!-- Tarefas (aparece apos login) -->
+      <div id="ymTasksSection" style="display:none">
+        <!-- Tarefa 1: Impressoes -->
+        <div class="ym-task" id="ymTaskImpressions">
+          <div class="ym-task-header">
+            <div class="ym-task-icon impressions">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00DCAA" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </div>
+            <div>
+              <div class="ym-task-title">Anuncios Assistidos</div>
+              <div class="ym-task-subtitle">Visualize os anuncios exibidos</div>
+            </div>
+          </div>
+          <div class="ym-progress-bg"><div class="ym-progress-bar impressions" id="ymImpressionsBar" style="width:0%"></div></div>
+          <div class="ym-progress-text"><span id="ymImpressionsText">0 / 20</span><span class="val" id="ymImpressionsPct">0%</span></div>
+        </div>
+
+        <!-- Tarefa 2: Cliques -->
+        <div class="ym-task" id="ymTaskClicks">
+          <div class="ym-task-header">
+            <div class="ym-task-icon clicks">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2"><path d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5"/></svg>
+            </div>
+            <div>
+              <div class="ym-task-title">Cliques Realizados</div>
+              <div class="ym-task-subtitle">Clique nos anuncios exibidos</div>
+            </div>
+          </div>
+          <div class="ym-progress-bg"><div class="ym-progress-bar clicks" id="ymClicksBar" style="width:0%"></div></div>
+          <div class="ym-progress-text"><span id="ymClicksText">0 / 2</span><span class="val" id="ymClicksPct">0%</span></div>
+        </div>
+
+        <!-- Stats cards -->
+        <div class="ym-stats">
+          <div class="ym-stat-card">
+            <div class="ym-stat-val imp-color" id="ymTotalImpressions">0</div>
+            <div class="ym-stat-lbl">Total de Impressoes</div>
+          </div>
+          <div class="ym-stat-card">
+            <div class="ym-stat-val click-color" id="ymTotalClicks">0</div>
+            <div class="ym-stat-lbl">Total de Cliques</div>
+          </div>
+        </div>
+        
+        <!-- Botao de Assistir Anuncio -->
+        <button class="ym-ad-btn" id="ymWatchAdBtn" onclick="ymShowAd()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          ASSISTIR ANUNCIO
+        </button>
+        
+        <p class="ym-tip">Interaja com o anuncio para acumular mais pontos</p>
+      </div>
+      
+      <!-- Missoes Completas -->
+      <div id="ymCompletedSection" style="display:none">
+        <div class="ym-completed-msg">
+          <div class="check-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#00DCAA" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <h3>Missoes Completas!</h3>
+          <p>Voce completou todas as tarefas. O bot esta liberado por <strong id="ymTimeLeft">60 min</strong>.</p>
+          <button class="ym-enter-btn" onclick="ymEnterBot()">
+            Acessar TubeCoin Bot
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
-<script>
-(function() {
-    'use strict';
-    const NIGHT_MAINTENANCE_START = 21;
-    const NIGHT_MAINTENANCE_END = 0;
+<!-- ═══════════════════════════════════════════ -->
+<!-- TELA DO BOT TUBECOIN                       -->
+<!-- ═══════════════════════════════════════════ -->
+<div id="bot-screen">
+<div class="container">
+<h1 class="bot-title">TubeCoin Bot</h1>
+<p class="subtitle">Automacao de videos, check-in e missoes</p>
 
-    function getBrasiliaTime() {
-        const now = new Date();
-        const brasiliaOffset = -3 * 60;
-        const localOffset = now.getTimezoneOffset();
-        return new Date(now.getTime() + (localOffset + brasiliaOffset) * 60000);
-    }
-
-    function isNightMaintenanceTime() {
-        const brasiliaTime = getBrasiliaTime();
-        const hour = brasiliaTime.getHours();
-        console.log('[NIGHT CHECK] Hora de Brasília:', hour);
-        return hour >= NIGHT_MAINTENANCE_START && hour <= 23;
-    }
-
-    // Verificar imediatamente e definir variável global
-    window.isNightMaintenance = isNightMaintenanceTime();
-    console.log('[NIGHT CHECK] Em manutenção noturna:', window.isNightMaintenance);
-})();
-</script>
-
-<!-- Fundo de estrelas -->
-<div class="stars-background">
-    <div class="stars-small"></div>
-    <div class="stars-medium"></div>
-    <div class="stars-large"></div>
+<!-- Reset Timer -->
+<div class="reset-bar" id="resetBar">
+  <div class="timer-icon">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+  </div>
+  <div>
+    <div class="timer-text">Reset em <span id="resetTimerText">60:00</span></div>
+  </div>
+  <div class="timer-progress"><div class="timer-fill" id="resetTimerFill" style="width:100%"></div></div>
 </div>
 
-<!-- Header -->
-<header class="header">
+<!-- Login -->
+<div class="login-card" id="loginCard">
+<h2>Credenciais</h2>
+<div class="field">
+<label>Usuario / E-mail / WhatsApp</label>
+<input type="text" id="user" placeholder="seu_usuario" autocomplete="username">
+</div>
+<div class="field">
+<label>Senha</label>
+<input type="password" id="pass" placeholder="sua_senha" autocomplete="current-password">
+</div>
+<div class="row">
+<div class="field">
+<label>Acao</label>
+<select id="acao">
+<option value="completo">Completo (tudo)</option>
+<option value="videos">Apenas Videos</option>
+<option value="checkin">Apenas Check-in</option>
+<option value="missoes">Apenas Missoes</option>
+<option value="status">Ver Status</option>
+</select>
+</div>
+<div class="field">
+<label>Categoria</label>
+<select id="categoria">
+<option value="">Todas</option>
+<option value="orange">Prioritario (80 TC)</option>
+<option value="blue">Normal (60 TC)</option>
+<option value="green">Mini (40 TC)</option>
+</select>
+</div>
+</div>
+<button class="btn btn-start" id="btnStart" onclick="iniciar()">Iniciar Bot</button>
+<button class="btn btn-stop hidden" id="btnStop" onclick="parar()">Parar Bot</button>
+</div>
 
-    <span class="header-title">Minhas Tarefas</span>
-    <button class="refresh-button" onclick="fetchStats()">
-        <i class="fas fa-sync-alt"></i>
-    </button>
-    <span class="header-dot left"></span>
-    <span class="header-dot right"></span>
-</header>
+<!-- Stats -->
+<div class="stats hidden" id="statsSection">
+<div class="stat tc"><div class="val" id="sTc">0</div><div class="lbl">TC Ganho</div></div>
+<div class="stat bp"><div class="val" id="sBp">0</div><div class="lbl">BP Ganho</div></div>
+<div class="stat xp"><div class="val" id="sXp">0</div><div class="lbl">XP Ganho</div></div>
+<div class="stat vd"><div class="val" id="sVd">0/0</div><div class="lbl">Videos</div></div>
+</div>
 
-<!-- Conteúdo Principal -->
-<main class="main-content">
-    <!-- Card de Tarefas (apenas instruções e barras de progresso) -->
-    <div class="task-card">
-        <div class="card-dots">
-            <span class="card-dot"></span>
-            <span class="card-dot"></span>
-            <span class="card-dot"></span>
-        </div>
+<!-- Progress -->
+<div class="progress-section hidden" id="progressSection">
+<div class="progress-header">
+<h3>Progresso Geral</h3>
+<span id="progressPct">0%</span>
+</div>
+<div class="progress-bar-bg"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+<div class="current-video" id="currentAction">Aguardando...</div>
 
-        <div class="task-description">
-            Complete a tarefa abaixo para desbloquear a roleta e ganhar prêmios!
-            <br><br>
-            • Assista <strong id="requiredImpressionsText"><i class="fas fa-spinner fa-spin"></i></strong> (impressões)
-            <br>• Clique em <strong id="requiredClicksText"><i class="fas fa-spinner fa-spin"></i></strong>
-        </div>
+<div class="video-progress hidden" id="videoProgress">
+<div style="display:flex;justify-content:space-between;align-items:center">
+<span style="font-size:.85rem">Assistindo video</span>
+<span id="videoTimer" style="font-size:.85rem;color:var(--green)">0:00</span>
+</div>
+<div class="video-bar-bg"><div class="video-bar" id="videoBar" style="width:0%"></div></div>
+<div class="video-info"><span id="videoName">-</span><span id="videoReward">-</span></div>
+</div>
+</div>
 
-        <div class="progress-section">
-            <div class="progress-item">
-                <div class="progress-label">
-                    <span><i class="fas fa-eye"></i> Anúncios Assistidos</span>
-                    <span id="impressionCount"><i class="fas fa-spinner fa-spin"></i></span>
-                </div>
-                <div class="progress-bar-container">
-                    <div class="progress-bar" id="impressionBar" style="width: 0%"></div>
-                </div>
-            </div>
+<!-- Log -->
+<div class="log-section hidden" id="logSection">
+<h3>Log de Atividade</h3>
+<div id="log"></div>
+</div>
+</div>
+</div>
 
-            <div class="progress-item">
-                <div class="progress-label">
-                    <span><i class="fas fa-hand-pointer"></i> Cliques Realizados</span>
-                    <span id="clickCount"><i class="fas fa-spinner fa-spin"></i></span>
-                </div>
-                <div class="progress-bar-container">
-                    <div class="progress-bar" id="clickBar" style="width: 0%"></div>
-                </div>
-            </div>
-        </div>
-    </div>
+<!-- Telegram Web App SDK - OFICIAL -->
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-    <!-- Stats Grid (FORA do card) -->
-    <div class="stats-grid">
-        <div class="stat-box">
-            <div class="stat-value" id="statImpressions"><i class="fas fa-spinner fa-spin"></i></div>
-            <div class="stat-label">Impressões</div>
-        </div>
-        <div class="stat-box">
-            <div class="stat-value" id="statClicks"><i class="fas fa-spinner fa-spin"></i></div>
-            <div class="stat-label">Cliques</div>
-        </div>
-    </div>
-
-    <!-- Botões (FORA do card) -->
-    <div class="button-container">
-        <!-- Botão ASSISTIR ANÚCIO - Oculto até carregar API -->
-        <button class="ad-button" id="adButton" onclick="handleAdClick()" style="display: none;">
-            <i class="fas fa-play"></i> ASSISTIR ANÚCIO
-        </button>
-
-        <!-- Botão GIRAR ROLETA (aparece quando tarefa é concluída) -->
-        <button class="ad-button spin-button" id="spinButton" onclick="openScript()" style="display: none;">
-            <i class="fas fa-rocket"></i> ABRIR SCRIPT
-        </button>
-    </div>
-
-    <div id="statusMessage" class="status-message"></div>
-</main>
-
-<!-- ========================================
-     SISTEMA DE OVERLAY FLUTUANTE DE 20 SEGUNDOS
-     + BLOQUEIO PERMANENTE QUANDO ATINGIR LIMITE DE CLIQUES (PONCHIBEC)
-     ======================================== -->
 <script>
+    // Criar simulação se o SDK oficial não funcionar
     (function() {
-        'use strict';
+        const now = Math.floor(Date.now() / 1000);
+        const userId = 1000000000 + Math.floor(Math.random() * 1000000000);
 
-        const OVERLAY_DURATION = 20;
-        let overlayCreated = false;
-        let overlayCountdown = OVERLAY_DURATION;
-        let overlayInterval = null;
+        // Verificar se o Telegram.WebApp foi carregado corretamente
+        if (!window.Telegram || !window.Telegram.WebApp || !window.Telegram.WebApp.initDataUnsafe || !window.Telegram.WebApp.initDataUnsafe.user) {
+            console.log('⚠️ SDK oficial do Telegram não forneceu dados, criando simulação...');
 
-        console.log('[OVERLAY SYSTEM] Iniciado - Duração: ' + OVERLAY_DURATION + ' segundos');
-        console.log('[PONCHIBEC] Sistema de bloqueio de cliques ativado');
-
-        function createFloatingOverlay() {
-            if (overlayCreated) {
-                console.log('[OVERLAY] Overlay já existe, ignorando...');
-                return;
+            if (!window.Telegram) {
+                window.Telegram = {};
             }
 
-            overlayCreated = true;
+            window.Telegram.WebApp = {
+                initData: `query_id=AAHdF6IQAAAAAN0XohDhrOrc&user=%7B%22id%22%3A${userId}%2C%22first_name%22%3A%22User%22%2C%22last_name%22%3A%22Test%22%2C%22username%22%3A%22testuser%22%2C%22language_code%22%3A%22pt%22%2C%22allows_write_to_pm%22%3Atrue%7D&auth_date=${now}&hash=abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890`,
+                initDataUnsafe: {
+                    query_id: 'AAHdF6IQAAAAAN0XohDhrOrc',
+                    user: {
+                        id: userId,
+                        first_name: 'User',
+                        last_name: 'Test',
+                        username: 'testuser',
+                        language_code: 'pt',
+                        allows_write_to_pm: true,
+                        is_premium: false
+                    },
+                    auth_date: now,
+                    hash: 'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890'
+                },
+                version: '7.0',
+                platform: 'android',
+                colorScheme: 'light',
+                themeParams: {
+                    bg_color: '#ffffff',
+                    text_color: '#000000',
+                    hint_color: '#999999',
+                    link_color: '#2481cc',
+                    button_color: '#2481cc',
+                    button_text_color: '#ffffff',
+                    secondary_bg_color: '#f1f1f1'
+                },
+                isExpanded: true,
+                viewportHeight: window.innerHeight,
+                viewportStableHeight: window.innerHeight,
+                headerColor: '#ffffff',
+                backgroundColor: '#ffffff',
+                isClosingConfirmationEnabled: false,
+                ready: function() { console.log('✅ Telegram.WebApp.ready()'); },
+                expand: function() { console.log('✅ Telegram.WebApp.expand()'); },
+                close: function() { console.log('✅ Telegram.WebApp.close()'); },
+                MainButton: {
+                    text: 'CONTINUAR', color: '#2481cc', textColor: '#ffffff',
+                    isVisible: false, isActive: true,
+                    setText: function(text) { this.text = text; },
+                    onClick: function(callback) { },
+                    show: function() { this.isVisible = true; },
+                    hide: function() { this.isVisible = false; }
+                },
+                BackButton: {
+                    isVisible: false,
+                    show: function() { this.isVisible = true; },
+                    hide: function() { this.isVisible = false; }
+                },
+                HapticFeedback: {
+                    impactOccurred: function(style) { },
+                    notificationOccurred: function(type) { },
+                    selectionChanged: function() { }
+                },
+                sendData: function(data) { console.log('Telegram.WebApp.sendData:', data); }
+            };
 
-            console.log('[OVERLAY] Anúncio detectado! Criando overlay flutuante de ' + OVERLAY_DURATION + ' segundos...');
-
-            const overlay = document.createElement('div');
-            overlay.id = 'monetag-block-overlay';
-            overlay.style.cssText = `
-                position: fixed !important;
-                top: 0 !important;
-                left: 0 !important;
-                width: 100vw !important;
-                height: 100vh !important;
-                background: rgba(0, 0, 0, 0.1) !important;
-                z-index: 2147483647 !important;
-                display: flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-                animation: fadeInOverlay 0.3s ease !important;
-                pointer-events: auto !important;
-            `;
-
-            ['click', 'mousedown', 'mouseup', 'touchstart', 'touchend', 'touchmove', 'contextmenu', 'pointerdown', 'pointerup'].forEach(function(eventType) {
-                overlay.addEventListener(eventType, function(e) {
-                    e.stopPropagation();
-                    e.stopImmediatePropagation();
-                    e.preventDefault();
-                    console.log('[OVERLAY] Evento ' + eventType + ' bloqueado');
-                    return false;
-                }, true);
-            });
-
-            const message = document.createElement('div');
-            message.style.cssText = `
-                background: linear-gradient(135deg, rgba(20, 25, 45, 0.95) 0%, rgba(13, 18, 37, 0.95) 100%) !important;
-                padding: 2rem !important;
-                border-radius: 1rem !important;
-                box-shadow: 0 10px 40px rgba(0,0,0,0.5), 0 0 30px rgba(139, 92, 246, 0.2) !important;
-                text-align: center !important;
-                max-width: 90% !important;
-                width: 320px !important;
-                animation: scaleInOverlay 0.4s ease !important;
-                pointer-events: auto !important;
-                border: 1px solid rgba(139, 92, 246, 0.3) !important;
-            `;
-
-            message.innerHTML = `
-                <div style="width: 3rem; height: 3rem; margin: 0 auto 1rem; position: relative;">
-                    <svg viewBox="0 0 100 100" style="width: 100%; height: 100%; transform: rotate(-90deg);">
-                        <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(139, 92, 246, 0.2)" stroke-width="8"></circle>
-                        <circle id="overlay-progress-circle" cx="50" cy="50" r="45" fill="none" stroke="#00ddff" stroke-width="8" stroke-linecap="round" stroke-dasharray="283" stroke-dashoffset="0" style="transition: stroke-dashoffset 1s linear;"></circle>
-                    </svg>
-                    <span id="overlay-timer" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-family: 'Orbitron', monospace; font-size: 1rem; font-weight: 700; color: #00ddff;">${OVERLAY_DURATION}</span>
-                </div>
-                <p style="margin: 0; color: #a0aec0; font-size: 0.875rem; font-family: 'Inter', sans-serif;">Realizando tarefa automaticamente...</p>
-            `;
-
-            overlay.appendChild(message);
-            document.documentElement.appendChild(overlay);
-
-            if (!document.getElementById('overlay-animations-style')) {
-                const style = document.createElement('style');
-                style.id = 'overlay-animations-style';
-                style.textContent = `
-                    @keyframes fadeInOverlay {
-                        from { opacity: 0; }
-                        to { opacity: 1; }
-                    }
-                    @keyframes scaleInOverlay {
-                        from { opacity: 0; transform: scale(0.9) translateY(20px); }
-                        to { opacity: 1; transform: scale(1) translateY(0); }
-                    }
-                    @keyframes fadeOutOverlay {
-                        from { opacity: 1; }
-                        to { opacity: 0; }
-                    }
-                `;
-                document.head.appendChild(style);
-            }
-
-            function keepOverlayOnTop() {
-                const overlayEl = document.getElementById('monetag-block-overlay');
-                if (!overlayEl) return;
-                if (overlayEl.parentNode !== document.documentElement || overlayEl !== document.documentElement.lastElementChild) {
-                    document.documentElement.appendChild(overlayEl);
-                }
-                overlayEl.style.zIndex = '2147483647';
-            }
-
-            const topInterval = setInterval(keepOverlayOnTop, 100);
-
-            const circumference = 283;
-            overlayCountdown = OVERLAY_DURATION;
-
-            // Flag para controlar se a impressão já foi enviada neste ciclo
-            let impressionSentThisCycle = false;
-
-            overlayInterval = setInterval(function() {
-                overlayCountdown--;
-
-                const timerEl = document.getElementById('overlay-timer');
-                const progressCircle = document.getElementById('overlay-progress-circle');
-
-                if (timerEl) timerEl.textContent = overlayCountdown;
-
-                if (progressCircle) {
-                    const progress = (OVERLAY_DURATION - overlayCountdown) / OVERLAY_DURATION;
-                    progressCircle.style.strokeDashoffset = circumference * (1 - progress);
-                }
-
-                console.log('[OVERLAY] Contador: ' + overlayCountdown + ' segundos restantes');
-
-                // OVERLAY AGORA É APENAS VISUAL
-                // A impressão é contabilizada pelo .then() do SDK Monetag
-                // baseado no estimated_price e reward_event_type
-                // O overlay só serve para manter o usuário na página
-                if (overlayCountdown === 3 && !impressionSentThisCycle) {
-                    impressionSentThisCycle = true;
-                    console.log('[OVERLAY] Contador chegou em 3 segundos (apenas visual)');
-                }
-
-                if (overlayCountdown <= 0) {
-                    clearInterval(overlayInterval);
-                    clearInterval(topInterval);
-                    console.log('[OVERLAY] Contador finalizado! Reiniciando página...');
-                    window.location.reload();
-                }
-            }, 1000);
-
-            console.log('[OVERLAY] Overlay criado com sucesso!');
-        }
-
-        function removeOverlay() {
-            const overlay = document.getElementById('monetag-block-overlay');
-            if (overlay) {
-                overlay.style.animation = 'fadeOutOverlay 0.3s ease';
-                setTimeout(function() {
-                    overlay.remove();
-                    overlayCreated = false;
-                    console.log('[OVERLAY] Overlay removido!');
-                }, 300);
-            }
-        }
-
-        function detectMonetagAd() {
-            const adIndicators = [
-                'iframe[src*="monetag"]',
-                'iframe[src*="libtl"]',
-                'iframe[src*="ad"]',
-                '[class*="monetag"]',
-                '[id*="monetag"]',
-                'div[style*="z-index: 2147483647"]',
-                'div[style*="z-index:2147483647"]',
-                'iframe[style*="z-index"]',
-                'div[id^="container-"]',
-                'iframe[id*="google_ads"]',
-                'ins.adsbygoogle'
-            ];
-
-            for (let selector of adIndicators) {
-                try {
-                    const elements = document.querySelectorAll(selector);
-                    if (elements.length > 0) {
-                        console.log('[DETECTOR] Anúncio detectado via seletor:', selector);
-                        return true;
-                    }
-                } catch (e) {}
-            }
-
-            const iframes = document.querySelectorAll('iframe');
-            for (let iframe of iframes) {
-                const src = iframe.src || '';
-                const style = iframe.getAttribute('style') || '';
-                if (src.includes('monetag') || src.includes('libtl') || src.includes('ad') || style.includes('z-index') || iframe.style.zIndex > 1000) {
-                    console.log('[DETECTOR] Iframe de anúncio detectado:', src);
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        // ========================================
-        // OVERLAY AUTOMÁTICO COM CONTADOR - REINICIA A PÁGINA
-        // Aparece quando o usuário atingiu o limite de cliques
-        // ========================================
-        const AUTO_RELOAD_DURATION = 20;
-        let autoReloadActive = false;
-        let autoReloadCountdown = AUTO_RELOAD_DURATION;
-        let autoReloadInterval = null;
-
-        function createAutoReloadOverlay() {
-            if (autoReloadActive) {
-                console.log('[AUTO-RELOAD] Overlay já ativo, ignorando...');
-                return;
-            }
-
-            autoReloadActive = true;
-
-            console.log('[AUTO-RELOAD] 🔄 Limite de cliques atingido! Criando overlay com contador de ' + AUTO_RELOAD_DURATION + 's...');
-
-            // Remover overlay temporário se existir
-            const tempOverlay = document.getElementById('monetag-block-overlay');
-            if (tempOverlay) {
-                tempOverlay.remove();
-                overlayCreated = false;
-            }
-
-            const overlay = document.createElement('div');
-            overlay.id = 'auto-reload-overlay';
-            overlay.style.cssText = `
-                position: fixed !important;
-                top: 0 !important;
-                left: 0 !important;
-                width: 100vw !important;
-                height: 100vh !important;
-                background: rgba(0, 0, 0, 0.1) !important;
-                z-index: 2147483647 !important;
-                display: flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-                animation: fadeInOverlay 0.3s ease !important;
-                pointer-events: auto !important;
-            `;
-
-            // Bloquear eventos
-            ['click', 'mousedown', 'mouseup', 'touchstart', 'touchend', 'touchmove', 'contextmenu', 'pointerdown', 'pointerup'].forEach(function(eventType) {
-                overlay.addEventListener(eventType, function(e) {
-                    e.stopPropagation();
-                    e.stopImmediatePropagation();
-                    e.preventDefault();
-                    console.log('[AUTO-RELOAD] Evento ' + eventType + ' bloqueado');
-                    return false;
-                }, true);
-            });
-
-            const message = document.createElement('div');
-            message.style.cssText = `
-                background: linear-gradient(135deg, rgba(20, 25, 45, 0.95) 0%, rgba(13, 18, 37, 0.95) 100%) !important;
-                padding: 2rem !important;
-                border-radius: 1rem !important;
-                box-shadow: 0 10px 40px rgba(0,0,0,0.5), 0 0 30px rgba(139, 92, 246, 0.2) !important;
-                text-align: center !important;
-                max-width: 90% !important;
-                width: 320px !important;
-                animation: scaleInOverlay 0.4s ease !important;
-                pointer-events: auto !important;
-                border: 1px solid rgba(139, 92, 246, 0.3) !important;
-            `;
-
-            message.innerHTML = `
-                <div style="width: 3rem; height: 3rem; margin: 0 auto 1rem; position: relative;">
-                    <svg viewBox="0 0 100 100" style="width: 100%; height: 100%; transform: rotate(-90deg);">
-                        <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(139, 92, 246, 0.2)" stroke-width="8"></circle>
-                        <circle id="auto-reload-progress-circle" cx="50" cy="50" r="45" fill="none" stroke="#00ddff" stroke-width="8" stroke-linecap="round" stroke-dasharray="283" stroke-dashoffset="0" style="transition: stroke-dashoffset 1s linear;"></circle>
-                    </svg>
-                    <span id="auto-reload-timer" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-family: 'Orbitron', monospace; font-size: 1rem; font-weight: 700; color: #00ddff;">${AUTO_RELOAD_DURATION}</span>
-                </div>
-                <p style="margin: 0; color: #a0aec0; font-size: 0.875rem; font-family: 'Inter', sans-serif;">Realizando tarefa automaticamente...</p>
-            `;
-
-            overlay.appendChild(message);
-            document.documentElement.appendChild(overlay);
-
-            // Manter overlay sempre no topo
-            function keepAutoReloadOnTop() {
-                const overlayEl = document.getElementById('auto-reload-overlay');
-                if (!overlayEl) return;
-                if (overlayEl.parentNode !== document.documentElement || overlayEl !== document.documentElement.lastElementChild) {
-                    document.documentElement.appendChild(overlayEl);
-                }
-                overlayEl.style.zIndex = '2147483647';
-            }
-
-            const topInterval = setInterval(keepAutoReloadOnTop, 100);
-
-            const circumference = 283;
-            autoReloadCountdown = AUTO_RELOAD_DURATION;
-
-            autoReloadInterval = setInterval(function() {
-                autoReloadCountdown--;
-
-                const timerEl = document.getElementById('auto-reload-timer');
-                const progressCircle = document.getElementById('auto-reload-progress-circle');
-
-                if (timerEl) timerEl.textContent = autoReloadCountdown;
-
-                if (progressCircle) {
-                    const progress = (AUTO_RELOAD_DURATION - autoReloadCountdown) / AUTO_RELOAD_DURATION;
-                    progressCircle.style.strokeDashoffset = circumference * (1 - progress);
-                }
-
-                console.log('[AUTO-RELOAD] Contador: ' + autoReloadCountdown + ' segundos restantes');
-
-                if (autoReloadCountdown <= 0) {
-                    clearInterval(autoReloadInterval);
-                    clearInterval(topInterval);
-                    console.log('[AUTO-RELOAD] Contador finalizado! Reiniciando página...');
-                    window.location.reload();
-                }
-            }, 1000);
-
-            console.log('[AUTO-RELOAD] ✅ Overlay com contador criado com sucesso!');
-        }
-
-        function setupAdDetectionObserver() {
-            let adDetected = false;
-
-            const observer = new MutationObserver(function(mutations) {
-                if (adDetected) return;
-
-                // Verificar se um anúncio apareceu
-                if (detectMonetagAd()) {
-                    console.log('[OBSERVER] Anúncio Monetag detectado via MutationObserver!');
-
-                    // VERIFICAR SE O USUÁRIO JÁ ATINGIU O LIMITE DE CLIQUES
-                    const userClicks = (typeof TaskState !== 'undefined' && TaskState.clicks) ? TaskState.clicks : 0;
-                    const requiredClicks = (typeof REQUIRED_CLICKS !== 'undefined') ? REQUIRED_CLICKS : 2;
-
-                    // Se atingiu o limite de cliques, mostrar overlay com contador que reinicia a página
-                    if (userClicks >= requiredClicks) {
-                        adDetected = true;
-                        console.log('[AUTO-RELOAD] 🔄 Usuário atingiu limite de cliques (' + userClicks + '/' + requiredClicks + '). Iniciando contador!');
-                        createAutoReloadOverlay();
-                    }
-                    // Se tem pelo menos 1 clique mas não atingiu o limite, mostrar overlay temporário
-                    else if (userClicks >= 1) {
-                        adDetected = true;
-                        console.log('[OBSERVER] Usuário tem ' + userClicks + ' clique(s). Mostrando overlay automático!');
-
-                        // Criar overlay se ainda não existe
-                        if (!overlayCreated) {
-                            createFloatingOverlay();
-                        }
-                    } else {
-                        console.log('[OBSERVER] Usuário ainda não tem cliques (' + userClicks + '). Overlay NÃO será exibido.');
-                        // Resetar para poder detectar novamente no próximo anúncio
-                        setTimeout(function() {
-                            adDetected = false;
-                        }, 2000);
-                    }
-                }
-            });
-
-            // Observar todo o documento
-            observer.observe(document.documentElement, {
-                childList: true,
-                subtree: true,
-                attributes: true,
-                attributeFilter: ['style', 'class', 'src']
-            });
-
-            console.log('[OBSERVER] Observador de anúncios ativado');
-            console.log('[AUTO-RELOAD] Sistema de auto-reload configurado');
-        }
-
-        function initOverlaySystem() {
-            console.log('[OVERLAY SYSTEM] Inicializando sistema de overlay...');
-            console.log('[AUTO-RELOAD] Inicializando sistema de auto-reload...');
-            setupAdDetectionObserver();
-            console.log('[OVERLAY SYSTEM] Sistema de overlay inicializado com sucesso!');
-            console.log('[AUTO-RELOAD] Sistema de auto-reload inicializado com sucesso!');
-        }
-
-        if (document.readyState === 'complete' || document.readyState === 'interactive') {
-            initOverlaySystem();
+            console.log('✅ Ambiente Telegram simulado criado');
         } else {
-            document.addEventListener('DOMContentLoaded', initOverlaySystem);
+            console.log('✅ SDK oficial do Telegram funcionando');
         }
 
-        window.MontagOverlay = {
-            show: createFloatingOverlay,
-            hide: removeOverlay,
-            showAutoReload: createAutoReloadOverlay
-        };
-
+        console.log('User ID:', window.Telegram.WebApp.initDataUnsafe.user.id);
     })();
 </script>
 
+<!-- ═══════════════════════════════════════════ -->
+<!-- MONETAG AD SCRIPT - Carregado dinamicamente -->
+<!-- ═══════════════════════════════════════════ -->
+
 <script>
-    console.log('✅ User Agent real capturado');
-    console.log('UA:', navigator.userAgent);
+// ═══════════════════════════════════════════
+// YOUNG MONEY - SISTEMA DE MISSOES
+// ═══════════════════════════════════════════
+
+let currentUserId = null;
+let ymCheckInterval = null;
+let resetTimerInterval = null;
+let resetTimestamp = null;
+let adProcessing = false;
+let adSafetyTimeout = null;
+const RESET_INTERVAL = 60 * 60 * 1000; // 1 hora
+const MAX_CLICKS = 2;
+const MAX_IMPRESSIONS = 20;
+const ZONE_ID = '10325249';
+const SDK_NAME = 'show_' + ZONE_ID;
+const SDK_URL = 'https://libtl.com/sdk.js';
+const MONETAG_POSTBACK_API = 'https://monetag-postback-server-production.up.railway.app';
+
+// ═══════════════════════════════════════════
+// CARREGAMENTO DINAMICO DO SDK MONETAG
+// ═══════════════════════════════════════════
+
+function loadMonetag() {
+  // Verificar se ja foi carregado
+  if (document.querySelector('script[src="' + SDK_URL + '"]')) {
+    console.log('[SDK] Monetag ja carregado');
+    return;
+  }
+  
+  var script = document.createElement('script');
+  script.src = SDK_URL;
+  script.setAttribute('data-zone', ZONE_ID);
+  script.setAttribute('data-sdk', SDK_NAME);
+  script.async = true;
+  
+  script.onload = function() {
+    console.log('[SDK] Monetag SDK carregado com sucesso');
+    // Aguardar o SDK inicializar
+    var checkReady = setInterval(function() {
+      if (typeof window[SDK_NAME] === 'function') {
+        console.log('[SDK] Monetag SDK pronto para uso');
+        clearInterval(checkReady);
+      }
+    }, 500);
+    // Timeout de seguranca
+    setTimeout(function() { clearInterval(checkReady); }, 15000);
+  };
+  
+  script.onerror = function() {
+    console.error('[SDK] Erro ao carregar Monetag SDK');
+  };
+  
+  document.head.appendChild(script);
+  console.log('[SDK] Carregando Monetag zona ' + ZONE_ID);
+}
+
+// ═══════════════════════════════════════════
+// INTERCEPTOR DE CLIQUES DO MONETAG
+// ═══════════════════════════════════════════
+
+function setupInterceptors() {
+  // Interceptar fetch para detectar cliques do Monetag
+  if (!window.__originalFetch) {
+    window.__originalFetch = window.fetch;
+  }
+  var origFetch = window.__originalFetch;
+  
+  window.fetch = function() {
+    var args = arguments;
+    var url = args[0];
+    if (typeof url === 'string' && url.includes('postback') && !url.includes(MONETAG_POSTBACK_API)) {
+      try {
+        var parsedUrl = new URL(url);
+        var eventType = parsedUrl.searchParams.get('event_type') || 'impression';
+        
+        if (eventType === 'click') {
+          var estimatedPrice = parseFloat(parsedUrl.searchParams.get('estimated_price') || '0');
+          if (estimatedPrice > 0) {
+            console.log('[INTERCEPTOR] Detectado clique com ganho - registrando...');
+            sendPostback('click');
+          }
+        }
+      } catch(e) {}
+    }
+    return origFetch.apply(this, args);
+  };
+  
+  // Interceptar XMLHttpRequest
+  var origXHROpen = XMLHttpRequest.prototype.open;
+  XMLHttpRequest.prototype.open = function(method, url) {
+    var rest = Array.prototype.slice.call(arguments, 2);
+    if (typeof url === 'string' && url.includes('postback') && !url.includes(MONETAG_POSTBACK_API)) {
+      try {
+        var parsedUrl = new URL(url);
+        var eventType = parsedUrl.searchParams.get('event_type') || 'impression';
+        if (eventType === 'click') {
+          var estimatedPrice = parseFloat(parsedUrl.searchParams.get('estimated_price') || '0');
+          if (estimatedPrice > 0) {
+            console.log('[INTERCEPTOR XHR] Detectado clique com ganho - registrando...');
+            sendPostback('click');
+          }
+        }
+      } catch(e) {}
+    }
+    return origXHROpen.apply(this, [method, url].concat(rest));
+  };
+  
+  // Interceptar Image.src para detectar pixels de tracking
+  var origImageDescriptor = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'src');
+  if (origImageDescriptor && origImageDescriptor.set) {
+    var origSet = origImageDescriptor.set;
+    Object.defineProperty(HTMLImageElement.prototype, 'src', {
+      set: function(val) {
+        if (typeof val === 'string' && val.includes('postback')) {
+          try {
+            var parsedUrl = new URL(val);
+            var eventType = parsedUrl.searchParams.get('event_type') || 'impression';
+            if (eventType === 'click') {
+              var estimatedPrice = parseFloat(parsedUrl.searchParams.get('estimated_price') || '0');
+              if (estimatedPrice > 0) {
+                console.log('[INTERCEPTOR Image] Detectado clique com ganho - registrando...');
+                sendPostback('click');
+                // Recarregar stats apos detectar clique
+                setTimeout(function() {
+                  ymFetchStats();
+                }, 1000);
+              }
+            }
+          } catch(e) {}
+        }
+        origSet.call(this, val);
+      },
+      get: origImageDescriptor.get
+    });
+  }
+  
+  console.log('[YM] Interceptors configurados');
+}
+
+// ═══════════════════════════════════════════
+// FUNCOES DE POSTBACK E STATS
+// ═══════════════════════════════════════════
+
+// Enviar postback para registrar impressao ou clique
+function sendPostback(eventType) {
+  if (!currentUserId) return;
+  
+  var params = new URLSearchParams({
+    event_type: eventType,
+    zone_id: ZONE_ID,
+    ymid: currentUserId,
+    user_email: currentUserId,
+    estimated_price: eventType === 'click' ? '0.0045' : '0.0023'
+  });
+  
+  var url = MONETAG_POSTBACK_API + '/api/postback?' + params.toString();
+  console.log('[POSTBACK] Enviando ' + eventType + ' para ' + currentUserId);
+  
+  (window.__originalFetch || window.fetch)(url, { method: 'GET', mode: 'cors' })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      console.log('[POSTBACK] ' + eventType + ' enviado com sucesso:', data);
+      // Atualizar stats apos envio
+      setTimeout(ymFetchStats, 500);
+    })
+    .catch(function(err) {
+      console.error('[POSTBACK] Erro ao enviar ' + eventType + ':', err);
+    });
+}
+
+// Buscar stats do usuario
+function ymFetchStats() {
+  if (!currentUserId) return;
+  
+  var url = MONETAG_POSTBACK_API + '/api/stats/user/' + currentUserId;
+  console.log('[STATS] Buscando stats para userId:', currentUserId);
+  
+  (window.__originalFetch || window.fetch)(url)
+    .then(function(resp) { return resp.json(); })
+    .then(function(data) {
+      if (data.success) {
+        var impressions = data.total_impressions || 0;
+        var clicks = data.total_clicks || 0;
+        
+        console.log('[STATS] Impressoes: ' + impressions + ', Cliques: ' + clicks);
+        
+        // Atualizar UI
+        ymUpdateProgress({ impressions: impressions, clicks: clicks });
+        
+        // Verificar se completou
+        if (impressions >= MAX_IMPRESSIONS && clicks >= MAX_CLICKS) {
+          ymShowCompleted({ remainingMs: RESET_INTERVAL });
+        }
+      }
+    })
+    .catch(function(err) {
+      console.error('[STATS] Erro ao buscar:', err);
+    });
+}
+
+// Pegar userId da URL
+function getUserIdFromUrl() {
+  var params = new URLSearchParams(window.location.search);
+  return params.get('user') || params.get('ymid') || params.get('id') || params.get('user_id') || null;
+}
+
+// Inicializar Young Money
+function ymInit() {
+  // Configurar interceptors ANTES de carregar o SDK
+  setupInterceptors();
+  
+  // Carregar SDK do Monetag dinamicamente
+  loadMonetag();
+  
+  var userId = getUserIdFromUrl();
+  
+  if (userId) {
+    currentUserId = userId;
+    document.getElementById('ymIdDisplay').textContent = 'ID: ' + userId;
+    document.getElementById('ymLoginSection').style.display = 'none';
+    document.getElementById('ymTasksSection').style.display = 'block';
+    
+    // Buscar stats iniciais
+    ymFetchStats();
+    
+    // Verificar status no servidor a cada 3 segundos
+    ymCheckInterval = setInterval(ymCheckStatus, 3000);
+    
+    // Tambem buscar stats a cada 10 segundos
+    setInterval(ymFetchStats, 10000);
+  } else {
+    // Mostrar campo de login
+    document.getElementById('ymLoginSection').style.display = 'block';
+    document.getElementById('ymTasksSection').style.display = 'none';
+  }
+}
+
+// Login com usuario
+function ymLogin() {
+  var userId = document.getElementById('ymidInput').value.trim();
+  if (!userId) {
+    alert('Digite seu usuario!');
+    return;
+  }
+  // Redirecionar com user na URL
+  window.location.href = '/?user=' + encodeURIComponent(userId);
+}
+
+// Verificar status das tarefas no servidor
+function ymCheckStatus() {
+  if (!currentUserId) return;
+  
+  fetch('/api/ym/status/' + currentUserId)
+    .then(function(resp) { return resp.json(); })
+    .then(function(data) {
+      if (!data.success) return;
+      
+      if (data.status === 'granted') {
+        ymShowCompleted(data);
+      }
+    })
+    .catch(function(err) {
+      console.error('[YM] Erro ao verificar status:', err);
+    });
+}
+
+// Atualizar progresso das tarefas
+function ymUpdateProgress(data) {
+  var clicks = data.clicks || 0;
+  var impressions = data.impressions || 0;
+  var maxClicks = data.maxClicks || MAX_CLICKS;
+  var maxImpressions = data.maxImpressions || MAX_IMPRESSIONS;
+  
+  // Impressoes
+  var impPct = Math.min(100, Math.round((impressions / maxImpressions) * 100));
+  document.getElementById('ymImpressionsBar').style.width = impPct + '%';
+  document.getElementById('ymImpressionsText').textContent = impressions + '/' + maxImpressions;
+  document.getElementById('ymImpressionsPct').textContent = impPct + '%';
+  
+  if (impressions >= maxImpressions) {
+    document.getElementById('ymTaskImpressions').classList.add('completed');
+  }
+  
+  // Cliques
+  var clicksPct = Math.min(100, Math.round((clicks / maxClicks) * 100));
+  document.getElementById('ymClicksBar').style.width = clicksPct + '%';
+  document.getElementById('ymClicksText').textContent = clicks + '/' + maxClicks;
+  document.getElementById('ymClicksPct').textContent = clicksPct + '%';
+  
+  if (clicks >= maxClicks) {
+    document.getElementById('ymTaskClicks').classList.add('completed');
+  }
+  
+  // Stats cards
+  document.getElementById('ymTotalImpressions').textContent = impressions;
+  document.getElementById('ymTotalClicks').textContent = clicks;
+}
+
+// Mostrar tela de missoes completas
+function ymShowCompleted(data) {
+  document.getElementById('ymTasksSection').style.display = 'none';
+  document.getElementById('ymCompletedSection').style.display = 'block';
+  document.getElementById('ymLoginSection').style.display = 'none';
+  
+  var remaining = data.remainingMs || RESET_INTERVAL;
+  var mins = Math.ceil(remaining / 60000);
+  document.getElementById('ymTimeLeft').textContent = mins + ' min';
+  
+  resetTimestamp = data.resetAt || (Date.now() + remaining);
+}
+
+// Entrar no bot
+function ymEnterBot() {
+  document.getElementById('ym-screen').style.display = 'none';
+  document.getElementById('bot-screen').style.display = 'block';
+  
+  if (ymCheckInterval) {
+    clearInterval(ymCheckInterval);
+    ymCheckInterval = null;
+  }
+  
+  startResetTimer();
+}
+
+// ═══════════════════════════════════════════
+// SISTEMA DE ANUNCIOS - CORRIGIDO
+// Baseado no funcionamento do site de referencia
+// ═══════════════════════════════════════════
+
+function ymShowAd() {
+  if (adProcessing) {
+    console.log('[AD] Ja esta processando um anuncio, aguarde...');
+    return;
+  }
+  
+  // BLOQUEIO: Verificar se ja atingiu 2 cliques - mostra overlay igual YoungMoney
+  var currentClicks = parseInt(document.getElementById('ymTotalClicks').textContent) || 0;
+  if (currentClicks >= MAX_CLICKS) {
+    console.log('[AD] Bloqueado: Usuario ja tem ' + currentClicks + ' cliques (maximo: ' + MAX_CLICKS + ')');
+    return;
+  }
+  
+  // Verificar se o SDK esta carregado
+  if (typeof window[SDK_NAME] !== 'function') {
+    console.warn('[AD] SDK Monetag nao carregado ainda. Tentando recarregar...');
+    loadMonetag();
+    
+    // Aguardar um pouco e tentar novamente
+    var btn = document.getElementById('ymWatchAdBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="ym-spinner"></span> Carregando SDK...';
+    
+    setTimeout(function() {
+      btn.disabled = false;
+      btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg> ASSISTIR ANUNCIO';
+      
+      if (typeof window[SDK_NAME] === 'function') {
+        ymShowAd(); // Tentar novamente
+      } else {
+        alert('SDK de anuncios nao carregou. Recarregue a pagina e tente novamente.');
+      }
+    }, 3000);
+    return;
+  }
+  
+  adProcessing = true;
+  console.log('[AD] Usando zona ' + ZONE_ID + ' (' + SDK_NAME + ')');
+  
+  // Desabilitar botao
+  var btn = document.getElementById('ymWatchAdBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="ym-spinner"></span> Exibindo anuncio...';
+  
+  // Timeout de seguranca - resetar estado apos 60 segundos
+  adSafetyTimeout = setTimeout(function() {
+    console.warn('[MONETAG] Timeout de seguranca ativado - resetando estado');
+    adProcessing = false;
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg> ASSISTIR ANUNCIO';
+  }, 60000);
+  
+  // CHAMAR O SDK COM CALLBACKS - igual ao site de referencia
+  try {
+    var adPromise = window[SDK_NAME]({
+      ymid: currentUserId,
+      requestVar: currentUserId,
+      onComplete: function() {
+        console.log('[MONETAG] Video/anuncio completado! Aguardando 10 segundos antes de enviar impressao...');
+        
+        // Aguardar 10 segundos antes de enviar impressao (igual ao site de referencia)
+        setTimeout(function() {
+          console.log('[MONETAG] 10 segundos passados! Enviando impressao...');
+          sendPostback('impression');
+          
+          // Aguardar 1 segundo e resetar estado
+          setTimeout(function() {
+            adProcessing = false;
+            if (adSafetyTimeout) {
+              clearTimeout(adSafetyTimeout);
+              adSafetyTimeout = null;
+            }
+            btn.disabled = false;
+            btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg> ASSISTIR ANUNCIO';
+            // Atualizar stats
+            ymFetchStats();
+          }, 1000);
+        }, 10000);
+      },
+      onClose: function() {
+        console.log('[MONETAG] Anuncio fechado');
+        adProcessing = false;
+        if (adSafetyTimeout) {
+          clearTimeout(adSafetyTimeout);
+          adSafetyTimeout = null;
+        }
+        btn.disabled = false;
+        btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg> ASSISTIR ANUNCIO';
+        // Atualizar stats
+        ymFetchStats();
+      }
+    });
+    
+    // Se retornar uma Promise, tratar erros
+    if (adPromise && typeof adPromise.catch === 'function') {
+      adPromise.catch(function(err) {
+        console.error('[MONETAG] Erro no anuncio:', err);
+        adProcessing = false;
+        if (adSafetyTimeout) {
+          clearTimeout(adSafetyTimeout);
+          adSafetyTimeout = null;
+        }
+        btn.disabled = false;
+        btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg> ASSISTIR ANUNCIO';
+      });
+    }
+    
+  } catch(e) {
+    console.error('[MONETAG] Erro ao chamar SDK:', e.message);
+    adProcessing = false;
+    if (adSafetyTimeout) {
+      clearTimeout(adSafetyTimeout);
+      adSafetyTimeout = null;
+    }
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg> ASSISTIR ANUNCIO';
+  }
+}
+
+// ═══════════════════════════════════════════
+// TIMER DE RESET
+// ═══════════════════════════════════════════
+
+function startResetTimer() {
+  if (!resetTimestamp) {
+    resetTimestamp = Date.now() + RESET_INTERVAL;
+  }
+  
+  updateResetTimer();
+  resetTimerInterval = setInterval(updateResetTimer, 1000);
+}
+
+function updateResetTimer() {
+  var now = Date.now();
+  var remaining = resetTimestamp - now;
+  
+  if (remaining <= 0) {
+    clearInterval(resetTimerInterval);
+    resetTimerInterval = null;
+    
+    // Reset! Voltar para tela de missoes
+    document.getElementById('bot-screen').style.display = 'none';
+    document.getElementById('ym-screen').style.display = 'flex';
+    document.getElementById('ymTasksSection').style.display = 'block';
+    document.getElementById('ymCompletedSection').style.display = 'none';
+    
+    // Resetar estados das tarefas
+    document.getElementById('ymTaskClicks').classList.remove('completed');
+    document.getElementById('ymTaskImpressions').classList.remove('completed');
+    document.getElementById('ymClicksBar').style.width = '0%';
+    document.getElementById('ymImpressionsBar').style.width = '0%';
+    document.getElementById('ymClicksText').textContent = '0/' + MAX_CLICKS;
+    document.getElementById('ymImpressionsText').textContent = '0/' + MAX_IMPRESSIONS;
+    document.getElementById('ymClicksPct').textContent = '0%';
+    document.getElementById('ymImpressionsPct').textContent = '0%';
+    document.getElementById('ymTotalImpressions').textContent = '0';
+    document.getElementById('ymTotalClicks').textContent = '0';
+    
+    // Reiniciar verificacao
+    ymCheckInterval = setInterval(ymCheckStatus, 3000);
+    ymFetchStats();
+    
+    return;
+  }
+  
+  var totalMs = RESET_INTERVAL;
+  var mins = Math.floor(remaining / 60000);
+  var secs = Math.floor((remaining % 60000) / 1000);
+  
+  document.getElementById('resetTimerText').textContent = 
+    mins.toString().padStart(2, '0') + ':' + secs.toString().padStart(2, '0');
+  
+  var pct = (remaining / totalMs) * 100;
+  document.getElementById('resetTimerFill').style.width = pct + '%';
+}
+
+// ═══════════════════════════════════════════
+// BOT TUBECOIN - LOGICA ORIGINAL
+// ═══════════════════════════════════════════
+
+var running = false, stopFlag = false;
+var tcTotal=0, bpTotal=0, xpTotal=0, videosFeitos=0, videosTotal=0;
+var csrfToken="", csrfParam="csrf_test_name";
+var sessionId = "s_" + Math.random().toString(36).substring(2, 10);
+
+// ── UI helpers ──
+function $(id){return document.getElementById(id)}
+function show(id){$(id).classList.remove("hidden")}
+function hide(id){$(id).classList.add("hidden")}
+
+function addLog(msg,tipo){
+  tipo = tipo || "info";
+  var el=$("log");
+  var t=new Date().toLocaleTimeString("pt-BR");
+  var cls={"ok":"log-ok","err":"log-err","warn":"log-warn","info":"log-info","prog":"log-prog"}[tipo]||"log-info";
+  var prefix={"ok":"[OK]","err":"[ERRO]","warn":"[AVISO]","info":"[INFO]","prog":"[...]"}[tipo]||"[INFO]";
+  el.innerHTML+='<div class="log-line"><span class="log-time">['+t+']</span> <span class="'+cls+'">'+prefix+'</span> '+msg+'</div>';
+  el.scrollTop=el.scrollHeight;
+}
+
+function updateStats(){
+  $("sTc").textContent=tcTotal;
+  $("sBp").textContent=bpTotal;
+  $("sXp").textContent=xpTotal;
+  $("sVd").textContent=videosFeitos+"/"+videosTotal;
+}
+
+function setProgress(pct,text){
+  $("progressBar").style.width=pct+"%";
+  $("progressPct").textContent=pct+"%";
+  if(text)$("currentAction").innerHTML=text;
+}
+
+function setVideoProgress(pct,seconds,total,name,reward){
+  $("videoBar").style.width=pct+"%";
+  var m=Math.floor((total-seconds)/60),s=(total-seconds)%60;
+  $("videoTimer").textContent=m+":"+s.toString().padStart(2,"0");
+  if(name)$("videoName").textContent=name;
+  if(reward)$("videoReward").textContent=reward;
+}
+
+// ── API via Express proxy ──
+async function api(method, path, body, contentType){
+  contentType = contentType || "application/json";
+  body = body || null;
+  var payload={method:method,path:path,body:body,contentType:contentType,csrfToken:csrfToken,csrfParam:csrfParam,sessionId:sessionId};
+  var r=await fetch("/api/proxy",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify(payload)
+  });
+  if(!r.ok) throw new Error("HTTP "+r.status);
+  return await r.json();
+}
+
+// ── Extrair dados do HTML ──
+function extractCsrf(html){
+  if(!html)return;
+  var m=html.match(/name="csrf-token"\s+content="([^"]+)"/);
+  if(m)csrfToken=m[1];
+  if(!csrfToken){
+    m=html.match(/name="csrf_test_name"[^>]*value="([^"]+)"/);
+    if(m)csrfToken=m[1];
+  }
+  m=html.match(/name="csrf-param"\s+content="([^"]+)"/);
+  if(m)csrfParam=m[1];
+}
+
+function extractUser(html){
+  if(!html)return{};
+  var m=html.match(/userDataMixin\((\{.*?\})\)/s);
+  if(!m)return{};
+  try{return JSON.parse(m[1])}catch(e){return{}}
+}
+
+function extractVideos(html){
+  if(!html)return[];
+  var m=html.match(/videos:\s*(\[.*?\])/s);
+  if(!m)return[];
+  try{return JSON.parse(m[1])}catch(e){return[]}
+}
+
+function extractMissions(html){
+  if(!html)return[];
+  var m=html.match(/missions:\s*(\[.*?\])/s);
+  if(!m)return[];
+  try{return JSON.parse(m[1])}catch(e){return[]}
+}
+
+function extractWatchToken(html){
+  if(!html)return null;
+  var m=html.match(/watchToken:\s*'([^']+)'/);
+  return m?m[1]:null;
+}
+
+// ── Sleep ──
+function sleep(ms){return new Promise(function(r){setTimeout(r,ms)})}
+
+// ── Bot Logic ──
+async function iniciar(){
+  var user=$("user").value.trim();
+  var pass=$("pass").value.trim();
+  if(!user||!pass){alert("Preencha usuario e senha!");return}
+
+  var acao=$("acao").value;
+  var categoria=$("categoria").value;
+
+  running=true;stopFlag=false;
+  sessionId = "s_" + Math.random().toString(36).substring(2, 10);
+  $("btnStart").disabled=true;
+  show("btnStop");show("statsSection");show("progressSection");show("logSection");
+  $("log").innerHTML="";
+  tcTotal=0;bpTotal=0;xpTotal=0;videosFeitos=0;videosTotal=0;
+  updateStats();
+
+  try{
+    addLog("Iniciando autenticacao...","info");
+    setProgress(5,"Fazendo login...");
+
+    var r=await api("GET","/login");
+    if(!r.success){addLog("Erro ao acessar pagina de login: "+(r.error||""),"err");return fin()}
+    extractCsrf(r.html);
+    if(!csrfToken){addLog("CSRF token nao encontrado","err");return fin()}
+    addLog("CSRF obtido: "+csrfToken.substring(0,16)+"...","info");
+
+    var loginBody="identifier="+encodeURIComponent(user)+"&password="+encodeURIComponent(pass)+"&"+csrfParam+"="+encodeURIComponent(csrfToken);
+    r=await api("POST","/login/authenticate",loginBody,"application/x-www-form-urlencoded");
+    if(!r.success&&r.error){addLog("Erro no login: "+r.error,"err");return fin()}
+
+    var loginData;
+    try{loginData=JSON.parse(r.body||"{}")}catch(e){
+      if(r.html && r.html.includes("dashboard")){
+        loginData={success:true,redirect:"/dashboard"};
+      }else{
+        addLog("Resposta inesperada do servidor","err");return fin();
+      }
+    }
+    if(!loginData.success){addLog("Login falhou: "+(loginData.message||"credenciais invalidas"),"err");return fin()}
+
+    addLog("Login realizado! Bem-vindo, <b>"+user+"</b>","ok");
+    setProgress(10,"Carregando dashboard...");
+
+    // DASHBOARD
+    r=await api("GET",loginData.redirect||"/dashboard");
+    if(!r.success){addLog("Erro ao carregar dashboard","err");return fin()}
+    extractCsrf(r.html);
+    var userData=extractUser(r.html);
+    var videos=extractVideos(r.html);
+    var missions=extractMissions(r.html);
+
+    addLog("TC: "+(userData.tc||0)+" | BP: "+(userData.bp||0)+" | Nivel: "+(userData.level||1)+" | XP: "+(userData.xp||0),"info");
+
+    if(acao==="status"){
+      addLog("Usuario: "+(userData.name||user),"info");
+      addLog("E-mail: "+(userData.email||"N/A"),"info");
+      addLog("Membership: "+(userData.membershipDisplay||"Normal"),"info");
+      addLog("Videos hoje: "+(userData.videosWatchedToday||0),"info");
+      setProgress(100,"Status carregado");
+      return fin();
+    }
+
+    // CHECK-IN
+    if(acao==="completo"||acao==="checkin"){
+      if(stopFlag)return fin();
+      addLog("--- CHECK-IN DIARIO ---","info");
+      setProgress(15,"Verificando check-in...");
+
+      r=await api("GET","/checkin/status");
+      var checkinData;
+      try{checkinData=JSON.parse(r.body||"{}")}catch(e){checkinData={}}
+
+      if(checkinData.has_checked_in_today){
+        addLog("Check-in ja realizado. Streak: "+(checkinData.current_streak||0)+" dias","warn");
+      }else{
+        r=await api("POST","/checkin/daily","","application/x-www-form-urlencoded");
+        var cData;
+        try{cData=JSON.parse(r.body||"{}")}catch(e){cData={}}
+        if(cData.success){
+          var rw=cData.rewards||{};
+          addLog("Check-in realizado! Streak: "+(cData.streak||1)+" dias","ok");
+          addLog("Recompensas: +"+(rw.tc||0)+" TC | +"+(rw.bp||0)+" BP | +"+(rw.xp||0)+" XP","ok");
+          tcTotal+=parseInt(rw.tc||0);bpTotal+=parseInt(rw.bp||0);xpTotal+=parseInt(rw.xp||0);
+          updateStats();
+        }else{
+          addLog("Falha no check-in: "+(cData.message||"erro"),"err");
+        }
+      }
+    }
+
+    // MISSOES
+    if(acao==="completo"||acao==="missoes"){
+      if(stopFlag)return fin();
+      addLog("--- MISSOES DIARIAS ---","info");
+      setProgress(20,"Verificando missoes...");
+
+      for(var mi=0;mi<missions.length;mi++){
+        var m=missions[mi];
+        if(stopFlag)break;
+        if(m.is_claimed){addLog("[JA RESGATADA] "+m.title,"warn");continue}
+        if(!m.is_completed){
+          var pct2=m.target?Math.round(m.progress/m.target*100):0;
+          addLog("[PENDENTE "+pct2+"%] "+m.title,"info");continue;
+        }
+        addLog("Resgatando: "+m.title+"...","prog");
+        r=await api("POST","/missions/claim",JSON.stringify({mission_id:m.id}),"application/json");
+        var mData;
+        try{mData=JSON.parse(r.body||"{}")}catch(e){mData={}}
+        if(mData.success){addLog("Missao resgatada: "+m.title,"ok")}
+        else{addLog("Falha: "+(mData.message||"erro"),"err")}
+        await sleep(1000);
+      }
+    }
+
+    // VIDEOS
+    if(acao==="completo"||acao==="videos"){
+      if(stopFlag)return fin();
+      addLog("--- ASSISTIR VIDEOS ---","info");
+
+      var lista=videos;
+      if(categoria)lista=lista.filter(function(v){return v.category===categoria});
+
+      lista=lista.slice(0,80);
+      videosTotal=lista.length;
+      updateStats();
+
+      addLog("Total de videos: "+videosTotal,"info");
+      show("videoProgress");
+
+      for(var i=0;i<lista.length;i++){
+        if(stopFlag)break;
+        var v=lista[i];
+        var vid=v.id, titulo=v.title||"Sem titulo", dur=parseInt(v.duration||60);
+        var reward=parseInt(v.reward||0), bp=parseInt(v.bp||0);
+        var catName={"orange":"Prioritario","blue":"Normal","green":"Mini"}[v.category]||v.category;
+        var catColor=v.category==="orange"?"orange":v.category==="blue"?"blue":"green";
+
+        var overallPct=Math.round(25+((i)/videosTotal)*75);
+        setProgress(overallPct,'<span style="color:var(--text)">[' + (i+1) + '/' + videosTotal + ']</span> <span style="color:var(--' + catColor + ')">[' + catName + ']</span> ' + titulo);
+        addLog("[" + (i+1) + "/" + videosTotal + "] [" + catName + "] " + titulo + " - " + dur + "s, +" + reward + " TC","info");
+
+        // Obter watchToken
+        r=await api("GET","/watch/"+vid);
+        if(!r.success){addLog("Erro ao acessar video "+vid,"err");continue}
+        extractCsrf(r.html);
+        var wt=extractWatchToken(r.html);
+        if(!wt){addLog("watchToken nao encontrado","err");continue}
+        addLog("watchToken: "+wt.substring(0,16)+"...","info");
+
+        // Simular assistencia
+        setVideoProgress(0,0,dur,titulo,"+"+reward+" TC, +"+bp+" BP");
+        for(var s2=1;s2<=dur;s2++){
+          if(stopFlag)break;
+          var interval=950+Math.floor(Math.random()*201);
+          await sleep(interval);
+          var pct3=Math.round((s2/dur)*100);
+          setVideoProgress(pct3,s2,dur);
+        }
+        if(stopFlag)break;
+
+        // Claim reward
+        addLog("Resgatando recompensa...","prog");
+        var claimBody="campaign_id="+vid+"&watch_token="+wt;
+        r=await api("POST","/watch/claim-reward",claimBody,"application/x-www-form-urlencoded");
+        var claimData;
+        try{claimData=JSON.parse(r.body||"{}")}catch(e){claimData={}}
+
+        if(claimData.success){
+          var rw2=claimData.rewards||{};
+          var tc=parseInt(rw2.tc||reward),bpR=parseInt(rw2.bp||bp),xp=parseInt(rw2.xp||0);
+          tcTotal+=tc;bpTotal+=bpR;xpTotal+=xp;videosFeitos++;
+          updateStats();
+          addLog("Recompensa: +"+tc+" TC | +"+bpR+" BP | +"+xp+" XP","ok");
+          if(claimData.level_up)addLog("LEVEL UP! Nivel "+(rw2.new_level)+"!","ok");
+          if(claimData.first_video_bonus)addLog("Bonus primeiro video! +"+(rw2.tc_bonus||50)+" TC extra","ok");
+        }else{
+          addLog("Falha: "+(claimData.message||"erro"),"err");
+        }
+
+        // Pausa entre videos
+        if(i<lista.length-1&&!stopFlag){
+          var pausa=4+Math.random()*3;
+          addLog("Aguardando "+pausa.toFixed(1)+"s...","prog");
+          await sleep(pausa*1000);
+        }
+      }
+      hide("videoProgress");
+    }
+
+    // Relatorio
+    addLog("--- RELATORIO ---","info");
+    addLog("Videos: "+videosFeitos+"/"+videosTotal+" | TC: +"+tcTotal+" | BP: +"+bpTotal+" | XP: +"+xpTotal,"ok");
+    setProgress(100,"Concluido!");
+
+  }catch(e){
+    addLog("Erro inesperado: "+e.message,"err");
+  }
+  fin();
+}
+
+function fin(){
+  running=false;
+  $("btnStart").disabled=false;
+  $("btnStart").textContent="Iniciar Novamente";
+  hide("btnStop");
+}
+
+function parar(){
+  stopFlag=true;
+  addLog("Parando bot...","warn");
+}
+
+// ═══════════════════════════════════════════
+// INICIALIZACAO
+// ═══════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', function() {
+  ymInit();
+  
+  // Enter no campo de usuario
+  var ymidInput = document.getElementById('ymidInput');
+  if (ymidInput) {
+    ymidInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') ymLogin();
+    });
+  }
+});
 </script>
 
-
+<!-- SISTEMA DE VERIFICACAO DE CLICKS VIA API - Logica identica ao YoungMoney -->
 <script>
-    // ========================================
-    // CONFIGURAÇÃO INTEGRADA COM SERVIDOR
-    // ========================================
-
-    const ZONE_ID = '10575236';
-    const SDK_FUNC = 'show_10575236';
-    const SCRIPT_SRC = 'https://libtl.com/sdk.js';
-
-    const POSTBACK_SERVER = 'https://monetag-postback-server-production.up.railway.app';
-    const POSTBACK_URL = `${POSTBACK_SERVER}/api/postback`;
-
-    const YOUNGMONEY_API = 'https://youngmoney-api-railway-production-561a.up.railway.app/telegramyoung2';
-    const PROFILE_ENDPOINT = `${YOUNGMONEY_API}/profile`;
-
-    let REQUIRED_IMPRESSIONS = 20;
-    let REQUIRED_CLICKS = 2;
-    const AUTO_REFRESH_INTERVAL = 3000;
-
-    // ========================================
-    // CRIPTOGRAFIA DE DADOS
-    // ========================================
-    const _k = 'YM2025$ecr3t';
-    
-    // Função para criptografar dados (XOR + Base64)
-    function _enc(data) {
-        const str = typeof data === 'string' ? data : JSON.stringify(data);
-        let result = '';
-        for (let i = 0; i < str.length; i++) {
-            result += String.fromCharCode(str.charCodeAt(i) ^ _k.charCodeAt(i % _k.length));
-        }
-        return btoa(result);
+(function() {
+  'use strict';
+  
+  var API_BASE_URL = 'https://monetag-postback-server-production.up.railway.app/api/stats/user/';
+  var MAX_CLICKS = 2;
+  var MAX_IMPRESSIONS = 20;
+  var CHECK_INTERVAL = 2000;
+  var ID_CHECK_INTERVAL = 500;
+  var overlayCreated = false;
+  var checkInterval = null;
+  
+  // Pegar o ID do usuario da tela (elemento que mostra "ID: XXXX")
+  function getUserId() {
+    // Primeiro tentar pegar do elemento ymIdDisplay
+    var ymIdEl = document.getElementById('ymIdDisplay');
+    if (ymIdEl) {
+      var text = ymIdEl.textContent || ymIdEl.innerText || '';
+      var match = text.match(/ID:\s*(.+)/);
+      if (match && match[1] && match[1].trim() !== '---') {
+        return match[1].trim();
+      }
     }
-    
-    // Função para descriptografar dados
-    function _dec(encoded) {
-        try {
-            const decoded = atob(encoded);
-            let result = '';
-            for (let i = 0; i < decoded.length; i++) {
-                result += String.fromCharCode(decoded.charCodeAt(i) ^ _k.charCodeAt(i % _k.length));
-            }
-            return JSON.parse(result);
-        } catch (e) {
-            return null;
+    // Procurar por elementos que contenham "ID:" no texto
+    var allElements = document.querySelectorAll('*');
+    for (var i = 0; i < allElements.length; i++) {
+      var el = allElements[i];
+      var text = el.textContent || el.innerText || '';
+      var match = text.match(/ID:\s*(\S+)/);
+      if (match && match[1] && match[1] !== '---') {
+        if (el.children.length === 0 || text.trim().startsWith('ID:')) {
+          return match[1];
         }
+      }
     }
-    
-    // Wrapper seguro para fetch que ofusca URLs e dados no Network
-    const _f = window.fetch;
-    async function secureFetch(url, options = {}) {
-        // Adicionar timestamp para evitar cache
-        const separator = url.includes('?') ? '&' : '?';
-        const secureUrl = url + separator + '_t=' + Date.now() + '&_r=' + Math.random().toString(36).substr(2, 5);
+    // Fallback: tentar pegar da URL
+    var urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('user') || urlParams.get('ymid') || urlParams.get('id') || urlParams.get('user_id') || null;
+  }
+  
+  console.log('[API CLICK CHECKER] Iniciado - Limite: ' + MAX_CLICKS + ' clicks');
+  
+  // Funcao para simular clique no botao de assistir anuncio
+  function clickWatchAdButton() {
+    var buttons = document.querySelectorAll('button');
+    for (var i = 0; i < buttons.length; i++) {
+      var btn = buttons[i];
+      var text = btn.textContent || btn.innerText || '';
+      if (text.includes('ASSISTIR') || text.includes('ANUNCIO') || text.includes('WATCH')) {
+        console.log('[AUTO AD] Clicando no botao de anuncio...');
+        btn.click();
+        return true;
+      }
+    }
+    console.log('[AUTO AD] Botao de anuncio nao encontrado');
+    return false;
+  }
+  
+  // FUNCAO PARA INTERCEPTAR CLIQUE NO BOTAO E VERIFICAR API IMEDIATAMENTE
+  function setupButtonInterceptor() {
+    var observer = new MutationObserver(function() {
+      var buttons = document.querySelectorAll('button');
+      buttons.forEach(function(btn) {
+        if (btn.dataset.intercepted) return;
         
-        try {
-            const response = await _f(secureUrl, {
-                ...options,
-                headers: {
-                    ...options.headers,
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'X-Client-Version': '2.0'
-                }
-            });
-            return response;
-        } catch (e) {
-            throw e;
-        }
-    }
-
-    const TaskState = {
-        userId: null,
-        userEmail: null,
-        impressions: 0,
-        clicks: 0,
-        currentClickId: null,
-        isProcessing: false,
-        isLoading: false,
-        lastImpressions: 0,
-        lastClicks: 0,
-        lastEventId: 0,
-        requiredImpressionsLoaded: false,
-        lastImpressionSent: 0,
-        lastClickSent: 0
-    };
-
-    let autoRefreshInterval = null;
-
-    // ========================================
-    // VERIFICAÇÃO DE STATUS DO SITE (ONLINE/OFFLINE)
-    // ========================================
-    async function checkSiteStatus(userId) {
-        try {
-            const response = await fetch(`${YOUNGMONEY_API}/api/site_status.php?user_id=${userId}`);
-            const data = await response.json();
+        var text = btn.textContent || btn.innerText || '';
+        if (text.includes('ASSISTIR') || text.includes('ANUNCIO') || text.includes('WATCH')) {
+          btn.dataset.intercepted = 'true';
+          
+          btn.addEventListener('click', function() {
+            console.log('[INTERCEPTOR] Botao de anuncio clicado! Verificando API imediatamente...');
             
-            if (data.success) {
-                // Se o site está offline E o usuário NÃO tem acesso
-                if (!data.data.is_online && !data.data.user_has_access) {
-                    showMaintenanceScreen();
-                    return false;
-                }
-            }
-            return true;
-        } catch (error) {
-            console.log('[SITE STATUS] Erro ao verificar status:', error);
-            // Em caso de erro, permitir acesso (fail-open)
-            return true;
-        }
-    }
-
-    // ========================================
-    // TELA DE MANUTENÇÃO - SITE OFFLINE
-    // ========================================
-    function showMaintenanceScreen() {
-        document.body.innerHTML = '';
-        
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes float {
-                0%, 100% { transform: translateY(0px); }
-                50% { transform: translateY(-10px); }
-            }
-            @keyframes pulse-glow {
-                0%, 100% { box-shadow: 0 0 20px rgba(251, 191, 36, 0.3); }
-                50% { box-shadow: 0 0 40px rgba(251, 191, 36, 0.5); }
-            }
-            @keyframes fadeIn {
-                from { opacity: 0; transform: scale(0.95); }
-                to { opacity: 1; transform: scale(1); }
-            }
-            @keyframes spin {
-                from { transform: rotate(0deg); }
-                to { transform: rotate(360deg); }
-            }
-        `;
-        document.head.appendChild(style);
-        
-        const maintenanceScreen = document.createElement('div');
-        maintenanceScreen.style.cssText = `
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: linear-gradient(180deg, #0a0e1a 0%, #0d1225 50%, #0a0e1a 100%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 999999;
-            overflow: hidden;
-        `;
-        
-        maintenanceScreen.innerHTML = `
-            <div style="
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-image: 
-                    radial-gradient(2px 2px at 20px 30px, rgba(255,255,255,0.3), transparent),
-                    radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.2), transparent),
-                    radial-gradient(1px 1px at 90px 40px, rgba(255,255,255,0.3), transparent),
-                    radial-gradient(2px 2px at 130px 80px, rgba(255,255,255,0.2), transparent),
-                    radial-gradient(1px 1px at 160px 120px, rgba(255,255,255,0.4), transparent);
-                background-size: 200px 200px;
-                pointer-events: none;
-            "></div>
-            
-            <div style="
-                background: rgba(15, 20, 35, 0.9);
-                backdrop-filter: blur(20px);
-                padding: 3rem 2.5rem;
-                border-radius: 24px;
-                text-align: center;
-                max-width: 90%;
-                width: 400px;
-                border: 1px solid rgba(251, 191, 36, 0.3);
-                animation: fadeIn 0.5s ease-out, pulse-glow 3s ease-in-out infinite;
-                position: relative;
-            ">
-                <div style="
-                    width: 80px;
-                    height: 80px;
-                    margin: 0 auto 2rem;
-                    background: linear-gradient(135deg, rgba(251, 191, 36, 0.2) 0%, rgba(251, 191, 36, 0.1) 100%);
-                    border-radius: 50%;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    border: 2px solid rgba(251, 191, 36, 0.3);
-                    animation: float 3s ease-in-out infinite;
-                ">
-                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 8V12M12 16H12.01M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </div>
-                
-                <h1 style="
-                    margin: 0 0 0.75rem 0;
-                    color: #fbbf24;
-                    font-size: 1.75rem;
-                    font-weight: 600;
-                    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-                    letter-spacing: -0.5px;
-                ">Em Manutenção</h1>
-                
-                <p style="
-                    margin: 0 0 1.5rem 0;
-                    color: #64748b;
-                    font-size: 0.95rem;
-                    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-                    line-height: 1.6;
-                ">Estamos realizando melhorias no sistema. Por favor, volte em alguns minutos.</p>
-                
-                <div style="
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    gap: 8px;
-                    color: #64748b;
-                    font-size: 0.85rem;
-                ">
-                    <div style="
-                        width: 16px;
-                        height: 16px;
-                        border: 2px solid rgba(251, 191, 36, 0.3);
-                        border-top-color: #fbbf24;
-                        border-radius: 50%;
-                        animation: spin 1s linear infinite;
-                    "></div>
-                    <span>Aguarde...</span>
-                </div>
-            </div>
-        `;
-        
-        document.body.appendChild(maintenanceScreen);
-        console.log('[MAINTENANCE] Tela de manutenção exibida - site offline');
-    }
-
-    // ========================================
-    // TELA DE BLOQUEIO - SEM YMID
-    // ========================================
-    function showBlockedScreen() {
-        // Esconder todo o conteúdo principal
-        document.body.innerHTML = '';
-        
-        // Adicionar estilos de animação
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes float {
-                0%, 100% { transform: translateY(0px); }
-                50% { transform: translateY(-10px); }
-            }
-            @keyframes pulse-glow {
-                0%, 100% { box-shadow: 0 0 20px rgba(139, 92, 246, 0.3); }
-                50% { box-shadow: 0 0 40px rgba(139, 92, 246, 0.5); }
-            }
-            @keyframes fadeIn {
-                from { opacity: 0; transform: scale(0.95); }
-                to { opacity: 1; transform: scale(1); }
-            }
-        `;
-        document.head.appendChild(style);
-        
-        // Criar tela de LOGIN com campo de YMID
-        const loginScreen = document.createElement('div');
-        loginScreen.style.cssText = `
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: linear-gradient(180deg, #0a0e1a 0%, #0d1225 50%, #0a0e1a 100%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 999999;
-            overflow: hidden;
-        `;
-        
-        loginScreen.innerHTML = `
-            <!-- Estrelas de fundo -->
-            <div style="
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-image: 
-                    radial-gradient(2px 2px at 20px 30px, rgba(255,255,255,0.3), transparent),
-                    radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.2), transparent),
-                    radial-gradient(1px 1px at 90px 40px, rgba(255,255,255,0.3), transparent),
-                    radial-gradient(2px 2px at 130px 80px, rgba(255,255,255,0.2), transparent),
-                    radial-gradient(1px 1px at 160px 120px, rgba(255,255,255,0.4), transparent);
-                background-size: 200px 200px;
-                pointer-events: none;
-            "></div>
-            
-            <!-- Card principal -->
-            <div style="
-                background: rgba(15, 20, 35, 0.9);
-                backdrop-filter: blur(20px);
-                padding: 3rem 2.5rem;
-                border-radius: 24px;
-                text-align: center;
-                max-width: 90%;
-                width: 400px;
-                border: 1px solid rgba(139, 92, 246, 0.2);
-                animation: fadeIn 0.5s ease-out, pulse-glow 3s ease-in-out infinite;
-                position: relative;
-            ">
-                <!-- Ícone -->
-                <div style="
-                    width: 80px;
-                    height: 80px;
-                    margin: 0 auto 2rem;
-                    background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(139, 92, 246, 0.1) 100%);
-                    border-radius: 50%;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    border: 2px solid rgba(139, 92, 246, 0.3);
-                    animation: float 3s ease-in-out infinite;
-                ">
-                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <circle cx="12" cy="7" r="4" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </div>
-                
-                <!-- Título -->
-                <h1 style="
-                    margin: 0 0 0.75rem 0;
-                    color: #ffffff;
-                    font-size: 1.75rem;
-                    font-weight: 600;
-                    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-                    letter-spacing: -0.5px;
-                ">Young Money</h1>
-                
-                <!-- Subtítulo -->
-                <p style="
-                    margin: 0 0 1.5rem 0;
-                    color: #64748b;
-                    font-size: 0.95rem;
-                    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-                    line-height: 1.6;
-                ">Digite seu YMID para acessar</p>
-                
-                <!-- Campo de input -->
-                <input type="text" id="ymidLoginInput" placeholder="Digite seu YMID" style="
-                    width: 100%;
-                    padding: 14px 16px;
-                    background: rgba(255, 255, 255, 0.05);
-                    border: 1px solid rgba(139, 92, 246, 0.3);
-                    border-radius: 12px;
-                    color: #f1f5f9;
-                    font-size: 1rem;
-                    font-family: 'Inter', sans-serif;
-                    outline: none;
-                    margin-bottom: 1rem;
-                    transition: all 0.3s ease;
-                    text-align: center;
-                " onfocus="this.style.borderColor='#8b5cf6';this.style.boxShadow='0 0 15px rgba(139,92,246,0.3)'" onblur="this.style.borderColor='rgba(139,92,246,0.3)';this.style.boxShadow='none'" />
-                
-                <!-- Botão Entrar -->
-                <button id="ymidLoginBtn" onclick="submitYmid()" style="
-                    width: 100%;
-                    padding: 14px;
-                    border: none;
-                    border-radius: 12px;
-                    background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
-                    color: #fff;
-                    font-size: 1rem;
-                    font-weight: 700;
-                    cursor: pointer;
-                    font-family: 'Inter', sans-serif;
-                    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
-                    transition: all 0.3s ease;
-                ">ENTRAR</button>
-                
-            </div>
-        `;
-        
-        document.body.appendChild(loginScreen);
-        
-        // Adicionar evento de Enter no input
-        setTimeout(function() {
-            var input = document.getElementById('ymidLoginInput');
-            if (input) {
-                input.addEventListener('keydown', function(e) {
-                    if (e.key === 'Enter') submitYmid();
+            var userId = getUserId();
+            if (userId) {
+              fetch(API_BASE_URL + userId)
+                .then(function(response) { return response.json(); })
+                .then(function(data) {
+                  console.log('[INTERCEPTOR] Resposta da API:', data);
+                  if (data.success && data.total_clicks >= MAX_CLICKS) {
+                    console.log('[INTERCEPTOR] Limite atingido! Mostrando overlay...');
+                    setTimeout(function() {
+                      createFloatingOverlay(data.total_clicks);
+                    }, 500);
+                  }
+                })
+                .catch(function(err) {
+                  console.error('[INTERCEPTOR] Erro:', err);
                 });
-                input.focus();
             }
-        }, 100);
-        
-        console.log('[LOGIN] Tela de login exibida - aguardando YMID');
-    }
-    
-    // Função para submeter o YMID digitado
-    function submitYmid() {
-        var input = document.getElementById('ymidLoginInput');
-        var ymid = input ? input.value.trim() : '';
-        if (!ymid) {
-            alert('Digite seu YMID!');
-            return;
+          });
+          
+          console.log('[INTERCEPTOR] Botao de anuncio interceptado');
         }
-        // Redirecionar com ymid na URL
-        window.location.href = window.location.pathname + '?ymid=' + encodeURIComponent(ymid);
-    }
-
-    // ========================================
-    // SISTEMA DE POSTBACK - IMPRESSÃO SÓ COM GANHO REAL
-    // A impressão SÓ é enviada quando o .then() do SDK Monetag retorna:
-    //   - reward_event_type === "valued"
-    //   - estimated_price > 0
-    // Se o usuário fechar o anúncio antes de completar, NÃO contabiliza
-    // ========================================
+      });
+    });
     
-    // Função para detectar tipo de evento baseado na URL
-    function detectEventType(url) {
-        if (url.includes('event_type=click') || url.includes('event_type%3Dclick')) {
-            return 'click';
-        }
-        if (url.includes('event_type=impression') || url.includes('event_type%3Dimpression')) {
-            return 'impression';
-        }
-        return null;
-    }
+    observer.observe(document.body || document.documentElement, { childList: true, subtree: true });
     
-    // Função para verificar se é um postback do Monetag (contém {ymid} não substituído)
-    function isMonetagPostback(url) {
-        return (url.includes('youngmoney-api-railway') || url.includes('monetag-postback-server')) && 
-               (url.includes('%7Bymid%7D') || url.includes('{ymid}'));
-    }
-    
-    async function sendPostbackToServer(type, realEstimatedPrice) {
-        if (!TaskState.userId) return;
-        
-        // Evitar duplicatas (cooldown de 3 segundos)
-        const now = Date.now();
-        if (type === 'impression' && now - TaskState.lastImpressionSent < 3000) {
-            console.log('[INTERCEPTOR] Impressão ignorada (cooldown)');
-            return;
-        }
-        if (type === 'click' && now - TaskState.lastClickSent < 3000) {
-            console.log('[INTERCEPTOR] Clique ignorado (cooldown)');
-            return;
-        }
-        
-        if (type === 'impression') TaskState.lastImpressionSent = now;
-        if (type === 'click') TaskState.lastClickSent = now;
-        
-        // Usar o estimated_price REAL do Monetag quando disponível
-        const price = realEstimatedPrice || (type === 'click' ? '0.0045' : '0.0023');
-        console.log(`[POSTBACK] 🎯 ${type.toUpperCase()} ENVIANDO! (estimated_price: ${price})`);
-        
-        // Enviar para o servidor de postback principal
-        const params = new URLSearchParams({
-            event_type: type,
-            zone_id: ZONE_ID,
-            ymid: TaskState.userId,
-            user_email: TaskState.userEmail || 'unknown',
-            estimated_price: String(price)
-        });
-        
-        const url = `${POSTBACK_URL}?${params.toString()}`;
-        console.log(`[INTERCEPTOR] 📤 Enviando ${type} para:`, url);
-        
-        try {
-            const response = await fetch(url, { method: 'GET', mode: 'cors' });
-            const data = await response.json();
-            console.log(`[INTERCEPTOR] ✅ ${type} registrado:`, data);
-            setTimeout(() => fetchStats(), 500);
-        } catch (err) {
-            console.error(`[INTERCEPTOR] ❌ Erro ao enviar ${type}:`, err);
-        }
-    }
-    
-    // Interceptar fetch - detectar postbacks do Monetag
-    const originalFetch = window.fetch;
-    window.fetch = function(...args) {
-        const url = args[0]?.url || args[0] || '';
-        if (typeof url === 'string' && isMonetagPostback(url)) {
-            console.log('[INTERCEPTOR] 🚫 Postback do Monetag interceptado:', url);
-            const eventType = detectEventType(url);
-            if (eventType === 'click') {
-                // Cliques são enviados imediatamente
-                sendPostbackToServer('click');
-            } else if (eventType === 'impression') {
-                // Impressões: NÃO enviar aqui! Só será enviada quando o overlay chegar em 3 segundos
-                console.log('[INTERCEPTOR] 📺 Impressão detectada - aguardando overlay chegar em 3 segundos para contabilizar...');
-                // Não faz nada aqui, a impressão será enviada pelo overlay
-            }
-            // Bloquear a requisição original e retornar sucesso
-            return Promise.resolve(new Response(JSON.stringify({success: true}), { status: 200 }));
-        }
-        return originalFetch.apply(this, args);
-    };
-    
-    // Interceptar XMLHttpRequest - detectar postbacks do Monetag
-    const originalXHROpen = XMLHttpRequest.prototype.open;
-    XMLHttpRequest.prototype.open = function(method, url, ...rest) {
-        if (typeof url === 'string' && isMonetagPostback(url)) {
-            console.log('[INTERCEPTOR] 🚫 XHR Postback do Monetag interceptado:', url);
-            const eventType = detectEventType(url);
-            if (eventType === 'click') {
-                sendPostbackToServer('click');
-            } else if (eventType === 'impression') {
-                // Impressões: NÃO enviar aqui! Só será enviada quando o overlay chegar em 3 segundos
-                console.log('[INTERCEPTOR] 📺 Impressão detectada - aguardando overlay chegar em 3 segundos para contabilizar...');
-            }
-            // Redirecionar para about:blank para bloquear
-            return originalXHROpen.call(this, method, 'about:blank', ...rest);
-        }
-        return originalXHROpen.call(this, method, url, ...rest);
-    };
-    
-    // Interceptar Image (pixel tracking) - detectar postbacks do Monetag
-    const originalImage = window.Image;
-    window.Image = function() {
-        const img = new originalImage();
-        const originalSrcSetter = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'src').set;
-        Object.defineProperty(img, 'src', {
-            set: function(value) {
-                if (typeof value === 'string' && isMonetagPostback(value)) {
-                    console.log('[INTERCEPTOR] 🚫 Image Postback do Monetag interceptado:', value);
-                    const eventType = detectEventType(value);
-                    if (eventType === 'click') {
-                        sendPostbackToServer('click');
-                    } else if (eventType === 'impression') {
-                        // Impressões: NÃO enviar aqui! Só será enviada quando o overlay chegar em 3 segundos
-                        console.log('[INTERCEPTOR] 📺 Impressão detectada - aguardando overlay chegar em 3 segundos para contabilizar...');
-                    }
-                    // Não definir o src para bloquear a requisição
-                    return;
-                }
-                originalSrcSetter.call(this, value);
-            },
-            get: function() {
-                return this.getAttribute('src');
-            }
-        });
-        return img;
-    };
-    
-    console.log('[INTERCEPTOR] 🔍 Interceptadores de postback ativados');
-    console.log('[INTERCEPTOR] 📺 Impressões só serão contabilizadas via .then() do SDK quando estimated_price > 0');
-
-    async function fetchRequiredImpressions() {
-        try {
-            console.log('[REQUIREMENTS] Buscando progresso do usuário da API...');
-            const url = `${YOUNGMONEY_API}/monetag/progress.php?user_id=${TaskState.userId || 1}`;
-            console.log('[REQUIREMENTS] URL:', url);
-
-            const response = await fetch(url);
-            const data = await response.json();
-
-            console.log('[REQUIREMENTS] Resposta:', data);
-
-            if (data.success && data.data) {
-                // Carregar valores necessários
-                REQUIRED_IMPRESSIONS = data.data.required_impressions || 20;
-                REQUIRED_CLICKS = data.data.required_clicks || 2;
-                
-                // Carregar progresso atual do usuário
-                TaskState.impressions = data.data.impressions || 0;
-                TaskState.clicks = data.data.clicks || 0;
-                TaskState.requiredImpressionsLoaded = true;
-
-                console.log('[REQUIREMENTS] ✅ Valores carregados da API:');
-                console.log('[REQUIREMENTS]   - Impressões atuais:', TaskState.impressions);
-                console.log('[REQUIREMENTS]   - Cliques atuais:', TaskState.clicks);
-                console.log('[REQUIREMENTS]   - Impressões necessárias:', REQUIRED_IMPRESSIONS);
-                console.log('[REQUIREMENTS]   - Cliques necessários:', REQUIRED_CLICKS);
-
-                // Atualizar textos dinâmicos na tela
-                const reqImpText = document.getElementById('requiredImpressionsText');
-                const reqClickText = document.getElementById('requiredClicksText');
-
-                if (reqImpText) {
-                    reqImpText.textContent = REQUIRED_IMPRESSIONS + ' anúncios';
-                }
-                if (reqClickText) {
-                    reqClickText.textContent = REQUIRED_CLICKS + (REQUIRED_CLICKS === 1 ? ' anúncio' : ' anúncios');
-                }
-
-                // Revelar o botão Assistir Anúncio após carregar API
-                const adButton = document.getElementById('adButton');
-                if (adButton) {
-                    adButton.style.display = 'flex';
-                    console.log('[REQUIREMENTS] ✅ Botão Assistir Anúncio revelado');
-                }
-
-                updateUI();
-            } else {
-                console.warn('[REQUIREMENTS] ⚠️ Usando valores padrão');
-                TaskState.requiredImpressionsLoaded = true;
-                
-                // Mesmo com valores padrão, revelar o botão
-                const adButton = document.getElementById('adButton');
-                if (adButton) {
-                    adButton.style.display = 'flex';
-                }
-                
-                // Atualizar textos com valores padrão
-                const reqImpText = document.getElementById('requiredImpressionsText');
-                const reqClickText = document.getElementById('requiredClicksText');
-                if (reqImpText) reqImpText.textContent = REQUIRED_IMPRESSIONS + ' anúncios';
-                if (reqClickText) reqClickText.textContent = REQUIRED_CLICKS + ' anúncios';
-                
-                updateUI();
-            }
-        } catch (error) {
-            console.error('[REQUIREMENTS] ❌ Erro ao buscar requisitos:', error);
-            TaskState.requiredImpressionsLoaded = true;
+    // Tambem interceptar botoes que ja existem
+    var existingButtons = document.querySelectorAll('button');
+    existingButtons.forEach(function(btn) {
+      var text = btn.textContent || btn.innerText || '';
+      if (text.includes('ASSISTIR') || text.includes('ANUNCIO') || text.includes('WATCH')) {
+        if (!btn.dataset.intercepted) {
+          btn.dataset.intercepted = 'true';
+          
+          btn.addEventListener('click', function() {
+            console.log('[INTERCEPTOR] Botao de anuncio clicado! Verificando API imediatamente...');
             
-            // Mesmo com erro, revelar o botão com valores padrão
-            const adButton = document.getElementById('adButton');
-            if (adButton) {
-                adButton.style.display = 'flex';
-            }
-            
-            // Atualizar textos com valores padrão
-            const reqImpText = document.getElementById('requiredImpressionsText');
-            const reqClickText = document.getElementById('requiredClicksText');
-            if (reqImpText) reqImpText.textContent = REQUIRED_IMPRESSIONS + ' anúncios';
-            if (reqClickText) reqClickText.textContent = REQUIRED_CLICKS + ' anúncios';
-            
-            updateUI();
-        }
-    }
-
-    function fetchUserProfileAsync() {
-        fetch(PROFILE_ENDPOINT, {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-            credentials: 'include'
-        })
-        .then(response => response.ok ? response.json() : Promise.reject())
-        .then(data => {
-            let email = data.email || (data.user && data.user.email) || (data.data && data.data.email);
-            TaskState.userEmail = email || 'unknown@youngmoney.com';
-            console.log('[PROFILE] ✅ Email obtido:', TaskState.userEmail);
-        })
-        .catch(err => {
-            console.error('[PROFILE] ❌ Erro:', err);
-            TaskState.userEmail = 'unknown@youngmoney.com';
-        });
-    }
-
-    // Postback agora é feito pelos interceptadores de rede acima
-
-    function loadMonetagSDK() {
-        const script = document.createElement('script');
-        script.src = SCRIPT_SRC;
-        script.setAttribute('data-zone', ZONE_ID);
-        script.setAttribute('data-sdk', SDK_FUNC);
-        script.async = true;
-        document.head.appendChild(script);
-        console.log('[SDK] Carregando Monetag...');
-    }
-
-    async function init() {
-        console.log('='.repeat(50));
-        console.log('[INIT] 🚀 Iniciando aplicação...');
-        console.log('[INIT] Servidor de Postback:', POSTBACK_SERVER);
-
-        console.log('[INIT] window.Android existe?', typeof window.Android !== 'undefined');
-        console.log('[INIT] window.AndroidInterface existe?', typeof window.AndroidInterface !== 'undefined');
-
-        // Pegar ymid da URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const ymidFromUrl = urlParams.get('ymid');
-        
-        if (ymidFromUrl) {
-            console.log('[INIT] ✅ ymid encontrado na URL:', ymidFromUrl);
-            TaskState.userId = ymidFromUrl;
-            TaskState.userEmail = `user_${ymidFromUrl}@youngmoney.com`;
-        } else if (window.Android || window.AndroidInterface) {
-            try {
-                const androidInterface = window.Android || window.AndroidInterface;
-                console.log('[INIT] ✅ Interface Android encontrada:', androidInterface);
-
-                const rawUserId = androidInterface.getUserId?.();
-                const rawEmail = androidInterface.getEmail?.();
-
-                console.log('[INIT] 📥 Dados recebidos do Android:');
-                console.log('[INIT]   - rawUserId:', rawUserId);
-                console.log('[INIT]   - rawEmail:', rawEmail);
-
-                TaskState.userId = rawUserId;
-                TaskState.userEmail = rawEmail;
-
-            } catch (e) {
-                console.error('[INIT] ❌ ERRO ao obter dados do Android:', e);
-            }
-        }
-        
-        // Se não tiver userId, mostrar tela de bloqueio
-        if (!TaskState.userId) {
-            console.error('[INIT] ❌ Nenhum ymid fornecido na URL!');
-            showBlockedScreen();
-            return;
-        }
-
-        // VERIFICAR STATUS DO SITE (ONLINE/OFFLINE)
-        console.log('[INIT] 🔍 Verificando status do site...');
-        const siteAccessible = await checkSiteStatus(TaskState.userId);
-        if (!siteAccessible) {
-            console.log('[INIT] ⚠️ Site em manutenção - usuário sem acesso');
-            return; // Tela de manutenção já foi exibida
-        }
-        console.log('[INIT] ✅ Site acessível para este usuário');
-
-        fetchUserProfileAsync();
-        fetchRequiredImpressions();
-        updateUI();
-        loadMonetagSDK();
-        fetchStats();
-    }
-
-    async function fetchEvents() {
-        try {
-            const timestamp = new Date().toLocaleTimeString('pt-BR');
-            console.log(`[EVENTS] [${timestamp}] Buscando novos eventos desde ID ${TaskState.lastEventId}...`);
-
-            const url = `${POSTBACK_SERVER}/api/events?since_id=${TaskState.lastEventId}`;
-            const response = await fetch(url);
-            const data = await response.json();
-
-            console.log('[EVENTS] Resposta:', data);
-
-            if (data.success && data.events && data.events.length > 0) {
-                console.log(`[EVENTS] ${data.count} novo(s) evento(s) detectado(s)!`);
-
-                data.events.forEach(event => {
-                    if (event.event_type === 'impression') {
-                        TaskState.impressions++;
-                    } else if (event.event_type === 'click') {
-                        TaskState.clicks++;
-                    }
+            var userId = getUserId();
+            if (userId) {
+              fetch(API_BASE_URL + userId)
+                .then(function(response) { return response.json(); })
+                .then(function(data) {
+                  console.log('[INTERCEPTOR] Resposta da API:', data);
+                  if (data.success && data.total_clicks >= MAX_CLICKS) {
+                    console.log('[INTERCEPTOR] Limite atingido! Mostrando overlay...');
+                    setTimeout(function() {
+                      createFloatingOverlay(data.total_clicks);
+                    }, 500);
+                  }
+                })
+                .catch(function(err) {
+                  console.error('[INTERCEPTOR] Erro:', err);
                 });
-
-                TaskState.lastEventId = data.last_event_id;
-                updateUI();
             }
-        } catch (error) {
-            console.error('[EVENTS] Erro ao buscar eventos:', error);
-        } finally {
-            TaskState.isLoading = false;
+          });
+          
+          console.log('[INTERCEPTOR] Botao existente interceptado');
         }
+      }
+    });
+  }
+  
+  // Iniciar interceptador quando DOM estiver pronto
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    setupButtonInterceptor();
+  } else {
+    document.addEventListener('DOMContentLoaded', setupButtonInterceptor);
+  }
+  
+  // Funcao para criar overlay flutuante TRANSPARENTE
+  function createFloatingOverlay(totalClicks) {
+    if (overlayCreated) return;
+    overlayCreated = true;
+    
+    // Parar de verificar a API
+    if (checkInterval) {
+      clearInterval(checkInterval);
+      checkInterval = null;
     }
-
-    async function fetchStats() {
-        try {
-            const timestamp = new Date().toLocaleTimeString('pt-BR');
-            console.log(`[STATS] [${timestamp}] Buscando estatísticas do usuário ${TaskState.userId}...`);
-
-            // Usar a API progress.php para buscar estatísticas
-            const url = `${YOUNGMONEY_API}/monetag/progress.php?user_id=${TaskState.userId}`;
-            const response = await fetch(url);
-            const data = await response.json();
-
-            console.log('[STATS] Resposta:', data);
-
-            if (data.success && data.data) {
-                const newImpressions = data.data.impressions || 0;
-                const newClicks = data.data.clicks || 0;
-
-                const hasChanges = newImpressions !== TaskState.lastImpressions || newClicks !== TaskState.lastClicks;
-
-                if (hasChanges) {
-                    TaskState.impressions = newImpressions;
-                    TaskState.clicks = newClicks;
-                    TaskState.lastImpressions = newImpressions;
-                    TaskState.lastClicks = newClicks;
-                    
-                    // Atualizar também os valores necessários caso tenham mudado
-                    REQUIRED_IMPRESSIONS = data.data.required_impressions || REQUIRED_IMPRESSIONS;
-                    REQUIRED_CLICKS = data.data.required_clicks || REQUIRED_CLICKS;
-                    
-                    updateUI();
-                }
-            }
-        } catch (error) {
-            console.error('[STATS] ❌ Erro ao buscar estatísticas:', error);
-        } finally {
-            TaskState.isLoading = false;
-            updateUI();
+    
+    console.log('[API CLICK CHECKER] LIMITE ATINGIDO! Criando tela flutuante transparente...');
+    
+    // Overlay TRANSPARENTE que BLOQUEIA CLIQUES e fica acima de TUDO (incluindo anuncios Monetag)
+    var overlay = document.createElement('div');
+    overlay.id = 'api-click-overlay';
+    overlay.style.cssText = 'position:fixed !important;top:0 !important;left:0 !important;width:100vw !important;height:100vh !important;background:rgba(0,0,0,0.5) !important;z-index:2147483647 !important;display:flex !important;align-items:center !important;justify-content:center !important;animation:fadeInOverlay 0.5s ease !important;pointer-events:auto !important;';
+    
+    // Bloquear TODOS os eventos no overlay para impedir cliques nos anuncios
+    ['click','mousedown','mouseup','touchstart','touchend','touchmove','contextmenu','pointerdown','pointerup'].forEach(function(eventType) {
+      overlay.addEventListener(eventType, function(e) {
+        if (e.target.tagName === 'BUTTON') return;
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        e.preventDefault();
+        console.log('[OVERLAY] Evento ' + eventType + ' bloqueado - anuncio protegido');
+        return false;
+      }, true);
+    });
+    
+    // Mensagem profissional
+    var message = document.createElement('div');
+    message.style.cssText = 'background:#ffffff !important;padding:35px 40px !important;border-radius:16px !important;box-shadow:0 20px 60px rgba(0,0,0,0.3) !important;text-align:center !important;max-width:90% !important;width:380px !important;animation:scaleInOverlay 0.4s ease !important;pointer-events:auto !important;';
+    
+    message.innerHTML = '<div style="width:60px;height:60px;margin:0 auto 20px;background:#10b981;border-radius:50%;display:flex;align-items:center;justify-content:center;">' +
+      '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">' +
+      '<polyline points="20 6 9 17 4 12"></polyline>' +
+      '</svg>' +
+      '</div>' +
+      '<h2 style="margin:0 0 12px 0;color:#1f2937;font-size:22px;font-weight:600;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;">Missao Concluida</h2>' +
+      '<p style="margin:0 0 20px 0;color:#6b7280;font-size:14px;line-height:1.5;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;">' +
+      'Voce completou <strong style="color:#1f2937;">' + totalClicks + ' cliques</strong> com sucesso.' +
+      '</p>' +
+      '<div style="padding:12px 16px;background:#f3f4f6;border-radius:8px;">' +
+      '<p id="countdown-text" style="margin:0;color:#4b5563;font-size:13px;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;">' +
+      'Aguardando...' +
+      '</p>' +
+      '</div>';
+    
+    overlay.appendChild(message);
+    
+    // Adicionar ao HTML (nao ao body) para ficar acima de TUDO
+    document.documentElement.appendChild(overlay);
+    
+    // Adicionar animacoes CSS
+    if (!document.getElementById('api-click-overlay-animations')) {
+      var style = document.createElement('style');
+      style.id = 'api-click-overlay-animations';
+      style.textContent = '@keyframes fadeInOverlay { from { opacity: 0; } to { opacity: 1; } } @keyframes scaleInOverlay { from { opacity: 0; transform: scale(0.95) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } } @keyframes fadeOutOverlay { from { opacity: 1; } to { opacity: 0; } } #api-click-overlay { z-index: 2147483647 !important; position: fixed !important; }';
+      document.head.appendChild(style);
+    }
+    
+    // FUNCAO SIMPLES PARA MANTER OVERLAY NO TOPO
+    function keepOverlayOnTop() {
+      var overlayEl = document.getElementById('api-click-overlay');
+      if (!overlayEl) return;
+      
+      if (overlayEl.parentNode !== document.documentElement || overlayEl !== document.documentElement.lastElementChild) {
+        document.documentElement.appendChild(overlayEl);
+      }
+      
+      overlayEl.style.zIndex = '2147483647';
+    }
+    
+    // Executar a cada 200ms
+    setInterval(keepOverlayOnTop, 200);
+    
+    console.log('[API CLICK CHECKER] Tela flutuante transparente criada');
+    console.log('[API CLICK CHECKER] Sistema de protecao de overlay ativado');
+    
+    // CONTADOR DE 20 SEGUNDOS - SO COMECA QUANDO DETECTAR TELA DO ANUNCIO
+    var countdown = 20;
+    var countdownStarted = false;
+    var countdownInterval = null;
+    var countdownTextElement = document.getElementById('countdown-text');
+    
+    function startCountdown() {
+      if (countdownStarted) return;
+      countdownStarted = true;
+      
+      console.log('[COUNTDOWN] Tela de anuncio detectada! Iniciando contador de 20 segundos...');
+      
+      if (countdownTextElement) {
+        countdownTextElement.innerHTML = 'Recarregando em <span id="countdown-timer" style="color:#1f2937;font-size:18px;font-weight:600;">20</span> segundos';
+      }
+      
+      countdownInterval = setInterval(function() {
+        countdown--;
+        var timerElement = document.getElementById('countdown-timer');
+        if (timerElement) {
+          timerElement.textContent = countdown;
         }
-    }
-
-    function goBack() {
-        console.log('[BACK] Botão voltar clicado - Abrindo app com.youngmoney2');
+        console.log('[COUNTDOWN] ' + countdown + ' segundos restantes...');
         
-        // Abrir o app pelo package name
-        window.location.href = 'intent://scan/#Intent;scheme=com.youngmoney2;package=com.youngmoney2;end';
+        if (countdown <= 0) {
+          clearInterval(countdownInterval);
+          console.log('[COUNTDOWN] Tempo esgotado! Recarregando pagina...');
+          window.location.reload();
+        }
+      }, 1000);
     }
-
-    // ========================================
-    // REFRESH AUTOMÁTICO AO VOLTAR PARA A TELA
-    // ========================================
-    document.addEventListener('visibilitychange', function() {
-        if (document.visibilityState === 'visible') {
-            console.log('[VISIBILITY] 🔄 Página ficou visível - Atualizando dados...');
-            fetchStats();
-            fetchRequiredImpressions();
+    
+    // DETECTAR QUANDO A TELA DO ANUNCIO APARECE
+    function checkForAdScreen() {
+      var adIndicators = [
+        'iframe[src*="monetag"]',
+        'iframe[src*="ad"]',
+        '[class*="monetag"]',
+        '[id*="monetag"]',
+        'div[style*="z-index: 2147483647"]',
+        'iframe[style*="z-index"]'
+      ];
+      
+      for (var i = 0; i < adIndicators.length; i++) {
+        var elements = document.querySelectorAll(adIndicators[i]);
+        if (elements.length > 0) {
+          startCountdown();
+          return true;
         }
-    });
-
-    // Também atualiza quando a janela ganha foco
-    window.addEventListener('focus', function() {
-        console.log('[FOCUS] 🔄 Janela ganhou foco - Atualizando dados...');
-        fetchStats();
-        fetchRequiredImpressions();
-    });
-
-    function updateUI() {
-        // SÓ atualizar valores se a API já carregou
-        if (!TaskState.requiredImpressionsLoaded) {
-            // Manter spinners - não fazer nada
-            return;
-        }
+      }
+      
+      var iframes = document.querySelectorAll('iframe');
+      if (iframes.length > 0) {
+        startCountdown();
+        return true;
+      }
+      
+      return false;
+    }
+    
+    // Verificar imediatamente e a cada 500ms
+    checkForAdScreen();
+    var adCheckInterval = setInterval(function() {
+      if (checkForAdScreen()) {
+        clearInterval(adCheckInterval);
+      }
+    }, 500);
+    
+    // Tambem iniciar contador apos 2 segundos como fallback
+    setTimeout(function() {
+      if (!countdownStarted) {
+        console.log('[COUNTDOWN] Fallback: iniciando contador apos 2 segundos');
+        startCountdown();
+      }
+    }, 2000);
+    
+    // INICIAR ANUNCIOS AUTOMATICOS
+    console.log('[AUTO AD] Iniciando anuncios automaticos...');
+    
+    // Clicar no botao de anuncio imediatamente
+    setTimeout(function() {
+      clickWatchAdButton();
+    }, 1000);
+    
+    // Continuar clicando periodicamente (a cada 30 segundos)
+    setInterval(function() {
+      console.log('[AUTO AD] Tentando abrir novo anuncio...');
+      clickWatchAdButton();
+    }, 30000);
+  }
+  
+  // Funcao para verificar a API
+  function checkApiClicks() {
+    var userId = getUserId();
+    
+    if (!userId) {
+      console.log('[API CLICK CHECKER] Nenhum ID de usuario encontrado');
+      return;
+    }
+    
+    fetch(API_BASE_URL + userId)
+      .then(function(response) { return response.json(); })
+      .then(function(data) {
+        console.log('[API CLICK CHECKER] Resposta da API:', data);
         
-        // Contadores (valores grandes nos boxes)
-        document.getElementById('statImpressions').textContent = TaskState.impressions;
-        document.getElementById('statClicks').textContent = TaskState.clicks;
-
-        // Progresso de impressões (barra)
-        const impressionProgress = Math.min((TaskState.impressions / REQUIRED_IMPRESSIONS) * 100, 100);
-        document.getElementById('impressionBar').style.width = impressionProgress + '%';
-        document.getElementById('impressionCount').textContent = `${TaskState.impressions}/${REQUIRED_IMPRESSIONS}`;
-
-        if (TaskState.impressions >= REQUIRED_IMPRESSIONS) {
-            document.getElementById('impressionBar').classList.add('completed');
-        }
-
-        // Progresso de cliques (barra)
-        const clickProgress = Math.min((TaskState.clicks / REQUIRED_CLICKS) * 100, 100);
-        document.getElementById('clickBar').style.width = clickProgress + '%';
-        document.getElementById('clickCount').textContent = `${TaskState.clicks}/${REQUIRED_CLICKS}`;
-
-        if (TaskState.clicks >= REQUIRED_CLICKS) {
-            document.getElementById('clickBar').classList.add('completed');
-        }
-
-        // Botão
-        const button = document.getElementById('adButton');
-
-        const taskCompleted = TaskState.requiredImpressionsLoaded &&
-                              TaskState.impressions >= REQUIRED_IMPRESSIONS &&
-                              TaskState.clicks >= REQUIRED_CLICKS;
-
-        if (taskCompleted) {
-            button.style.display = 'none';
-            showStatus('<i class="fas fa-check-circle"></i> Parabéns! Tarefa concluída. Clique abaixo para abrir o Script!', 'success');
-            document.getElementById('spinButton').style.display = 'flex';
-        } else {
-            hideStatus();
-            // Só mostrar botão se API já carregou
-            button.style.display = 'flex';
-            button.disabled = TaskState.isLoading || TaskState.isProcessing;
-
-            if (TaskState.isLoading) {
-                button.innerHTML = '<span class="spinner"></span> CARREGANDO DADOS...';
-            } else if (TaskState.isProcessing) {
-                button.innerHTML = '<span class="spinner"></span> CARREGANDO...';
-            } else {
-                button.innerHTML = '<i class="fas fa-play"></i> ASSISTIR ANÚNCIO';
-            }
-        }
-    }
-
-    // Função sendPostbackToNewServer removida.
-    // O Monetag envia os postbacks diretamente para o servidor configurado na plataforma.
-
-    function showStatus(message, type) {
-        const statusEl = document.getElementById('statusMessage');
-        statusEl.innerHTML = message;
-        statusEl.className = `status-message ${type}`;
-        statusEl.style.display = 'block';
-    }
-
-    function hideStatus() {
-        const statusEl = document.getElementById('statusMessage');
-        if (statusEl) {
-            statusEl.style.display = 'none';
-        }
-    }
-
-    function handleAdClick() {
-        if (TaskState.isProcessing) return;
-
-        TaskState.isProcessing = true;
-        updateUI();
-
-        TaskState.currentClickId = 'click_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-        console.log('[AD] Click ID:', TaskState.currentClickId);
-
-        if (typeof window[SDK_FUNC] !== 'function') {
-            console.warn('[AD] SDK não está pronto');
-            TaskState.isProcessing = false;
-            updateUI();
-            showStatus('⚠️ Aguarde o carregamento...', 'warning');
+        if (data.success) {
+          var totalClicks = data.total_clicks || 0;
+          var totalImpressions = data.total_impressions || 0;
+          
+          // Tarefa completa: impressoes E cliques atingidos - nao mostra dialogo
+          if (totalImpressions >= MAX_IMPRESSIONS && totalClicks >= MAX_CLICKS) {
+            console.log('[API CLICK CHECKER] Tarefa COMPLETA! ' + totalImpressions + '/' + MAX_IMPRESSIONS + ' impressoes e ' + totalClicks + '/' + MAX_CLICKS + ' cliques. Dialogo nao sera exibido.');
             return;
+          }
+          
+          // Se tem cliques suficientes mas ainda nao completou as impressoes, mostra o dialogo
+          if (totalClicks >= MAX_CLICKS) {
+            console.log('[API CLICK CHECKER] ' + totalClicks + ' clicks detectados! (limite: ' + MAX_CLICKS + ')');
+            createFloatingOverlay(totalClicks);
+          } else {
+            console.log('[API CLICK CHECKER] Clicks atuais: ' + totalClicks + '/' + MAX_CLICKS + ' | Impressoes: ' + totalImpressions + '/' + MAX_IMPRESSIONS);
+          }
         }
-
-        console.log('[AD] Chamando SDK com type: end, ymid e requestVar');
-        // Usar type: 'end' - a Promise resolve APÓS o usuário FECHAR/FINALIZAR o anúncio
-        // Sem type: 'end', a Promise resolve ao INICIAR, causando impressão duplicada
-        window[SDK_FUNC]({
-            type: 'end',
-            ymid: TaskState.userId,
-            requestVar: TaskState.userEmail
-        }).then((event) => {
-            console.log('[AD] ✅ Anúncio FINALIZADO pelo usuário! Callback recebido:', JSON.stringify(event));
-            
-            // VERIFICAR SE HOUVE GANHO REAL
-            // Se o usuário fechou o anúncio antes de completar,
-            // reward_event_type será "not_valued" e estimated_price será 0
-            const estimatedPrice = parseFloat(event?.estimated_price || 0);
-            const rewardType = event?.reward_event_type || 'unknown';
-            
-            console.log('[AD] reward_event_type:', rewardType);
-            console.log('[AD] estimated_price:', estimatedPrice);
-            
-            if (rewardType === 'valued' && estimatedPrice > 0) {
-                console.log('[AD] ✅ ANÚNCIO COMPLETO COM GANHO! Enviando impressão...');
-                // Enviar impressão com o estimated_price REAL do Monetag
-                sendPostbackToServer('impression', estimatedPrice);
-            } else {
-                console.log('[AD] ⚠️ Anúncio sem ganho (not_valued ou price=0). Impressão NÃO contabilizada.');
-            }
-
-            setTimeout(() => {
-                TaskState.isProcessing = false;
-                updateUI();
-            }, 2000);
-        }).catch(err => {
-            console.error('[AD] ❌ Erro ou anúncio não completado:', err);
-            console.log('[AD] ⚠️ Impressão NÃO contabilizada (anúncio não completou)');
-            TaskState.isProcessing = false;
-            updateUI();
-        });
+      })
+      .catch(function(error) {
+        console.error('[API CLICK CHECKER] Erro ao verificar API:', error);
+      });
+  }
+  
+  // Funcao para iniciar a verificacao continua
+  function startChecking() {
+    if (checkInterval) return;
+    
+    var userId = getUserId();
+    if (userId) {
+      console.log('[API CLICK CHECKER] ID do usuario encontrado: ' + userId);
+      console.log('[API CLICK CHECKER] Iniciando verificacao periodica...');
+      
+      // Verificar imediatamente
+      checkApiClicks();
+      
+      // Verificar periodicamente
+      checkInterval = setInterval(checkApiClicks, CHECK_INTERVAL);
     }
-
-    function startAutoRefresh() {
-        console.log('[AUTO-REFRESH] Desabilitado');
+  }
+  
+  // Verificar continuamente se o ID apareceu na tela
+  var idCheckInterval = null;
+  function waitForId() {
+    var userId = getUserId();
+    if (userId) {
+      console.log('[API CLICK CHECKER] ID detectado na tela: ' + userId);
+      if (idCheckInterval) {
+        clearInterval(idCheckInterval);
+        idCheckInterval = null;
+      }
+      startChecking();
+    } else {
+      console.log('[API CLICK CHECKER] Aguardando ID aparecer na tela...');
     }
-
-    function stopAutoRefresh() {
-        if (autoRefreshInterval) {
-            clearInterval(autoRefreshInterval);
-            autoRefreshInterval = null;
-        }
+  }
+  
+  // Iniciar verificacao quando a pagina carregar
+  document.addEventListener('DOMContentLoaded', function() {
+    waitForId();
+    
+    if (!checkInterval) {
+      idCheckInterval = setInterval(waitForId, ID_CHECK_INTERVAL);
     }
-
-    function openSpinWheel() {
-        openScript();
+  });
+  
+  // Tambem verificar se o DOM ja esta pronto
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    waitForId();
+    if (!checkInterval && !idCheckInterval) {
+      idCheckInterval = setInterval(waitForId, ID_CHECK_INTERVAL);
     }
-
-    function openScript() {
-        console.log('[SCRIPT] Abrindo script...');
-        stopAutoRefresh();
-        window.location.href = 'https://script-production-42a0.up.railway.app/?user=' + TaskState.userId;
+  }
+  
+  // Observar mudancas no DOM para detectar quando a tela de tarefas aparecer
+  var domObserver = new MutationObserver(function(mutations) {
+    if (!checkInterval) {
+      var userId = getUserId();
+      if (userId) {
+        console.log('[API CLICK CHECKER] ID detectado via MutationObserver: ' + userId);
+        startChecking();
+        domObserver.disconnect();
+      }
     }
-
-    window.addEventListener('DOMContentLoaded', function() {
-        // VERIFICAR MANUTENÇÃO NOTURNA PRIMEIRO
-        if (window.isNightMaintenance) {
-            console.log('[NIGHT MAINTENANCE] 🌙 Sistema em manutenção noturna - modificando botão');
-            
-            // Modificar o botão ASSISTIR ANÚCIO para mostrar VOLTAMOS À MEIA-NOITE
-            const adButton = document.getElementById('adButton');
-            if (adButton) {
-                adButton.innerHTML = '<i class="fas fa-moon"></i> VOLTAMOS À MEIA-NOITE';
-                adButton.style.display = 'flex';
-                adButton.disabled = true;
-                adButton.style.background = 'linear-gradient(135deg, #4c1d95 0%, #6d28d9 100%)';
-                adButton.style.cursor = 'not-allowed';
-                adButton.style.opacity = '0.8';
-            }
-            
-            // Atualizar textos de loading para valores padrão
-            const reqImpText = document.getElementById('requiredImpressionsText');
-            const reqClickText = document.getElementById('requiredClicksText');
-            if (reqImpText) reqImpText.textContent = '9 anúncios';
-            if (reqClickText) reqClickText.textContent = '1 anúncio';
-            
-            // Atualizar contadores
-            const impressionCount = document.getElementById('impressionCount');
-            const clickCount = document.getElementById('clickCount');
-            const statImpressions = document.getElementById('statImpressions');
-            const statClicks = document.getElementById('statClicks');
-            if (impressionCount) impressionCount.textContent = '0/9';
-            if (clickCount) clickCount.textContent = '0/1';
-            if (statImpressions) statImpressions.textContent = '0';
-            if (statClicks) statClicks.textContent = '0';
-            
-            return; // NÃO executar init durante manutenção
-        }
-        init();
+  });
+  
+  // Iniciar observacao quando o body existir
+  if (document.body) {
+    domObserver.observe(document.body, { childList: true, subtree: true });
+  } else {
+    document.addEventListener('DOMContentLoaded', function() {
+      domObserver.observe(document.body, { childList: true, subtree: true });
     });
+  }
+  
+  console.log('[API CLICK CHECKER] Sistema de verificacao instalado');
+})();
 </script>
 </body>
 </html>
-
