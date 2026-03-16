@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <title>Young Money - Minhas Tarefas</title>
+
+    <!-- Telegram Web App SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <!-- VERIFICAÇÃO DO USER_ID NA URL -->
+    <script>
+    (function() {
+        'use strict';
+        function getUrlParam(param) {
+            var urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+        function hasValidUserId() {
+            var userId = getUrlParam('user_id');
+            return userId && userId.length > 0 && /^[0-9]+$/.test(userId);
+        }
+        window.TELEGRAM_USER_ID = getUrlParam('user_id');
+        function showBlockScreen() {
+            document.documentElement.innerHTML = '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Acesso Bloqueado</title><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:Inter,-apple-system,sans-serif;background:linear-gradient(135deg,#0a0e1a 0%,#0d1225 100%);color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}.container{max-width:380px;text-align:center;animation:fadeIn .6s ease}.icon{width:100px;height:100px;margin:0 auto 25px;background:linear-gradient(135deg,#0088cc,#00a8e8);border-radius:24px;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 40px rgba(0,136,204,.3)}.icon svg{width:60px;height:60px;fill:#fff}h1{font-size:1.5rem;margin-bottom:12px;font-weight:700}p{color:#a0aec0;margin-bottom:30px;line-height:1.6}.card{background:rgba(20,25,45,.9);border:1px solid rgba(139,92,246,.3);border-radius:16px;padding:25px;margin-bottom:20px;text-align:left}.step{display:flex;align-items:flex-start;gap:12px;margin-bottom:16px;color:#a0aec0;font-size:.95rem;line-height:1.5}.step:last-child{margin-bottom:0}.num{min-width:28px;height:28px;background:linear-gradient(135deg,#8b5cf6,#00ddff);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:.85rem;color:#fff}.warn{display:flex;align-items:center;justify-content:center;gap:10px;padding:15px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:12px;color:#ef4444;font-size:.9rem}.warn svg{width:20px;height:20px;fill:currentColor;flex-shrink:0}@keyframes fadeIn{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}</style></head><body><div class="container"><div class="icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg></div><h1>Acesso Exclusivo</h1><p>Entre pelo Telegram</p><div class="card"><div class="step"><span class="num">1</span><span>Abra o <strong>Telegram</strong> no seu celular</span></div><div class="step"><span class="num">2</span><span>Acesse o <strong>bot oficial</strong> do YoungMoney</span></div><div class="step"><span class="num">3</span><span>Clique no botão para abrir o <strong>Mini App</strong></span></div></div><div class="warn"><svg viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg><span>Acesso requer user_id válido na URL</span></div></div></body></html>';
+        }
+        if (!hasValidUserId()) {
+            showBlockScreen();
+        }
+    })();
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Rajdhani:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            overflow-x: hidden;
+            max-width: 100vw;
+            width: 100%;
+            height: 100%;
+        }
+
+        :root {
+            --bg-primary: #0a0e1a;
+            --bg-secondary: #0d1225;
+            --text-primary: #ffffff;
+            --text-secondary: #a0aec0;
+            --purple-neon: #8b5cf6;
+            --cyan-neon: #00ddff;
+            --green-neon: #10b981;
+            --yellow-neon: #fbbf24;
+            --card-bg: rgba(20, 25, 45, 0.85);
+            --card-border: rgba(139, 92, 246, 0.4);
+            --orange-neon: #f97316;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 32px 24px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 40px rgba(139, 92, 246, 0.15);
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .logo {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.6rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--purple-neon), var(--cyan-neon));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+            letter-spacing: 2px;
+        }
+
+        .title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .task-section {
+            margin-bottom: 28px;
+        }
+
+        .task-label {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.85rem;
+            color: var(--cyan-neon);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .task-label .icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 221, 255, 0.15);
+            border-radius: 50%;
+            font-size: 0.75rem;
+        }
+
+        .progress-container {
+            margin-bottom: 16px;
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+        }
+
+        .progress-bar {
+            height: 100%;
+            border-radius: 6px;
+            transition: width 0.5s ease;
+            background: linear-gradient(90deg, var(--purple-neon), var(--cyan-neon));
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.4);
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 8px;
+        }
+
+        .progress-value {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .completed-message {
+            display: none;
+            text-align: center;
+            padding: 24px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 16px;
+            margin-bottom: 20px;
+        }
+
+        .completed-message.show {
+            display: block;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .completed-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 16px;
+            background: rgba(16, 185, 129, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(16, 185, 129, 0.4);
+            font-size: 1.8rem;
+        }
+
+        .completed-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--green-neon);
+            margin-bottom: 8px;
+        }
+
+        .completed-text {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--purple-neon), var(--cyan-neon));
+            color: #fff;
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            box-shadow: 0 0 30px rgba(139, 92, 246, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        .info-box {
+            background: rgba(0, 221, 255, 0.05);
+            border: 1px solid rgba(0, 221, 255, 0.2);
+            border-radius: 12px;
+            padding: 16px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-top: 20px;
+        }
+
+        .info-box strong {
+            color: var(--cyan-neon);
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="header">
+                <div class="logo">YOUNG MONEY</div>
+                <div class="title">Minhas Tarefas</div>
+                <div class="subtitle">Complete as missões para ganhar acesso</div>
+            </div>
+
+            <div id="completedMessage" class="completed-message">
+                <div class="completed-icon">✓</div>
+                <div class="completed-title">Missões Completas!</div>
+                <div class="completed-text">Você desbloqueou o acesso ao TubeCoin Bot</div>
+            </div>
+
+            <div id="taskContainer">
+                <!-- Cliques -->
+                <div class="task-section">
+                    <div class="task-label">
+                        <span class="icon">🖱️</span>
+                        Cliques
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar-bg">
+                            <div id="clicksBar" class="progress-bar" style="width: 0%"></div>
+                        </div>
+                        <div class="progress-text">
+                            <span>Progresso</span>
+                            <span class="progress-value"><span id="clicksCount">0</span>/2</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Impressões -->
+                <div class="task-section">
+                    <div class="task-label">
+                        <span class="icon">👁️</span>
+                        Impressões
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar-bg">
+                            <div id="impressionsBar" class="progress-bar" style="width: 0%"></div>
+                        </div>
+                        <div class="progress-text">
+                            <span>Progresso</span>
+                            <span class="progress-value"><span id="impressionsCount">0</span>/20</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <strong>Como funciona:</strong> Clique nos anúncios Monetag para completar as tarefas. Os dados são sincronizados automaticamente.
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button id="startBtn" class="btn btn-primary">Iniciar Tarefas</button>
+                <button id="checkBtn" class="btn btn-secondary">Verificar Progresso</button>
+            </div>
+
+            <div id="actionButtonContainer" class="hidden">
+                <button id="openScriptBtn" class="btn btn-primary" style="width: 100%; margin-top: 20px;">
+                    Abrir TubeCoin Bot
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ═══════════════════════════════════════════
+        // CONFIGURAÇÕES E CONSTANTES
+        // ═══════════════════════════════════════════
+
+        const CONFIG = {
+            MAX_CLICKS: 2,
+            MAX_IMPRESSIONS: 20,
+            ZONE_ID: '10325249',
+            SDK_NAME: 'show_10325249',
+            SDK_URL: 'https://libtl.com/sdk.js',
+            MONETAG_API: 'https://monetag-postback-server-production.up.railway.app',
+            SCRIPT_URL: 'https://tubecoin.com.br', // URL do script do TubeCoin
+            CHECK_INTERVAL: 5000 // 5 segundos
+        };
+
+        // ═══════════════════════════════════════════
+        // ESTADO GLOBAL
+        // ═══════════════════════════════════════════
+
+        let state = {
+            userId: window.TELEGRAM_USER_ID,
+            clicks: 0,
+            impressions: 0,
+            isCompleted: false,
+            checkInterval: null,
+            isChecking: false
+        };
+
+        // ═══════════════════════════════════════════
+        // ELEMENTOS DO DOM
+        // ═══════════════════════════════════════════
+
+        const elements = {
+            clicksCount: document.getElementById('clicksCount'),
+            clicksBar: document.getElementById('clicksBar'),
+            impressionsCount: document.getElementById('impressionsCount'),
+            impressionsBar: document.getElementById('impressionsBar'),
+            startBtn: document.getElementById('startBtn'),
+            checkBtn: document.getElementById('checkBtn'),
+            completedMessage: document.getElementById('completedMessage'),
+            taskContainer: document.getElementById('taskContainer'),
+            actionButtonContainer: document.getElementById('actionButtonContainer'),
+            openScriptBtn: document.getElementById('openScriptBtn')
+        };
+
+        // ═══════════════════════════════════════════
+        // FUNÇÕES PRINCIPAIS
+        // ═══════════════════════════════════════════
+
+        function updateProgress() {
+            const clicksPercent = (state.clicks / CONFIG.MAX_CLICKS) * 100;
+            const impressionsPercent = (state.impressions / CONFIG.MAX_IMPRESSIONS) * 100;
+
+            elements.clicksCount.textContent = state.clicks;
+            elements.clicksBar.style.width = Math.min(clicksPercent, 100) + '%';
+
+            elements.impressionsCount.textContent = state.impressions;
+            elements.impressionsBar.style.width = Math.min(impressionsPercent, 100) + '%';
+        }
+
+        function checkCompletion() {
+            if (state.clicks >= CONFIG.MAX_CLICKS && state.impressions >= CONFIG.MAX_IMPRESSIONS) {
+                if (!state.isCompleted) {
+                    state.isCompleted = true;
+                    showCompletedState();
+                }
+                return true;
+            }
+            return false;
+        }
+
+        function showCompletedState() {
+            elements.completedMessage.classList.add('show');
+            elements.taskContainer.classList.add('hidden');
+            elements.startBtn.classList.add('hidden');
+            elements.checkBtn.classList.add('hidden');
+            elements.actionButtonContainer.classList.remove('hidden');
+        }
+
+        async function fetchStats() {
+            if (state.isChecking || !state.userId) return;
+
+            state.isChecking = true;
+            try {
+                const response = await fetch(`${CONFIG.MONETAG_API}/api/stats/user/${state.userId}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    state.clicks = parseInt(data.total_clicks) || 0;
+                    state.impressions = parseInt(data.total_impressions) || 0;
+                    updateProgress();
+                    checkCompletion();
+                }
+            } catch (error) {
+                console.error('[STATS] Erro ao buscar:', error);
+            } finally {
+                state.isChecking = false;
+            }
+        }
+
+        function startAutoCheck() {
+            if (state.checkInterval) return;
+            console.log('[AUTO-CHECK] Iniciando verificação automática a cada', CONFIG.CHECK_INTERVAL, 'ms');
+            state.checkInterval = setInterval(fetchStats, CONFIG.CHECK_INTERVAL);
+            fetchStats(); // Verificar imediatamente
+        }
+
+        function stopAutoCheck() {
+            if (state.checkInterval) {
+                clearInterval(state.checkInterval);
+                state.checkInterval = null;
+                console.log('[AUTO-CHECK] Verificação automática parada');
+            }
+        }
+
+        function loadMonetag() {
+            if (document.querySelector(`script[src="${CONFIG.SDK_URL}"]`)) {
+                console.log('[SDK] Monetag já carregado');
+                return;
+            }
+
+            const script = document.createElement('script');
+            script.src = CONFIG.SDK_URL;
+            script.setAttribute('data-zone', CONFIG.ZONE_ID);
+            script.setAttribute('data-sdk', CONFIG.SDK_NAME);
+            script.async = true;
+
+            script.onload = function() {
+                console.log('[SDK] Monetag SDK carregado com sucesso');
+            };
+
+            script.onerror = function() {
+                console.error('[SDK] Erro ao carregar Monetag SDK');
+            };
+
+            document.head.appendChild(script);
+            console.log('[SDK] Carregando Monetag zona', CONFIG.ZONE_ID);
+        }
+
+        function openTubeCoinBot() {
+            console.log('[ACTION] Abrindo TubeCoin Bot...');
+            // Redirecionar para o script do TubeCoin
+            window.location.href = CONFIG.SCRIPT_URL + '?user_id=' + state.userId;
+        }
+
+        // ═══════════════════════════════════════════
+        // EVENT LISTENERS
+        // ═══════════════════════════════════════════
+
+        elements.startBtn.addEventListener('click', function() {
+            console.log('[START] Iniciando tarefas...');
+            loadMonetag();
+            startAutoCheck();
+            elements.startBtn.disabled = true;
+            elements.startBtn.textContent = 'Tarefas em Andamento...';
+        });
+
+        elements.checkBtn.addEventListener('click', function() {
+            console.log('[CHECK] Verificando progresso manualmente...');
+            fetchStats();
+        });
+
+        elements.openScriptBtn.addEventListener('click', function() {
+            openTubeCoinBot();
+        });
+
+        // ═══════════════════════════════════════════
+        // INICIALIZAÇÃO
+        // ═══════════════════════════════════════════
+
+        console.log('[INIT] Aplicação iniciada');
+        console.log('[INIT] User ID:', state.userId);
+        console.log('[INIT] Configuração:', CONFIG);
+
+        // Verificar se já tem progresso salvo
+        fetchStats();
+    </script>
+</body>
+</html>
