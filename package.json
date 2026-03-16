@@ -1,22 +1,17 @@
 {
-  "name": "youngmoney-integrated",
+  "name": "tubecoin-bot",
   "version": "1.0.0",
-  "description": "Young Money - Tarefas Integradas com TubeCoin Bot",
-  "main": "server.js",
+  "description": "TubeCoin Bot - Automação de vídeos, check-in e missões",
   "type": "module",
+  "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js"
+    "start": "node server.js"
   },
-  "keywords": [
-    "youngmoney",
-    "tubecoin",
-    "monetag",
-    "telegram"
-  ],
-  "author": "Carlos20473736",
-  "license": "MIT",
   "dependencies": {
-    "express": "^4.18.2"
+    "express": "^4.21.2",
+    "node-fetch": "^3.3.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
