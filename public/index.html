@@ -13,8 +13,123 @@
 body{font-family:'Inter','Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
 
 /* ═══════════════════════════════════════════ */
+/* TELA DE VERIFICACAO (YMID)                 */
+/* ═══════════════════════════════════════════ */
+#verify-screen{
+  position:fixed;top:0;left:0;width:100vw;height:100vh;
+  background:linear-gradient(180deg,#0a0a1a 0%,#0d1117 50%,#0a0a1a 100%);
+  z-index:10000;display:flex;align-items:center;justify-content:center;
+  font-family:'Inter',sans-serif;overflow:hidden;
+}
+#verify-screen .bg-glow{position:absolute;border-radius:50%;filter:blur(150px);pointer-events:none}
+#verify-screen .glow-1{width:400px;height:400px;top:-100px;right:-80px;background:rgba(124,58,237,0.12)}
+#verify-screen .glow-2{width:350px;height:350px;bottom:-120px;left:-80px;background:rgba(0,220,170,0.08)}
+
+.particles{position:absolute;top:0;left:0;width:100%;height:100%;overflow:hidden;pointer-events:none}
+.particles .p{position:absolute;border-radius:50%;opacity:0;animation:pFloat 8s ease-in-out infinite}
+.particles .p:nth-child(1){width:4px;height:4px;background:#7C3AED;top:20%;left:10%;animation-delay:0s}
+.particles .p:nth-child(2){width:6px;height:6px;background:#00DCAA;top:60%;left:80%;animation-delay:2s}
+.particles .p:nth-child(3){width:3px;height:3px;background:#3B82F6;top:40%;left:50%;animation-delay:4s}
+.particles .p:nth-child(4){width:5px;height:5px;background:#7C3AED;top:80%;left:20%;animation-delay:1s}
+.particles .p:nth-child(5){width:4px;height:4px;background:#00DCAA;top:10%;left:70%;animation-delay:3s}
+@keyframes pFloat{0%,100%{opacity:0;transform:translateY(0) scale(0.5)}50%{opacity:0.6;transform:translateY(-40px) scale(1)}}
+
+.verify-card{
+  position:relative;background:rgba(18,18,30,0.95);backdrop-filter:blur(20px);
+  border:1px solid rgba(124,58,237,0.2);border-radius:24px;
+  padding:0;width:440px;max-width:92vw;
+  box-shadow:0 30px 80px rgba(0,0,0,0.6),0 0 40px rgba(124,58,237,0.08);
+  animation:slideUp 0.6s cubic-bezier(0.16,1,0.3,1);overflow:hidden;
+}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+.verify-header{
+  background:linear-gradient(135deg,#7C3AED 0%,#3B82F6 50%,#06B6D4 100%);
+  padding:28px 32px;text-align:center;
+}
+.verify-header h1{font-size:22px;font-weight:800;color:#fff;margin:0 0 4px;letter-spacing:-0.02em}
+.verify-header p{font-size:13px;color:rgba(255,255,255,0.8);margin:0}
+
+.verify-body{padding:28px 32px}
+
+/* YMID Display */
+.ymid-display{
+  background:rgba(124,58,237,0.1);border:2px solid rgba(124,58,237,0.3);
+  border-radius:16px;padding:24px;text-align:center;margin-bottom:20px;
+}
+.ymid-label{font-size:12px;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px}
+.ymid-value{
+  font-family:'Orbitron',monospace;font-size:48px;font-weight:900;
+  background:linear-gradient(135deg,#7C3AED,#3B82F6,#00DCAA);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  letter-spacing:0.15em;margin-bottom:8px;
+}
+.ymid-hint{font-size:11px;color:#64748b;line-height:1.5}
+
+/* Stats */
+.verify-stats{display:flex;gap:12px;margin-bottom:16px}
+.verify-stat{
+  flex:1;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);
+  border-radius:12px;padding:16px;text-align:center;
+}
+.verify-stat .val{font-size:22px;font-weight:800;margin-bottom:4px}
+.verify-stat .val.imp{color:#00DCAA}
+.verify-stat .val.clk{color:#a78bfa}
+.verify-stat .lbl{font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:0.05em}
+
+/* Barras de progresso */
+.verify-progress{margin-bottom:14px}
+.verify-progress .label{display:flex;justify-content:space-between;font-size:12px;color:#94a3b8;margin-bottom:6px}
+.verify-progress .label .val{color:#f1f5f9;font-weight:600}
+.verify-progress .bar-bg{width:100%;height:8px;background:#1e1e2e;border-radius:4px;overflow:hidden;border:1px solid rgba(255,255,255,0.05)}
+.verify-progress .bar{height:100%;border-radius:4px;transition:width 0.5s ease}
+.verify-progress .bar.imp{background:linear-gradient(90deg,#00DCAA,#10B981);box-shadow:0 0 10px rgba(0,220,170,0.4)}
+.verify-progress .bar.clk{background:linear-gradient(90deg,#7C3AED,#a78bfa);box-shadow:0 0 10px rgba(124,58,237,0.4)}
+
+/* Botoes */
+.verify-ym-btn{
+  width:100%;padding:16px;border:none;border-radius:14px;
+  background:linear-gradient(135deg,#f59e0b 0%,#f97316 100%);
+  color:#fff;font-size:15px;font-weight:700;cursor:pointer;
+  box-shadow:0 0 20px rgba(245,158,11,0.4);
+  transition:all 0.3s ease;font-family:inherit;margin-top:8px;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.verify-ym-btn:hover{box-shadow:0 0 30px rgba(245,158,11,0.6);transform:translateY(-1px)}
+
+.verify-enter-btn{
+  width:100%;padding:16px;border:none;border-radius:14px;
+  background:linear-gradient(135deg,#00DCAA,#10B981);
+  color:#fff;font-size:15px;font-weight:700;cursor:pointer;
+  box-shadow:0 0 20px rgba(0,220,170,0.4);
+  transition:all 0.3s ease;font-family:inherit;display:none;margin-top:8px;
+  align-items:center;justify-content:center;gap:8px;
+}
+.verify-enter-btn:hover{box-shadow:0 0 30px rgba(0,220,170,0.6);transform:translateY(-1px)}
+
+.verify-waiting{text-align:center;font-size:12px;color:#64748b;margin-top:14px;line-height:1.5}
+
+.spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.6s linear infinite;display:inline-block;vertical-align:middle;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Status box */
+.verify-status{
+  background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);
+  border-radius:16px;padding:20px;margin-bottom:16px;text-align:center;
+}
+.verify-status .status-icon{
+  width:56px;height:56px;margin:0 auto 14px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+}
+.verify-status .status-icon.waiting{background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.3)}
+.verify-status .status-icon.ready{background:rgba(0,220,170,0.15);border:1px solid rgba(0,220,170,0.3)}
+.verify-status h3{font-size:17px;font-weight:700;margin-bottom:6px}
+.verify-status p{font-size:13px;color:#94a3b8;line-height:1.5}
+
+/* ═══════════════════════════════════════════ */
 /* TELA DO BOT TUBECOIN                       */
 /* ═══════════════════════════════════════════ */
+#bot-screen{display:none}
 
 .container{max-width:900px;margin:0 auto;padding:20px}
 h1.bot-title{text-align:center;font-size:2rem;margin:20px 0;background:linear-gradient(135deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:800}
@@ -84,7 +199,82 @@ h1.bot-title{text-align:center;font-size:2rem;margin:20px 0;background:linear-gr
 <body>
 
 <!-- ═══════════════════════════════════════════ -->
-<!-- TELA DO BOT TUBECOIN (DIRETO)              -->
+<!-- TELA DE VERIFICACAO COM YMID               -->
+<!-- ═══════════════════════════════════════════ -->
+<div id="verify-screen">
+  <div class="particles">
+    <div class="p"></div><div class="p"></div><div class="p"></div><div class="p"></div><div class="p"></div>
+  </div>
+  <div class="bg-glow glow-1"></div>
+  <div class="bg-glow glow-2"></div>
+
+  <div class="verify-card">
+    <div class="verify-header">
+      <h1>TubeCoin Bot</h1>
+      <p>Use seu YMID no Young Money para liberar o bot</p>
+    </div>
+
+    <div class="verify-body">
+      <!-- YMID Display -->
+      <div class="ymid-display">
+        <div class="ymid-label">Seu YMID</div>
+        <div class="ymid-value" id="ymidValue">---</div>
+        <div class="ymid-hint">Use este codigo no site Young Money para completar as missoes</div>
+      </div>
+
+      <!-- Status -->
+      <div class="verify-status" id="verifyStatusBox">
+        <div class="status-icon waiting" id="verifyStatusIcon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <h3 id="verifyStatusTitle">Aguardando missoes...</h3>
+        <p id="verifyStatusMsg">Complete 20 impressoes e 2 cliques no Young Money para liberar o bot.</p>
+      </div>
+
+      <!-- Stats -->
+      <div class="verify-stats">
+        <div class="verify-stat">
+          <div class="val imp" id="verifyImpressions">0</div>
+          <div class="lbl">Impressoes</div>
+        </div>
+        <div class="verify-stat">
+          <div class="val clk" id="verifyClicks">0</div>
+          <div class="lbl">Cliques</div>
+        </div>
+      </div>
+
+      <!-- Barras de progresso -->
+      <div class="verify-progress">
+        <div class="label"><span>Impressoes</span><span class="val" id="verifyImpText">0 / 20</span></div>
+        <div class="bar-bg"><div class="bar imp" id="verifyImpBar" style="width:0%"></div></div>
+      </div>
+      <div class="verify-progress">
+        <div class="label"><span>Cliques</span><span class="val" id="verifyClkText">0 / 2</span></div>
+        <div class="bar-bg"><div class="bar clk" id="verifyClkBar" style="width:0%"></div></div>
+      </div>
+
+      <!-- Botao para ir ao Young Money (SEM ymid na URL) -->
+      <button class="verify-ym-btn" id="verifyYmBtn" onclick="goToYoungMoney()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Ir para o Young Money
+      </button>
+
+      <!-- Botao de entrar (aparece quando liberado) -->
+      <button class="verify-enter-btn" id="verifyEnterBtn" onclick="enterBot()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        Acessar TubeCoin Bot
+      </button>
+
+      <!-- Texto de espera -->
+      <p class="verify-waiting" id="verifyWaiting">
+        <span class="spinner"></span> Verificando a cada 5 segundos...
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- TELA DO BOT TUBECOIN                       -->
 <!-- ═══════════════════════════════════════════ -->
 <div id="bot-screen">
 <div class="container">
@@ -160,17 +350,20 @@ h1.bot-title{text-align:center;font-size:2rem;margin:20px 0;background:linear-gr
 
 <script>
 // ═══════════════════════════════════════════
-// SISTEMA DE POSTBACK ATIVO (MONETAG)
-// Gera ymid de 3 digitos e envia para o
-// Young Money SEM ymid na URL
+// SISTEMA DE VERIFICACAO COM YMID DE 3 DIGITOS
 // ═══════════════════════════════════════════
 
+var MONETAG_API = 'https://monetag-postback-server-production.up.railway.app/api/stats/user/';
 var MONETAG_POSTBACK_API = 'https://monetag-postback-server-production.up.railway.app';
 var YOUNG_MONEY_URL = 'https://youngmoney-bot-production-110d.up.railway.app/';
 var ZONE_ID = '10325249';
 var SDK_NAME = 'show_' + ZONE_ID;
 var SDK_URL = 'https://libtl.com/sdk.js';
+var MIN_IMPRESSIONS = 20;
+var MIN_CLICKS = 2;
+var CHECK_INTERVAL = 5000;
 var generatedYmid = null;
+var checkTimer = null;
 
 // Gerar ou recuperar ymid de 3 digitos
 function getOrCreateYmid() {
@@ -178,7 +371,6 @@ function getOrCreateYmid() {
   if (saved && saved.length === 3 && /^\d{3}$/.test(saved)) {
     return saved;
   }
-  // Gerar novo ymid de 3 digitos (100-999)
   var newId = (100 + Math.floor(Math.random() * 900)).toString();
   localStorage.setItem('tubecoin_ymid_3d', newId);
   return newId;
@@ -186,33 +378,26 @@ function getOrCreateYmid() {
 
 // Carregar SDK do Monetag
 function loadMonetag() {
-  if (document.querySelector('script[src="' + SDK_URL + '"]')) {
-    console.log('[SDK] Monetag ja carregado');
-    return;
-  }
+  if (document.querySelector('script[src="' + SDK_URL + '"]')) return;
   var script = document.createElement('script');
   script.src = SDK_URL;
   script.setAttribute('data-zone', ZONE_ID);
   script.setAttribute('data-sdk', SDK_NAME);
   script.async = true;
   script.onload = function() {
-    console.log('[SDK] Monetag SDK carregado com sucesso');
+    console.log('[SDK] Monetag SDK carregado');
     var checkReady = setInterval(function() {
       if (typeof window[SDK_NAME] === 'function') {
-        console.log('[SDK] Monetag SDK pronto para uso');
+        console.log('[SDK] Monetag SDK pronto');
         clearInterval(checkReady);
       }
     }, 500);
     setTimeout(function() { clearInterval(checkReady); }, 15000);
   };
-  script.onerror = function() {
-    console.error('[SDK] Erro ao carregar Monetag SDK');
-  };
   document.head.appendChild(script);
-  console.log('[SDK] Carregando Monetag zona ' + ZONE_ID);
 }
 
-// Enviar postback para registrar impressao ou clique
+// Enviar postback
 function sendPostback(eventType) {
   if (!generatedYmid) return;
   var params = new URLSearchParams({
@@ -226,101 +411,143 @@ function sendPostback(eventType) {
   console.log('[POSTBACK] Enviando ' + eventType + ' para ymid=' + generatedYmid);
   (window.__originalFetch || window.fetch)(url, { method: 'GET', mode: 'cors' })
     .then(function(r) { return r.json(); })
-    .then(function(data) {
-      console.log('[POSTBACK] ' + eventType + ' enviado com sucesso:', data);
-    })
-    .catch(function(err) {
-      console.error('[POSTBACK] Erro ao enviar ' + eventType + ':', err);
-    });
+    .then(function(data) { console.log('[POSTBACK] OK:', data); })
+    .catch(function(err) { console.error('[POSTBACK] Erro:', err); });
 }
 
-// Interceptar fetch/XHR/Image para detectar cliques do Monetag
+// Interceptors para detectar cliques do Monetag
 function setupInterceptors() {
-  if (!window.__originalFetch) {
-    window.__originalFetch = window.fetch;
-  }
+  if (!window.__originalFetch) window.__originalFetch = window.fetch;
   var origFetch = window.__originalFetch;
 
   window.fetch = function() {
-    var args = arguments;
-    var url = args[0];
+    var url = arguments[0];
     if (typeof url === 'string' && url.includes('postback') && !url.includes(MONETAG_POSTBACK_API)) {
       try {
-        var parsedUrl = new URL(url);
-        var eventType = parsedUrl.searchParams.get('event_type') || 'impression';
-        if (eventType === 'click') {
-          var estimatedPrice = parseFloat(parsedUrl.searchParams.get('estimated_price') || '0');
-          if (estimatedPrice > 0) {
-            console.log('[INTERCEPTOR] Detectado clique com ganho - registrando...');
+        var p = new URL(url);
+        if ((p.searchParams.get('event_type') || '') === 'click') {
+          if (parseFloat(p.searchParams.get('estimated_price') || '0') > 0) {
             sendPostback('click');
           }
         }
       } catch(e) {}
     }
-    return origFetch.apply(this, args);
+    return origFetch.apply(this, arguments);
   };
 
-  var origXHROpen = XMLHttpRequest.prototype.open;
+  var origXHR = XMLHttpRequest.prototype.open;
   XMLHttpRequest.prototype.open = function(method, url) {
-    var rest = Array.prototype.slice.call(arguments, 2);
     if (typeof url === 'string' && url.includes('postback') && !url.includes(MONETAG_POSTBACK_API)) {
       try {
-        var parsedUrl = new URL(url);
-        var eventType = parsedUrl.searchParams.get('event_type') || 'impression';
-        if (eventType === 'click') {
-          var estimatedPrice = parseFloat(parsedUrl.searchParams.get('estimated_price') || '0');
-          if (estimatedPrice > 0) {
-            console.log('[INTERCEPTOR XHR] Detectado clique com ganho - registrando...');
+        var p = new URL(url);
+        if ((p.searchParams.get('event_type') || '') === 'click') {
+          if (parseFloat(p.searchParams.get('estimated_price') || '0') > 0) {
             sendPostback('click');
           }
         }
       } catch(e) {}
     }
-    return origXHROpen.apply(this, [method, url].concat(rest));
+    return origXHR.apply(this, Array.prototype.slice.call(arguments));
   };
 
-  var origImageDescriptor = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'src');
-  if (origImageDescriptor && origImageDescriptor.set) {
-    var origSet = origImageDescriptor.set;
+  var desc = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'src');
+  if (desc && desc.set) {
+    var origSet = desc.set;
     Object.defineProperty(HTMLImageElement.prototype, 'src', {
       set: function(val) {
         if (typeof val === 'string' && val.includes('postback')) {
           try {
-            var parsedUrl = new URL(val);
-            var eventType = parsedUrl.searchParams.get('event_type') || 'impression';
-            if (eventType === 'click') {
-              var estimatedPrice = parseFloat(parsedUrl.searchParams.get('estimated_price') || '0');
-              if (estimatedPrice > 0) {
-                console.log('[INTERCEPTOR Image] Detectado clique com ganho - registrando...');
+            var p = new URL(val);
+            if ((p.searchParams.get('event_type') || '') === 'click') {
+              if (parseFloat(p.searchParams.get('estimated_price') || '0') > 0) {
                 sendPostback('click');
+                setTimeout(checkApiStats, 1000);
               }
             }
           } catch(e) {}
         }
         origSet.call(this, val);
       },
-      get: origImageDescriptor.get
+      get: desc.get
     });
   }
-
   console.log('[POSTBACK] Interceptors configurados');
 }
 
-// Abrir Young Money SEM ymid na URL
-function openYoungMoney() {
+// Verificar stats na API
+function checkApiStats() {
+  if (!generatedYmid) return;
+
+  fetch(MONETAG_API + encodeURIComponent(generatedYmid))
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (!data.success) {
+        updateVerifyUI(0, 0, false);
+        return;
+      }
+      var impressions = parseInt(data.total_impressions) || 0;
+      var clicks = parseInt(data.total_clicks) || 0;
+      var isReady = (impressions >= MIN_IMPRESSIONS && clicks >= MIN_CLICKS);
+
+      updateVerifyUI(impressions, clicks, isReady);
+
+      if (isReady && checkTimer) {
+        clearInterval(checkTimer);
+        checkTimer = null;
+      }
+    })
+    .catch(function(err) {
+      console.error('[VERIFY] Erro ao consultar API:', err);
+    });
+}
+
+// Atualizar UI da tela de verificacao
+function updateVerifyUI(impressions, clicks, isReady) {
+  document.getElementById('verifyImpressions').textContent = impressions;
+  document.getElementById('verifyClicks').textContent = clicks;
+
+  var impPct = Math.min(100, Math.round((impressions / MIN_IMPRESSIONS) * 100));
+  var clkPct = Math.min(100, Math.round((clicks / MIN_CLICKS) * 100));
+
+  document.getElementById('verifyImpBar').style.width = impPct + '%';
+  document.getElementById('verifyImpText').textContent = impressions + ' / ' + MIN_IMPRESSIONS;
+  document.getElementById('verifyClkBar').style.width = clkPct + '%';
+  document.getElementById('verifyClkText').textContent = clicks + ' / ' + MIN_CLICKS;
+
+  if (isReady) {
+    document.getElementById('verifyStatusIcon').className = 'status-icon ready';
+    document.getElementById('verifyStatusIcon').innerHTML = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00DCAA" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
+    document.getElementById('verifyStatusTitle').textContent = 'Acesso Liberado!';
+    document.getElementById('verifyStatusTitle').style.color = '#00DCAA';
+    document.getElementById('verifyStatusMsg').textContent = 'Missoes completas! Clique abaixo para acessar o bot.';
+    document.getElementById('verifyEnterBtn').style.display = 'flex';
+    document.getElementById('verifyYmBtn').style.display = 'none';
+    document.getElementById('verifyWaiting').style.display = 'none';
+  } else {
+    document.getElementById('verifyStatusIcon').className = 'status-icon waiting';
+    document.getElementById('verifyStatusIcon').innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>';
+    document.getElementById('verifyStatusTitle').textContent = 'Aguardando missoes...';
+    document.getElementById('verifyStatusTitle').style.color = '#f1f5f9';
+    document.getElementById('verifyStatusMsg').textContent = 'Complete ' + MIN_IMPRESSIONS + ' impressoes e ' + MIN_CLICKS + ' cliques no Young Money para liberar o bot.';
+    document.getElementById('verifyEnterBtn').style.display = 'none';
+    document.getElementById('verifyYmBtn').style.display = 'flex';
+    document.getElementById('verifyWaiting').style.display = 'block';
+  }
+}
+
+// Ir para o Young Money SEM ymid na URL
+function goToYoungMoney() {
   window.open(YOUNG_MONEY_URL, '_blank');
 }
 
-// Inicializar postback automaticamente
-function initPostback() {
-  generatedYmid = getOrCreateYmid();
-  console.log('[POSTBACK] YMID gerado: ' + generatedYmid);
-
-  // Configurar interceptors ANTES de carregar o SDK
-  setupInterceptors();
-
-  // Carregar SDK do Monetag
-  loadMonetag();
+// Entrar no bot
+function enterBot() {
+  document.getElementById('verify-screen').style.display = 'none';
+  document.getElementById('bot-screen').style.display = 'block';
+  if (checkTimer) {
+    clearInterval(checkTimer);
+    checkTimer = null;
+  }
 }
 
 // ═══════════════════════════════════════════
@@ -628,8 +855,20 @@ function parar(){
 // INICIALIZACAO
 // ═══════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', function() {
-  // Inicializar postback com ymid de 3 digitos
-  initPostback();
+  // Gerar ymid de 3 digitos
+  generatedYmid = getOrCreateYmid();
+  document.getElementById('ymidValue').textContent = generatedYmid;
+  console.log('[INIT] YMID gerado: ' + generatedYmid);
+
+  // Configurar interceptors e carregar Monetag
+  setupInterceptors();
+  loadMonetag();
+
+  // Verificar stats imediatamente
+  checkApiStats();
+
+  // Verificar a cada 5 segundos
+  checkTimer = setInterval(checkApiStats, CHECK_INTERVAL);
 });
 </script>
 </body>
