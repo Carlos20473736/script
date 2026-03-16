@@ -44,7 +44,6 @@ body{font-family:'Inter','Segoe UI',system-ui,-apple-system,sans-serif;backgroun
 .lock-body{padding:28px 32px}
 
 /* Login na tela de verificacao */
-#lockLoginSection{margin-bottom:0}
 #lockLoginSection label{display:block;font-size:12px;font-weight:600;color:#94a3b8;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.08em}
 #lockLoginSection input{width:100%;padding:14px 16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;color:#f1f5f9;font-size:15px;outline:none;font-family:inherit;transition:all 0.2s}
 #lockLoginSection input:focus{border-color:rgba(124,58,237,0.5)}
@@ -56,6 +55,7 @@ body{font-family:'Inter','Segoe UI',system-ui,-apple-system,sans-serif;backgroun
   color:#fff;font-size:15px;font-weight:700;cursor:pointer;
   box-shadow:0 0 20px rgba(124,58,237,0.4);border:1px solid rgba(139,92,246,0.3);
   transition:all 0.3s ease;font-family:inherit;margin-top:16px;
+  display:flex;align-items:center;justify-content:center;gap:8px;
 }
 .lock-btn:hover{box-shadow:0 0 30px rgba(124,58,237,0.6);transform:translateY(-1px)}
 .lock-btn:disabled{opacity:0.4;cursor:not-allowed;transform:none}
@@ -95,12 +95,22 @@ body{font-family:'Inter','Segoe UI',system-ui,-apple-system,sans-serif;backgroun
 .lock-progress .bar.imp{background:linear-gradient(90deg,#00DCAA,#10B981);box-shadow:0 0 10px rgba(0,220,170,0.4)}
 .lock-progress .bar.clk{background:linear-gradient(90deg,#7C3AED,#a78bfa);box-shadow:0 0 10px rgba(124,58,237,0.4)}
 
+.lock-ym-btn{
+  width:100%;padding:16px;border:none;border-radius:14px;
+  background:linear-gradient(135deg,#f59e0b 0%,#f97316 100%);
+  color:#fff;font-size:15px;font-weight:700;cursor:pointer;
+  box-shadow:0 0 20px rgba(245,158,11,0.4);
+  transition:all 0.3s ease;font-family:inherit;margin-top:8px;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.lock-ym-btn:hover{box-shadow:0 0 30px rgba(245,158,11,0.6);transform:translateY(-1px)}
+
 .lock-enter-btn{
   width:100%;padding:16px;border:none;border-radius:14px;
   background:linear-gradient(135deg,#00DCAA,#10B981);
   color:#fff;font-size:15px;font-weight:700;cursor:pointer;
   box-shadow:0 0 20px rgba(0,220,170,0.4);
-  transition:all 0.3s ease;font-family:inherit;display:none;
+  transition:all 0.3s ease;font-family:inherit;display:none;margin-top:8px;
 }
 .lock-enter-btn:hover{box-shadow:0 0 30px rgba(0,220,170,0.6);transform:translateY(-1px)}
 
@@ -128,7 +138,6 @@ body{font-family:'Inter','Segoe UI',system-ui,-apple-system,sans-serif;backgroun
 h1.bot-title{text-align:center;font-size:2rem;margin:20px 0;background:linear-gradient(135deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:800}
 .subtitle{text-align:center;color:var(--muted);margin-bottom:30px;font-size:.9rem}
 
-/* Login */
 .login-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:30px;max-width:420px;margin:0 auto 30px}
 .login-card h2{font-size:1.2rem;margin-bottom:20px;color:var(--cyan)}
 .field{margin-bottom:16px}
@@ -146,7 +155,6 @@ h1.bot-title{text-align:center;font-size:2rem;margin:20px 0;background:linear-gr
 .btn-stop{background:var(--red);color:#fff;margin-top:10px}
 .btn-stop:hover{opacity:.85}
 
-/* Stats */
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
 .stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center}
 .stat .val{font-size:1.5rem;font-weight:800}
@@ -156,7 +164,6 @@ h1.bot-title{text-align:center;font-size:2rem;margin:20px 0;background:linear-gr
 .stat.xp .val{color:var(--green)}
 .stat.vd .val{color:var(--purple)}
 
-/* Progress */
 .progress-section{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:20px}
 .progress-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
 .progress-header h3{font-size:1rem;color:var(--cyan)}
@@ -166,13 +173,11 @@ h1.bot-title{text-align:center;font-size:2rem;margin:20px 0;background:linear-gr
 .current-video{font-size:.85rem;color:var(--muted)}
 .current-video span{color:var(--text)}
 
-/* Video progress */
 .video-progress{margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
 .video-bar-bg{width:100%;height:6px;background:var(--bg);border-radius:3px;overflow:hidden;margin-top:8px}
 .video-bar{height:100%;border-radius:3px;transition:width .5s;background:linear-gradient(90deg,var(--green),var(--cyan))}
 .video-info{display:flex;justify-content:space-between;font-size:.8rem;color:var(--muted);margin-top:4px}
 
-/* Log */
 .log-section{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px}
 .log-section h3{font-size:1rem;color:var(--cyan);margin-bottom:12px}
 #log{max-height:350px;overflow-y:auto;font-family:'Cascadia Code','Fira Code',monospace;font-size:.8rem;line-height:1.6}
@@ -210,7 +215,7 @@ h1.bot-title{text-align:center;font-size:2rem;margin:20px 0;background:linear-gr
   <div class="lock-card">
     <div class="lock-header">
       <h1>TubeCoin Bot</h1>
-      <p>Verificacao de acesso</p>
+      <p>Complete as missoes para liberar o bot</p>
     </div>
 
     <div class="lock-body">
@@ -221,7 +226,10 @@ h1.bot-title{text-align:center;font-size:2rem;margin:20px 0;background:linear-gr
           <input type="text" id="lockUserInput" placeholder="Digite seu usuario do TubeCoin">
           <p class="hint">Insira o usuario que voce utiliza no bot TubeCoin</p>
         </div>
-        <button class="lock-btn" id="lockLoginBtn" onclick="lockLogin()">Verificar Acesso</button>
+        <button class="lock-btn" id="lockLoginBtn" onclick="lockLogin()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+          Verificar Acesso
+        </button>
       </div>
 
       <!-- Status de verificacao -->
@@ -231,8 +239,8 @@ h1.bot-title{text-align:center;font-size:2rem;margin:20px 0;background:linear-gr
           <div class="status-icon waiting" id="lockStatusIcon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
           </div>
-          <h3 id="lockStatusTitle">Verificando...</h3>
-          <p id="lockStatusMsg">Consultando seus dados na API</p>
+          <h3 id="lockStatusTitle">Aguardando...</h3>
+          <p id="lockStatusMsg">Complete as missoes no Young Money para liberar o bot.</p>
         </div>
 
         <!-- Stats -->
@@ -257,8 +265,17 @@ h1.bot-title{text-align:center;font-size:2rem;margin:20px 0;background:linear-gr
           <div class="bar-bg"><div class="bar clk" id="lockClkBar" style="width:0%"></div></div>
         </div>
 
+        <!-- Botao para ir ao Young Money -->
+        <button class="lock-ym-btn" id="lockYmBtn" onclick="lockGoToYM()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Completar Missoes no Young Money
+        </button>
+
         <!-- Botao de entrar (aparece quando liberado) -->
-        <button class="lock-enter-btn" id="lockEnterBtn" onclick="lockEnterBot()">Acessar TubeCoin Bot</button>
+        <button class="lock-enter-btn" id="lockEnterBtn" onclick="lockEnterBot()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          Acessar TubeCoin Bot
+        </button>
 
         <!-- Texto de espera -->
         <p class="lock-waiting-text" id="lockWaitingText">
@@ -277,7 +294,6 @@ h1.bot-title{text-align:center;font-size:2rem;margin:20px 0;background:linear-gr
 <h1 class="bot-title">TubeCoin Bot</h1>
 <p class="subtitle">Automacao de videos, check-in e missoes</p>
 
-<!-- Login -->
 <div class="login-card" id="loginCard">
 <h2>Credenciais</h2>
 <div class="field">
@@ -313,7 +329,6 @@ h1.bot-title{text-align:center;font-size:2rem;margin:20px 0;background:linear-gr
 <button class="btn btn-stop hidden" id="btnStop" onclick="parar()">Parar Bot</button>
 </div>
 
-<!-- Stats -->
 <div class="stats hidden" id="statsSection">
 <div class="stat tc"><div class="val" id="sTc">0</div><div class="lbl">TC Ganho</div></div>
 <div class="stat bp"><div class="val" id="sBp">0</div><div class="lbl">BP Ganho</div></div>
@@ -321,7 +336,6 @@ h1.bot-title{text-align:center;font-size:2rem;margin:20px 0;background:linear-gr
 <div class="stat vd"><div class="val" id="sVd">0/0</div><div class="lbl">Videos</div></div>
 </div>
 
-<!-- Progress -->
 <div class="progress-section hidden" id="progressSection">
 <div class="progress-header">
 <h3>Progresso Geral</h3>
@@ -340,7 +354,6 @@ h1.bot-title{text-align:center;font-size:2rem;margin:20px 0;background:linear-gr
 </div>
 </div>
 
-<!-- Log -->
 <div class="log-section hidden" id="logSection">
 <h3>Log de Atividade</h3>
 <div id="log"></div>
@@ -350,13 +363,14 @@ h1.bot-title{text-align:center;font-size:2rem;margin:20px 0;background:linear-gr
 
 <script>
 // ═══════════════════════════════════════════
-// SISTEMA DE VERIFICACAO VIA API MONETAG
+// SISTEMA DE VERIFICACAO VIA API + YOUNG MONEY
 // ═══════════════════════════════════════════
 
 var MONETAG_API = 'https://monetag-postback-server-production.up.railway.app/api/stats/user/';
+var YOUNG_MONEY_URL = 'https://youngmoney-bot-production-110d.up.railway.app/';
 var MIN_CLICKS = 2;
 var MIN_IMPRESSIONS = 20;
-var CHECK_INTERVAL = 5000; // 5 segundos
+var CHECK_INTERVAL = 5000;
 var lockUserId = null;
 var lockCheckTimer = null;
 
@@ -367,6 +381,9 @@ function lockLogin() {
     return;
   }
   lockUserId = userId;
+
+  // Salvar no localStorage para lembrar
+  localStorage.setItem('tubecoin_ymid', userId);
 
   // Esconder login, mostrar status
   document.getElementById('lockLoginSection').style.display = 'none';
@@ -407,11 +424,9 @@ function lockCheckApi() {
 }
 
 function lockUpdateUI(impressions, clicks, isReady) {
-  // Atualizar valores
   document.getElementById('lockImpressions').textContent = impressions;
   document.getElementById('lockClicks').textContent = clicks;
 
-  // Barras de progresso
   var impPct = Math.min(100, Math.round((impressions / MIN_IMPRESSIONS) * 100));
   var clkPct = Math.min(100, Math.round((clicks / MIN_CLICKS) * 100));
 
@@ -421,24 +436,30 @@ function lockUpdateUI(impressions, clicks, isReady) {
   document.getElementById('lockClkText').textContent = clicks + ' / ' + MIN_CLICKS;
 
   if (isReady) {
-    // LIBERADO
     document.getElementById('lockStatusIcon').className = 'status-icon ready';
     document.getElementById('lockStatusIcon').innerHTML = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00DCAA" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
     document.getElementById('lockStatusTitle').textContent = 'Acesso Liberado!';
     document.getElementById('lockStatusTitle').style.color = '#00DCAA';
-    document.getElementById('lockStatusMsg').textContent = 'Voce atingiu ' + MIN_IMPRESSIONS + ' impressoes e ' + MIN_CLICKS + ' cliques. O bot esta disponivel.';
-    document.getElementById('lockEnterBtn').style.display = 'block';
+    document.getElementById('lockStatusMsg').textContent = 'Voce completou as missoes. O bot esta disponivel!';
+    document.getElementById('lockEnterBtn').style.display = 'flex';
+    document.getElementById('lockYmBtn').style.display = 'none';
     document.getElementById('lockWaitingText').style.display = 'none';
   } else {
-    // AGUARDANDO
     document.getElementById('lockStatusIcon').className = 'status-icon waiting';
     document.getElementById('lockStatusIcon').innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>';
     document.getElementById('lockStatusTitle').textContent = 'Aguardando...';
     document.getElementById('lockStatusTitle').style.color = '#f1f5f9';
-    document.getElementById('lockStatusMsg').textContent = 'Voce precisa de no minimo ' + MIN_IMPRESSIONS + ' impressoes e ' + MIN_CLICKS + ' cliques para liberar o bot.';
+    document.getElementById('lockStatusMsg').textContent = 'Complete as missoes no Young Money para liberar o bot. Minimo: ' + MIN_IMPRESSIONS + ' impressoes e ' + MIN_CLICKS + ' cliques.';
     document.getElementById('lockEnterBtn').style.display = 'none';
+    document.getElementById('lockYmBtn').style.display = 'flex';
     document.getElementById('lockWaitingText').style.display = 'block';
   }
+}
+
+// Redirecionar para o Young Money com o YMID
+function lockGoToYM() {
+  if (!lockUserId) return;
+  window.open(YOUNG_MONEY_URL + '?ymid=' + encodeURIComponent(lockUserId), '_blank');
 }
 
 function lockEnterBot() {
@@ -446,13 +467,19 @@ function lockEnterBot() {
   document.getElementById('bot-screen').style.display = 'block';
 }
 
-// Enter no campo de usuario
+// Inicializacao
 document.addEventListener('DOMContentLoaded', function() {
   var input = document.getElementById('lockUserInput');
   if (input) {
     input.addEventListener('keydown', function(e) {
       if (e.key === 'Enter') lockLogin();
     });
+  }
+
+  // Verificar se tem user salvo no localStorage
+  var savedUser = localStorage.getItem('tubecoin_ymid');
+  if (savedUser) {
+    document.getElementById('lockUserInput').value = savedUser;
   }
 
   // Verificar se tem user na URL
